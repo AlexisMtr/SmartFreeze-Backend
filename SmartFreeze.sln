@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFreeze", "SmartFreeze\SmartFreeze.csproj", "{00A7823D-6A54-4903-97CE-FC4CAC634837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartFreeze", "SmartFreeze\SmartFreeze.csproj", "{00A7823D-6A54-4903-97CE-FC4CAC634837}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFreezeFA", "SmartFreezeFA\SmartFreezeFA.csproj", "{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{00A7823D-6A54-4903-97CE-FC4CAC634837}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00A7823D-6A54-4903-97CE-FC4CAC634837}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00A7823D-6A54-4903-97CE-FC4CAC634837}.Release|Any CPU.Build.0 = Release|Any CPU
+		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
