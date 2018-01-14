@@ -1,0 +1,42 @@
+﻿{
+  "coord": {
+    "lon": 5.73,
+    "lat": 45.18
+  },
+  "weather": [
+    {
+      "id": 804,
+      "main": "Clouds",
+      "description": "couvert",
+      "icon": "04d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 6,
+    "pressure": 1018,
+    "humidity": 82,
+    "temp_min": 6,
+    "temp_max": 6
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 4.6,
+    "deg": 100
+  },
+  "clouds": {
+    "all": 90
+  },
+  "dt": 1515936600,
+  "sys": {
+    "type": 1,
+    "id": 5572,
+    "message": 0.0027,
+    "country": "FR",
+    "sunrise": 1515913957,
+    "sunset": 1515946822
+  },
+  "id": 6454071,
+  "name": "Grenoble",
+  "cod": 200
+}

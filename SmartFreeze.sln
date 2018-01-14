@@ -5,7 +5,11 @@ VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartFreeze", "SmartFreeze\SmartFreeze.csproj", "{00A7823D-6A54-4903-97CE-FC4CAC634837}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFreezeFA", "SmartFreezeFA\SmartFreezeFA.csproj", "{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartFreezeFA", "SmartFreezeFA\SmartFreezeFA.csproj", "{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherLibrary", "WeatherLibrary\WeatherLibrary.csproj", "{42C9B9AA-6D44-4A9B-8F48-546089822759}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherLibrary.Tests", "WeatherLibrary.Tests\WeatherLibrary.Tests.csproj", "{95B8D259-AA53-41B1-BF86-5068F76F804D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{155B739E-3ABC-4346-9AC2-865CB3BB5A6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42C9B9AA-6D44-4A9B-8F48-546089822759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42C9B9AA-6D44-4A9B-8F48-546089822759}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42C9B9AA-6D44-4A9B-8F48-546089822759}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42C9B9AA-6D44-4A9B-8F48-546089822759}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95B8D259-AA53-41B1-BF86-5068F76F804D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95B8D259-AA53-41B1-BF86-5068F76F804D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95B8D259-AA53-41B1-BF86-5068F76F804D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95B8D259-AA53-41B1-BF86-5068F76F804D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
