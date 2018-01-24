@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace SmartFreeze
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IHostingEnvironment env)
         {
@@ -25,20 +24,10 @@ namespace SmartFreeze
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(config =>
-            {
-                config.SwaggerDoc("v1", new Info
-                {
-                    Title = "SmartFreeze API",
-                    Description = "",
-                    Version = "1.0.0",
-                    Contact = new Contact
-                    {
-                        Name = "AlexisMtr",
-                        Url = "http://github.com/AlexisMtr"
-                    }
-                });
-            });
+            ConfigureMapper();
+            ConfigureContext(services);
+            ConfigureDI(services);
+            ConfigureSwagger(services);
 
             services.AddMvc();
         }
@@ -51,8 +40,7 @@ namespace SmartFreeze
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(config => config.SwaggerEndpoint("/swagger/v1/swagger.json", "SmartFreeze API V1"));
+            ConfigureSwaggerUI(app);
 
             app.UseMvc();
         }
