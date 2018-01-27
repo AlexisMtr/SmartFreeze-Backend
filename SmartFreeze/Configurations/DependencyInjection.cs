@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SmartFreeze.Configurations;
 using SmartFreeze.Context;
+using SmartFreeze.Repositories;
+using SmartFreeze.Services;
 
 namespace SmartFreeze
 {
@@ -8,7 +10,11 @@ namespace SmartFreeze
     {
         public void ConfigureDI(IServiceCollection services)
         {
+            services.AddScoped<DeviceRepository>();
+            services.AddScoped<TelemetryRepository>();
 
+            services.AddScoped<DeviceService>();
+            services.AddScoped<TelemetryService>();
         }
 
         public void ConfigureContext(IServiceCollection services)
