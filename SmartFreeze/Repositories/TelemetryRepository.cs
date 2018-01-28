@@ -1,10 +1,10 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using System;
-using System.Linq;
 
 namespace SmartFreeze.Repositories
 {

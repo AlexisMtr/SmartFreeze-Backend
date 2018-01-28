@@ -1,15 +1,16 @@
-﻿using SmartFreeze.Models;
+﻿using MongoDB.Driver.Linq;
+using SmartFreeze.Models;
 using System;
 using System.Linq;
 
 namespace SmartFreeze.Filters
 {
-    public class TelemetryFilter : IFilter<Telemetry>
+    public class TelemetryFilter : IMongoFilter<Telemetry>
     {
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
-
-        public IQueryable<Telemetry> FilterSource(IQueryable<Telemetry> source)
+        
+        public IMongoQueryable<Telemetry> FilterSource(IMongoQueryable<Telemetry> source)
         {
             if (Start.HasValue)
             {

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
@@ -27,7 +28,7 @@ namespace SmartFreeze.Repositories
         public PaginatedItems<Device> GetAllPaginated(DeviceFilter filter, int rowsPerPage, int pageNumber)
         {
             return collection.AsQueryable().Where(e => true)
-                .Filter(filter)
+                .Filter<Device, Device>(filter)
                 .Paginate(rowsPerPage, pageNumber);
         }
 

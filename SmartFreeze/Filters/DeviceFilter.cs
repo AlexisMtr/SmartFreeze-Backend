@@ -4,15 +4,15 @@ using System.Linq;
 
 namespace SmartFreeze.Filters
 {
-    public class DeviceFilter : IFilter<Device>
+    public class DeviceFilter : IMongoFilter<Device>, IMongoFilter<Site, Device>
     {
         public string Site { get; set; }
         public bool? Warning { get; set; }
         public bool? Failure { get; set; }
         public bool? Favorite { get; set; }
         public Alarm.Gravity Gravity { get; set; }
-
-        public IQueryable<Device> FilterSource(IQueryable<Device> source)
+        
+        public IMongoQueryable<Device> FilterSource(IMongoQueryable<Device> source)
         {
             if (Favorite.HasValue)
             {
@@ -29,10 +29,19 @@ namespace SmartFreeze.Filters
 
             if (Gravity != Alarm.Gravity.All)
             {
-                source.Where(e => e.Alarms.Any(a => a.AlarmGravity == Gravity));
+                source = source.Where(e => e.Alarms.Any(a => a.AlarmGravity == Gravity));
             }
 
             return source;
+        }
+
+        public IMongoQueryable<Device> FilterSource(IMongoQueryable<Site> source)
+        {
+            var devicesSource = source
+                    .Where(e => e.Name.Equals(Site))
+                    .SelectMany(e => e.Devices);
+
+            return FilterSource(devicesSource);
         }
     }
 }

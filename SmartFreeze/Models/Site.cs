@@ -1,0 +1,16 @@
+﻿using System.Collections.Generic;
+
+namespace SmartFreeze.Models
+{
+    public class Site
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public Position Position { get; set; }
+        public IEnumerable<Alarm> Alarms { get; set; }
+        public IEnumerable<Device> Devices { get; set; }
+        public double SurfaceArea { get; set; }
+        public string SurfaceAreaUnit { get; set; }
+        public ApplicationContext SiteType { get; set; }
+    }
+}
