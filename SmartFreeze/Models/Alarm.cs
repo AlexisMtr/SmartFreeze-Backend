@@ -1,10 +1,13 @@
-﻿namespace SmartFreeze.Models
+﻿using System;
+
+namespace SmartFreeze.Models
 {
     public class Alarm
     {
         public enum Type
         {
             FreezeWarning,
+            ThawWarning,
             DeviceFailure
         }
 
@@ -22,5 +25,8 @@
         public bool IsActive { get; set; }
         public Type AlarmType { get; set; }
         public Gravity AlarmGravity { get; set; }
+        public DateTime OccuredAt { get; set; }
+        public string ShortDescription { get; set; }
+        public string Description { get; set; }
     }
 }
