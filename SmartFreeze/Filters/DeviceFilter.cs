@@ -6,7 +6,7 @@ namespace SmartFreeze.Filters
 {
     public class DeviceFilter : IMongoFilter<Device>, IMongoFilter<Site, Device>
     {
-        public string Site { get; set; }
+        public string SiteId { get; set; }
         public bool? Warning { get; set; }
         public bool? Failure { get; set; }
         public bool? Favorite { get; set; }
@@ -37,9 +37,18 @@ namespace SmartFreeze.Filters
 
         public IMongoQueryable<Device> FilterSource(IMongoQueryable<Site> source)
         {
-            var devicesSource = source
-                    .Where(e => e.Name.Equals(Site))
-                    .SelectMany(e => e.Devices);
+            IMongoQueryable<Device> devicesSource;
+
+            if(string.IsNullOrEmpty(SiteId))
+            {
+                devicesSource = source.SelectMany(e => e.Devices);
+            }
+            else
+            {
+                devicesSource = source
+                       .Where(e => e.Id.Equals(SiteId))
+                       .SelectMany(e => e.Devices);
+            }
 
             return FilterSource(devicesSource);
         }

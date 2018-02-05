@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
@@ -22,10 +23,11 @@ namespace SmartFreeze.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<DeviceOverviewDto>))]
         public async Task<IActionResult> Get([FromQuery]DeviceFilter filter, [FromQuery]int rowsPerPage = 20, [FromQuery]int pageNumber = 1)
         {
-            return Ok(deviceService.GetAll(filter, rowsPerPage, pageNumber));
+            var devices = deviceService.GetAll(filter, rowsPerPage, pageNumber);
+            return Ok(Mapper.Map<PaginatedItemsDto<DeviceOverviewDto>>(devices));
         }
 
         [HttpGet("{deviceId}")]
