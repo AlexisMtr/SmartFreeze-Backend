@@ -6,9 +6,10 @@ namespace SmartFreeze.Models
     {
         public enum Type
         {
-            FreezeWarning,
-            ThawWarning,
-            DeviceFailure
+            All = 0,
+            FreezeWarning = 1,
+            ThawWarning = 2,
+            DeviceFailure = 3
         }
 
         public enum Gravity

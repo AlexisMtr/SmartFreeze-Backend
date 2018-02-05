@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using SmartFreeze.Configurations;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SmartFreeze
@@ -21,6 +22,8 @@ namespace SmartFreeze
                         Url = "http://github.com/AlexisMtr"
                     }
                 });
+                config.OperationFilter<DefaultValueOperationFilter>();
+                config.DescribeAllEnumsAsStrings();
             });
         }
 

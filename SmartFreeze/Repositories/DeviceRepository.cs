@@ -10,12 +10,10 @@ namespace SmartFreeze.Repositories
 {
     public class DeviceRepository
     {
-        private readonly SmartFreezeContext context;
         private readonly IMongoCollection<Device> collection;
 
         public DeviceRepository(SmartFreezeContext context)
         {
-            this.context = context;
             this.collection = context.Database
                 .GetCollection<Device>(nameof(Device));
         }

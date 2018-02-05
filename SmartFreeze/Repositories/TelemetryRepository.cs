@@ -10,12 +10,10 @@ namespace SmartFreeze.Repositories
 {
     public class TelemetryRepository
     {
-        private readonly SmartFreezeContext context;
         private readonly IMongoCollection<Telemetry> collection;
 
         public TelemetryRepository(SmartFreezeContext context)
         {
-            this.context = context;
             this.collection = context.Database
                 .GetCollection<Telemetry>(nameof(Telemetry));
         }

@@ -38,6 +38,7 @@ namespace SmartFreeze.Sorters
                 else
                 {
                     orderedSource = asc ? OrderAsc(orderedSource, property) : OrderDesc(orderedSource, property);
+                    alreadyOrdered = true;
                 }
                 
             }
