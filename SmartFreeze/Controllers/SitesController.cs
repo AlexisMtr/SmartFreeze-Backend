@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using SmartFreeze.Dtos;
+using SmartFreeze.Filters;
 using SmartFreeze.Services;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SmartFreeze.Controllers
 {
+    [Route("api/[controller]")]
     public class SitesController : Controller
     {
         private readonly SiteService siteService;
@@ -14,9 +19,11 @@ namespace SmartFreeze.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<SiteOverviewDto>))]
+        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 20, int pageNumber = 1)
         {
-            return Ok();
+            var sites = siteService.Get(filter, rowsPerPage, pageNumber);
+            return Ok(Mapper.Map<PaginatedItemsDto<SiteOverviewDto>>(sites));
         }
 
         [HttpGet("{siteId}")]

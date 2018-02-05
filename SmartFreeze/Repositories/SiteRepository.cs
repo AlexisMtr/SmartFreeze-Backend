@@ -22,7 +22,7 @@ namespace SmartFreeze.Repositories
             return collection.AsQueryable().FirstOrDefault(e => e.Id.Equals(siteId));
         }
 
-        public PaginatedItems<Site> GetAllPaginated(IFilter<Site> filter, int rowsPerPage, int pageNumber)
+        public PaginatedItems<Site> GetAllPaginated(IMongoFilter<Site> filter, int rowsPerPage, int pageNumber)
         {
             return collection.AsQueryable()
                 .Filter(filter)

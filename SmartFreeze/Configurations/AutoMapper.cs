@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using SmartFreeze.Profiles;
 
 namespace SmartFreeze
 {
@@ -8,7 +9,8 @@ namespace SmartFreeze
         public void ConfigureMapper()
         {
             var configuration = new MapperConfigurationExpression();
-            // TODO : Map profiles
+
+            configuration.AddProfile<SiteOverviewProfile>();
 
             Mapper.Initialize(configuration);
         }
