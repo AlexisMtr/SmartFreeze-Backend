@@ -18,5 +18,6 @@ namespace SmartFreeze.Models
         public string SiteName { get; set; }
         public IEnumerable<Alarm> Alarms { get; set; }
         public DateTime LastCommunication { get; set; }
+        public Position Position { get; set; }
     }
 }

@@ -31,14 +31,14 @@ namespace SmartFreeze.Controllers
         }
 
         [HttpGet("{deviceId}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DeviceDetailsDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get(string deviceId)
         {
             var device = deviceService.Get(deviceId);
             if (device == null) return NotFound();
 
-            return Ok(device);
+            return Ok(Mapper.Map<DeviceDetailsDto>(device));
         }
 
         [HttpGet("{deviceId}/telemetry")]

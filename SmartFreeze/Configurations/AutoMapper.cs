@@ -12,6 +12,11 @@ namespace SmartFreeze
 
             configuration.AddProfile<SiteOverviewProfile>();
 
+            configuration.AddProfile<DeviceOrverviewProfile>();
+            configuration.AddProfile<DeviceDetailsProfile>();
+
+            configuration.AddProfile<AlarmProfile>();
+
             Mapper.Initialize(configuration);
         }
     }

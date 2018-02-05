@@ -5,17 +5,15 @@ using System.Linq;
 
 namespace SmartFreeze.Profiles
 {
-    public class DeviceOrverviewProfile : Profile
+    public class DeviceDetailsProfile : Profile
     {
-        public DeviceOrverviewProfile()
+        public DeviceDetailsProfile()
         {
-            CreateMap<Device, DeviceOverviewDto>()
+            CreateMap<Device, DeviceDetailsDto>()
                 .ForMember(d => d.HasActiveAlarms, opt => opt.MapFrom(s => s.Alarms.Any(a => a.IsActive)))
                 .ForMember(d => d.ActiveAlarmsCount, opt => opt.MapFrom(s => s.Alarms.Count()))
                 .ForMember(d => d.Latitude, opt => opt.MapFrom(s => s.Position.Latitude))
                 .ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.Position.Longitude));
-
-            CreateMap<PaginatedItems<Device>, PaginatedItemsDto<DeviceOverviewDto>>();
         }
     }
 }
