@@ -10,23 +10,26 @@ namespace SmartFreeze.Repositories
 {
     public class DeviceRepository
     {
-        private readonly IMongoCollection<Device> collection;
+        private readonly IMongoCollection<Site> collection;
 
         public DeviceRepository(SmartFreezeContext context)
         {
             this.collection = context.Database
-                .GetCollection<Device>(nameof(Device));
+                .GetCollection<Site>(nameof(Site));
         }
 
         public Device Get(string deviceId)
         {
-            return collection.AsQueryable().FirstOrDefault(e => true);
+            return collection.AsQueryable()
+                .SelectMany(e => e.Devices)
+                .FirstOrDefault(e => e.Id.Equals(deviceId));
         }
 
-        public PaginatedItems<Device> GetAllPaginated(DeviceFilter filter, int rowsPerPage, int pageNumber)
+        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Device> filter, int rowsPerPage, int pageNumber)
         {
-            return collection.AsQueryable().Where(e => true)
-                .Filter<Device, Device>(filter)
+            return collection.AsQueryable()
+                .SelectMany(e => e.Devices)
+                .Filter(filter)
                 .Paginate(rowsPerPage, pageNumber);
         }
 
