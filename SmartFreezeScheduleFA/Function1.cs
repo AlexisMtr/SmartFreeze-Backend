@@ -18,6 +18,9 @@ namespace SmartFreezeScheduleFA
             using (var scope = ServiceLocator.Container.BeginLifetimeScope())
             {
                 CommunicationStateService service = scope.Resolve<CommunicationStateService>();
+                int minMin = 3 * 60 + 5;
+                int minMax = 4 * 60 + 5;
+                service.CheckDeviceCommunication(minMin, minMax);
             }
         }
     }
