@@ -9,7 +9,9 @@ namespace SmartFreezeScheduleFA.Models
             All = 0,
             FreezeWarning = 1,
             ThawWarning = 2,
-            DeviceFailure = 3
+            DeviceFailure = 3,
+            CommunicationError = 4,
+            BatteryWarning = 5
         }
 
         public enum Gravity

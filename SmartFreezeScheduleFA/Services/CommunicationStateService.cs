@@ -17,7 +17,7 @@ namespace SmartFreezeScheduleFA.Services
 
         public void GenerateAlarm()
         {
-
+            Alarm alarm = new Alarm();
         }
     }
 }
