@@ -22,6 +22,15 @@ namespace SmartFreeze.Profiles
                 .ForMember(d => d.ActiveAlarmsCount, opt => opt.MapFrom(s => s.Alarms.Count()));
 
             CreateMap<PaginatedItems<Site>, PaginatedItemsDto<SiteOverviewDto>>();
+
+
+            CreateMap<SiteOverviewDto, Site>()
+                .ForMember(d => d.Position, map => map.MapFrom(s => new Position
+                {
+                    Longitude = s.Longitude,
+                    Altitude = s.Latitude,
+                    Latitude = s.Latitude,
+                }));
         }
     }
 }

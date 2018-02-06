@@ -31,10 +31,17 @@ namespace SmartFreeze.Repositories
                 .Filter(filter)
                 .Paginate(rowsPerPage, pageNumber);
         }
-
-        public object Register(object device)
+        
+        public void AddAlarm(string deviceId, Alarm alarm)
         {
-            return null;
+            var siteIdFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
+            var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Id", deviceId);
+
+            var filter = Builders<Site>.Filter.And(siteIdFilter, deviceSiteFilter);
+            UpdateDefinition<Site> update = Builders<Site>.Update.Push("Devices.$.Alarms", alarm);
+
+            collection.FindOneAndUpdate(filter, update);
+
         }
     }
 }
