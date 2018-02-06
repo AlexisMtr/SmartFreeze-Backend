@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartFreeze.Services
+namespace SmartFreezeScheduleFA.Services
 {
-    public class NotificationService
+    public class CommunicationStateService
     {
+      
     }
 }
