@@ -27,9 +27,11 @@ namespace SmartFreeze.Controllers
         }
 
         [HttpGet("{siteId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(SiteDetailsDto))]
         public async Task<IActionResult> Get(string siteId)
         {
-            return Ok();
+            var site = siteService.Get(siteId);
+            return Ok(Mapper.Map<SiteDetailsDto>(site));
         }
     }
 }
