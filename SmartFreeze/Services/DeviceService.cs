@@ -18,7 +18,7 @@ namespace SmartFreeze.Services
             return deviceRepository.Get(deviceId);
         }
 
-        public PaginatedItems<Device> GetAll(DeviceFilter filter, int rowsPerPage = 20, int pageNumber = 1)
+        public PaginatedItems<Device> GetAll(DeviceFilter filter, int rowsPerPage, int pageNumber)
         {
             return deviceRepository.GetAllPaginated(filter, rowsPerPage, pageNumber);
         }

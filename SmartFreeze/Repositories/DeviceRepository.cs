@@ -25,10 +25,9 @@ namespace SmartFreeze.Repositories
                 .FirstOrDefault(e => e.Id.Equals(deviceId));
         }
 
-        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Device> filter, int rowsPerPage, int pageNumber)
+        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Site, Device> filter, int rowsPerPage, int pageNumber)
         {
             return collection.AsQueryable()
-                .SelectMany(e => e.Devices)
                 .Filter(filter)
                 .Paginate(rowsPerPage, pageNumber);
         }

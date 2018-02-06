@@ -10,8 +10,10 @@ namespace SmartFreeze
         {
             var configuration = new MapperConfigurationExpression();
 
-            configuration.AddProfile<SiteOverviewProfile>();
-            configuration.AddProfile<SiteRegistrationProfile>();
+            configuration.AddProfile<SiteProfile>();
+            configuration.AddProfile<DeviceProfile>();
+            configuration.AddProfile<AlarmProfile>();
+            configuration.AddProfile<TelemetryProfile>();
 
             Mapper.Initialize(configuration);
         }

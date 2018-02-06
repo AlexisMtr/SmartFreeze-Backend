@@ -22,16 +22,18 @@ namespace SmartFreeze.Controllers
 
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<SiteOverviewDto>))]
-        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 20, int pageNumber = 1)
+        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 0, int pageNumber = 1)
         {
             var sites = siteService.Get(filter, rowsPerPage, pageNumber);
             return Ok(Mapper.Map<PaginatedItemsDto<SiteOverviewDto>>(sites));
         }
 
         [HttpGet("{siteId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(SiteDetailsDto))]
         public async Task<IActionResult> Get(string siteId)
         {
-            return Ok();
+            var site = siteService.Get(siteId);
+            return Ok(Mapper.Map<SiteDetailsDto>(site));
         }
 
 
@@ -50,8 +52,10 @@ namespace SmartFreeze.Controllers
 
         [HttpPut("{siteId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateSite(string siteId, [FromBody]SiteRegistration siteRegistration)
         {
+            //TODO : Create DTO for update (with only allowed fields)
             Site site = Mapper.Map<SiteRegistration, Site>(siteRegistration);
 
             var isUpdated = siteService.Update(siteId, site);
@@ -61,7 +65,7 @@ namespace SmartFreeze.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{siteId")]
+        [HttpDelete("{siteId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateSite(string siteId)
