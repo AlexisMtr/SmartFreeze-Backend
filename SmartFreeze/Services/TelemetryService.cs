@@ -13,9 +13,9 @@ namespace SmartFreeze.Services
             this.telemetryRepository = telemetryRepository;
         }
 
-        public PaginatedItems<Telemetry> GetByDevice(string deviceId, DateTime? from, DateTime? to, int rowsPerPage = 20, int pageNumber = 1)
+        public PaginatedItems<Telemetry> GetByDevice(string deviceId, DateTime? from, DateTime? to, int rowsPerPage, int pageNumber)
         {
-            return telemetryRepository.GetByDevice(deviceId, from, to, rowsPerPage, pageNumber);
+            return telemetryRepository.GetByDevice(deviceId, rowsPerPage, pageNumber, from, to);
         }
     }
 }

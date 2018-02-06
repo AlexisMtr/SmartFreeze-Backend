@@ -17,6 +17,8 @@ namespace SmartFreeze
 
             configuration.AddProfile<AlarmProfile>();
 
+            configuration.AddProfile<TelemetryProfile>();
+
             Mapper.Initialize(configuration);
         }
     }

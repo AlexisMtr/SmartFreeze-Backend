@@ -19,8 +19,18 @@ namespace SmartFreeze.Extensions
             return sorter.SortSource(source);
         }
 
-        public static PaginatedItems<T> Paginate<T>(this IMongoQueryable<T> source, int rowsPerPage = 20, int pageNumber = 1)
+        public static PaginatedItems<T> Paginate<T>(this IMongoQueryable<T> source, int rowsPerPage = 0, int pageNumber = 1)
         {
+            if(rowsPerPage == 0)
+            {
+                return new PaginatedItems<T>
+                {
+                    PageCount = 1,
+                    TotalItemsCount = source.Count(),
+                    Items = source
+                };
+            }
+
             var skip = Math.Max(0, pageNumber - 1) * rowsPerPage;
             var totalCount = source.Count();
             var pageCount = (int)Math.Ceiling((double)totalCount / rowsPerPage);

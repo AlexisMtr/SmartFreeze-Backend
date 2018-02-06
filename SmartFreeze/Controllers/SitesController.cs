@@ -20,7 +20,7 @@ namespace SmartFreeze.Controllers
 
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<SiteOverviewDto>))]
-        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 20, int pageNumber = 1)
+        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 0, int pageNumber = 1)
         {
             var sites = siteService.Get(filter, rowsPerPage, pageNumber);
             return Ok(Mapper.Map<PaginatedItemsDto<SiteOverviewDto>>(sites));

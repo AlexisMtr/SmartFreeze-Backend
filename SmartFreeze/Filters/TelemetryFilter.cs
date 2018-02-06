@@ -9,9 +9,14 @@ namespace SmartFreeze.Filters
     {
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
+        public string DeviceId { get; set; }
         
         public IMongoQueryable<Telemetry> FilterSource(IMongoQueryable<Telemetry> source)
         {
+            if(!string.IsNullOrEmpty(DeviceId))
+            {
+                source = source.Where(e => e.DeviceId == DeviceId);
+            }
             if (Start.HasValue)
             {
                 source = source.Where(e => e.OccuredAt >= Start.Value);
