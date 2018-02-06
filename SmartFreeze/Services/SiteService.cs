@@ -1,6 +1,7 @@
 ﻿using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Repositories;
+using System;
 
 namespace SmartFreeze.Services
 {
@@ -22,5 +23,23 @@ namespace SmartFreeze.Services
         {
             return siteRepository.GetAllPaginated(filter, rowsPerPage, pageNumber);
         }
+
+
+        public bool Create(Site site)
+        {
+            return siteRepository.Create(site);
+        }
+
+        public bool Update(Site site)
+        {
+            return siteRepository.Update(site);
+        }
+
+        public bool Delete(String idSite)
+        {
+            return siteRepository.Delete(idSite);
+        }
+
+      
     }
 }

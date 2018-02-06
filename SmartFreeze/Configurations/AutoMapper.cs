@@ -11,6 +11,7 @@ namespace SmartFreeze
             var configuration = new MapperConfigurationExpression();
 
             configuration.AddProfile<SiteOverviewProfile>();
+            configuration.AddProfile<SiteRegistrationProfile>();
 
             Mapper.Initialize(configuration);
         }
