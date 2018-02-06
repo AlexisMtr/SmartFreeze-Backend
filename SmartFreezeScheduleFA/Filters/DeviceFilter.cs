@@ -1,5 +1,4 @@
 ﻿using MongoDB.Driver.Linq;
-using SmartFreezeScheduleFA;
 using SmartFreezeScheduleFA.Models;
 using System.Linq;
 
@@ -39,7 +38,6 @@ namespace SmartFreezeScheduleFA.Filters
         public IMongoQueryable<Device> FilterSource(IMongoQueryable<Site> source)
         {
             var devicesSource = source
-                    .Where(e => e.Name.Equals(Site))
                     .SelectMany(e => e.Devices);
 
             return FilterSource(devicesSource);
