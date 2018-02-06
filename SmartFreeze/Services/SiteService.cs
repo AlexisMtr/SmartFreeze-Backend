@@ -25,19 +25,19 @@ namespace SmartFreeze.Services
         }
 
 
-        public bool Create(Site site)
+        public Site Create(Site site)
         {
             return siteRepository.Create(site);
         }
 
-        public bool Update(Site site)
+        public bool Update(string siteId, Site site)
         {
-            return siteRepository.Update(site);
+            return siteRepository.Update(siteId, site);
         }
 
-        public bool Delete(String idSite)
+        public bool Delete(string siteId)
         {
-            return siteRepository.Delete(idSite);
+            return siteRepository.Delete(siteId);
         }
 
       
