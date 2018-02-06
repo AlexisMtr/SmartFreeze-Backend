@@ -1,9 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace SmartFreeze.Models
 {
+    [BsonIgnoreExtraElements]
     public class Site
     {
+        [BsonId]
+        private ObjectId ObjectId { get; set; }
+
         public string Id { get; set; }
         public string Name { get; set; }
         public Position Position { get; set; }

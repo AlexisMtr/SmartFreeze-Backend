@@ -12,9 +12,11 @@ namespace SmartFreeze
         {
             services.AddScoped<DeviceRepository>();
             services.AddScoped<TelemetryRepository>();
+            services.AddScoped<SiteRepository>();
 
             services.AddScoped<DeviceService>();
             services.AddScoped<TelemetryService>();
+            services.AddScoped<SiteService>();
         }
 
         public void ConfigureContext(IServiceCollection services)

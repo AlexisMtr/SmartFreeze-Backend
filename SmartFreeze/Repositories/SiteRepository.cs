@@ -1,5 +1,4 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
@@ -8,33 +7,26 @@ using System.Linq;
 
 namespace SmartFreeze.Repositories
 {
-    public class DeviceRepository
+    public class SiteRepository
     {
         private readonly IMongoCollection<Site> collection;
 
-        public DeviceRepository(SmartFreezeContext context)
+        public SiteRepository(SmartFreezeContext context)
         {
             this.collection = context.Database
                 .GetCollection<Site>(nameof(Site));
         }
 
-        public Device Get(string deviceId)
+        public Site Get(string siteId)
         {
-            return collection.AsQueryable()
-                .SelectMany(e => e.Devices)
-                .FirstOrDefault(e => e.Id.Equals(deviceId));
+            return collection.AsQueryable().FirstOrDefault(e => e.Id.Equals(siteId));
         }
 
-        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Site, Device> filter, int rowsPerPage, int pageNumber)
+        public PaginatedItems<Site> GetAllPaginated(IMongoFilter<Site> filter, int rowsPerPage, int pageNumber)
         {
             return collection.AsQueryable()
                 .Filter(filter)
                 .Paginate(rowsPerPage, pageNumber);
-        }
-
-        public object Register(object device)
-        {
-            return null;
         }
     }
 }

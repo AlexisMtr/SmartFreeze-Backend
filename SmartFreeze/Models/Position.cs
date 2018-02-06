@@ -1,5 +1,8 @@
-﻿namespace SmartFreeze.Models
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace SmartFreeze.Models
 {
+    [BsonNoId]
     public class Position
     {
         public double Latitude { get; set; }
