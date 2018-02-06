@@ -69,12 +69,8 @@ namespace SmartFreeze.Repositories
 
         public void addAlarm(String idSite, Alarm alarm)
         {
-            var site = this.Get(idSite);
-            IEnumerable<Alarm> Alarms = site.Alarms;
-            Alarms.ToList().Add(alarm);
-            UpdateDefinition<Site> update = Builders<Site>.Update
-                  .Set(p => p.Alarms, Alarms);
-           this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, idSite), update);
+            UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
+            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, idSite), update);
 
         }
     } 
