@@ -1,5 +1,6 @@
 ﻿using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
+using SmartFreezeScheduleFA.Services;
 using System;
 using System.Collections.Generic;
 
@@ -9,15 +10,10 @@ namespace SmartFreezeScheduleFA.Services
     {
         private readonly DeviceRepository deviceRepository;
 
-        // vérification des dernières communications
-        public void CheckDeviceCommunication (int minBoundaryMin, int? maxBoundaryMin = null)
+        public IEnumerable<Device> checkDeviceCommunication (int minBoundaryMin, int? maxBoundaryMin = null)
         {
-            IEnumerable<Device> failDevices = deviceRepository.GetFailsCommunicationBetween(minBoundaryMin, maxBoundaryMin);
-        }
-
-        public void GenerateAlarm()
-        {
-            Alarm alarm = new Alarm();
+            return deviceRepository.GetFailsCommunicationBetween(minBoundaryMin, maxBoundaryMin);
+            
         }
     }
 }

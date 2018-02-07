@@ -15,6 +15,7 @@ namespace SmartFreezeScheduleFA.Configurations
             //DbContext
             builder.RegisterInstance(new DbContext(ConfigurationManager.AppSettings["DefaultConnectionString"], ConfigurationManager.AppSettings["DefaultDbName"]));
             builder.RegisterType<CommunicationStateService>().InstancePerLifetimeScope();
+            builder.RegisterType<AlarmService>().InstancePerLifetimeScope();
 
             Container = builder.Build();
         }
