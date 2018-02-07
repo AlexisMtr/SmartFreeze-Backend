@@ -22,9 +22,9 @@ namespace SmartFreezeFA.Parsers
                 {
                     telemetries.Add(new Telemetry
                     {
-                        Id = $"{dynamicFrame.DevEUI.Value}-{DateTime.UtcNow.ToString("yyyymmddhhmm")}",
+                        Id = $"{dynamicFrame.DevEUI.Value}-{DateTime.UtcNow.ToString("yyyyMMddHHmm")}",
                         DeviceId = dynamicFrame.DevEUI.Value,
-                        OccuredAt = DateTime.UtcNow.AddSeconds((int)(item.ts.Value / 1_000)),
+                        OccuredAt = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds((int)(item.ts.Value / 1_000)),
                         BatteryVoltage = item.battery.Value,
                         Humidity = item.humidity.Value,
                         Pressure = item.pressure.Value,

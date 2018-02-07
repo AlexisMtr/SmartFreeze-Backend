@@ -26,7 +26,7 @@ namespace SmartFreezeFA.Tests
         [TestMethod]
         public void Parse_ValidFrame()
         {
-            string deviceId = string.Empty;
+            string deviceId = "Device1";
 
             object frame = new
             {
@@ -38,7 +38,7 @@ namespace SmartFreezeFA.Tests
                     {
                         new
                         {
-                            ts = 1512669900771,
+                            ts = 1517911845000,
                             temperature = 14.5,
                             humidity = 45,
                             pressure = 97300,
@@ -46,7 +46,7 @@ namespace SmartFreezeFA.Tests
                         },
                         new
                         {
-                            ts = 1512670900771,
+                            ts = 1517913645000,
                             temperature = 14.5,
                             humidity = 45,
                             pressure = 97300,
@@ -54,7 +54,7 @@ namespace SmartFreezeFA.Tests
                         },
                         new
                         {
-                            ts = 1512671900771,
+                            ts = 1517915445000,
                             temperature = 14.5,
                             humidity = 45,
                             pressure = 97300,
