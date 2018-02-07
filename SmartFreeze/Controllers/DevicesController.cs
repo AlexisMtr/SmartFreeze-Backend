@@ -15,11 +15,13 @@ namespace SmartFreeze.Controllers
     {
         private readonly DeviceService deviceService;
         private readonly TelemetryService telemetryService;
+        private readonly AlarmService alarmService;
 
-        public DevicesController(DeviceService deviceService, TelemetryService telemetryService)
+        public DevicesController(DeviceService deviceService, TelemetryService telemetryService, AlarmService alarmService)
         {
             this.deviceService = deviceService;
             this.telemetryService = telemetryService;
+            this.alarmService = alarmService;
         }
 
         [HttpGet]
@@ -55,6 +57,14 @@ namespace SmartFreeze.Controllers
                 return Ok(Mapper.Map<PaginatedItemsDto<TelemetryFahrenheitDto>>(telemetry));
             }
             return Ok(Mapper.Map<PaginatedItemsDto<TelemetryDto>>(telemetry));
+        }
+
+        [HttpGet("{deviceId}/alarms")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<AlarmDetailsDto>))]
+        public async Task<IActionResult> GetAlarms(string deviceId, [FromQuery]AlarmFilter filter, int rowsPerPage = 0, int pageNumber = 1)
+        {
+            PaginatedItems<Alarm> alarms = alarmService.GetByDevice(deviceId, filter, rowsPerPage, pageNumber);
+            return Ok(Mapper.Map<PaginatedItemsDto<AlarmDetailsDto>>(alarms));
         }
 
         [HttpPost]

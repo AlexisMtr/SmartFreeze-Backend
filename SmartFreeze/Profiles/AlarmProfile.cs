@@ -9,6 +9,7 @@ namespace SmartFreeze.Profiles
         public AlarmProfile()
         {
             CreateMap<Alarm, AlarmDetailsDto>();
+            CreateMap<PaginatedItems<Alarm>, PaginatedItemsDto<AlarmDetailsDto>>();
         }
     }
 }
