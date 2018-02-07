@@ -1,4 +1,7 @@
 ﻿using Autofac;
+using SmartFreezeFA.Repositories;
+using SmartFreezeFA.Services;
+using System.Configuration;
 
 namespace SmartFreezeFA.Configurations
 {
@@ -10,8 +13,13 @@ namespace SmartFreezeFA.Configurations
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-            DbContext context = new DbContext("", "");
+            DbContext context = new DbContext(ConfigurationManager.ConnectionStrings["DefaultConnectionString"].ConnectionString, ConfigurationManager.AppSettings["DefaultDbName"]));
             builder.RegisterInstance(context);
+
+            builder.RegisterType<AlarmRepository>();
+            builder.RegisterType<TelemetryRepository>();
+
+            builder.RegisterType<AlarmService>();
 
             Container = builder.Build();
         }
