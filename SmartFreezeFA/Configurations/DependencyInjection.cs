@@ -13,7 +13,7 @@ namespace SmartFreezeFA.Configurations
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-            DbContext context = new DbContext(ConfigurationManager.ConnectionStrings["DefaultConnectionString"].ConnectionString, ConfigurationManager.AppSettings["DefaultDbName"]));
+            DbContext context = new DbContext(ConfigurationManager.ConnectionStrings["DefaultConnectionString"].ConnectionString, ConfigurationManager.AppSettings["DefaultDbName"]);
             builder.RegisterInstance(context);
 
             builder.RegisterType<AlarmRepository>();
