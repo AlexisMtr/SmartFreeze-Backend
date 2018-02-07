@@ -3,6 +3,7 @@ using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
+using System;
 using System.Linq;
 
 namespace SmartFreeze.Repositories
@@ -56,10 +57,10 @@ namespace SmartFreeze.Repositories
             return result != null;
         }
 
-        public void addAlarm(String idSite, Alarm alarm)
+        public void AddAlarm(String idSite, Alarm alarm)
         {
             UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
-            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
+            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, idSite), update);
         }
     }
 }
