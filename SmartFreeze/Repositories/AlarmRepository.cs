@@ -4,7 +4,6 @@ using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
-using System.Linq;
 
 namespace SmartFreeze.Repositories
 {
@@ -29,7 +28,8 @@ namespace SmartFreeze.Repositories
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
             return collection.AsQueryable()
-                .SelectMany(e => e.Devices.Where(d => d.Id == deviceId))
+                .SelectMany(e => e.Devices)
+                .Where(e => e.Id == deviceId)
                 .Filter(filter)
                 .Paginate(rowsPerPage, pageNumber);
         }
