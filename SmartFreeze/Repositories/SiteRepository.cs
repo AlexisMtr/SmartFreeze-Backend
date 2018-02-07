@@ -3,10 +3,7 @@ using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SmartFreeze.Repositories
 {
@@ -32,46 +29,37 @@ namespace SmartFreeze.Repositories
                 .Paginate(rowsPerPage, pageNumber);
         }
 
-        public bool Create(Site site)
+        public Site Create(Site site)
         {
-            var result = collection.InsertOneAsync(site);
-            if (result != null)
-            {
-                return true;
-            }
-            return false;
+            collection.InsertOne(site);
+            return site;
         }
 
-        public bool Update(Site site)
-        {      UpdateDefinition<Site> update = Builders<Site>.Update.Set(p => p.Name, site.Name)
-                   .Set(p => p.SurfaceArea, site.SurfaceArea)
-                   .Set(p => p.ImageUri, site.ImageUri)
-                   .Set(p => p.Description, site.Description)
-                   .Set(p => p.Zones, site.Zones);
+        public bool Update(string siteId, Site site)
+        {
+            UpdateDefinition<Site> update = Builders<Site>.Update.Set(p => p.Name, site.Name)
+                .Set(p => p.SurfaceArea, site.SurfaceArea)
+                .Set(p => p.ImageUri, site.ImageUri)
+                .Set(p => p.Description, site.Description)
+                .Set(p => p.Zones, site.Zones);
+
             var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, site.Id), update);
-            if (result != null)
-            {
-                return true;
-            }
-            return false;
+
+            return result != null;
         }
 
 
-        public bool Delete(String idSite)
+        public bool Delete(string siteId)
         {
-            var result = collection.DeleteOneAsync(Builders<Site>.Filter.Eq("Id", idSite));
-            if (result != null)
-            {
-                return true;
-            }
-            return false;
+            var result = collection.DeleteOne(Builders<Site>.Filter.Eq("Id", siteId));
+
+            return result != null;
         }
 
-        public void AddAlarm(String idSite, Alarm alarm)
+        public void addAlarm(String idSite, Alarm alarm)
         {
             UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
-            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, idSite), update);
-
+            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
         }
-    } 
+    }
 }

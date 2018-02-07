@@ -22,59 +22,56 @@ namespace SmartFreeze.Controllers
 
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<SiteOverviewDto>))]
-        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 20, int pageNumber = 1)
+        public async Task<IActionResult> Get([FromQuery]SiteFilter filter, int rowsPerPage = 0, int pageNumber = 1)
         {
             var sites = siteService.Get(filter, rowsPerPage, pageNumber);
             return Ok(Mapper.Map<PaginatedItemsDto<SiteOverviewDto>>(sites));
         }
 
         [HttpGet("{siteId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(SiteDetailsDto))]
         public async Task<IActionResult> Get(string siteId)
         {
-            return Ok();
+            var site = siteService.Get(siteId);
+            return Ok(Mapper.Map<SiteDetailsDto>(site));
         }
 
 
         [HttpPost]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> RegisterSite([FromQuery]ApplicationContext context, [FromBody]SiteRegistration siteRegistration)
         {
             ObjectId newId = ObjectId.GenerateNewId();
 
-            Site site = Mapper.Map<SiteRegistration, Site>(siteRegistration);
+            Site site = Mapper.Map<Site>(siteRegistration);
             site.Id = newId.ToString();
+            Site newSite = siteService.Create(site);
 
-
-            var isCreated =  siteService.Create(site);
-
-            if (isCreated) return  Ok();
-            
-            return NoContent();
+            return Ok(Mapper.Map<SiteOverviewDto>(newSite));
         }
 
-        [HttpPost]
+        [HttpPut("{siteId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateSite([FromQuery]ApplicationContext context, [FromBody]SiteRegistration siteRegistration)
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateSite(string siteId, [FromBody]SiteRegistration siteRegistration)
         {
+            //TODO : Create DTO for update (with only allowed fields)
             Site site = Mapper.Map<SiteRegistration, Site>(siteRegistration);
 
-            var isUpdated = siteService.Update(site);
+            var isUpdated = siteService.Update(siteId, site);
 
             if (isUpdated) return Ok();
 
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpDelete("{siteId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateSite([FromQuery]ApplicationContext context, [FromBody]SiteRegistration siteRegistration)
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateSite(string siteId)
         {
-
-            var isUpdated = siteService.Delete(siteRegistration.)
-
-            if (isUpdated) return Ok();
-
-            return NoContent();
+            if(siteService.Delete(siteId)) return Ok();
+            return NotFound();
         }
     }
 }

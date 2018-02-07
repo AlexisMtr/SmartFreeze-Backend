@@ -4,8 +4,6 @@ using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace SmartFreeze.Repositories
@@ -27,23 +25,22 @@ namespace SmartFreeze.Repositories
                 .FirstOrDefault(e => e.Id.Equals(deviceId));
         }
 
-        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Device> filter, int rowsPerPage, int pageNumber)
+        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Site, Device> filter, int rowsPerPage, int pageNumber)
         {
             return collection.AsQueryable()
-                .SelectMany(e => e.Devices)
                 .Filter(filter)
                 .Paginate(rowsPerPage, pageNumber);
         }
-
-        public object Register(object device)
+        
+        public void AddAlarm(string deviceId, Alarm alarm)
         {
-            return null;
-        }
+            var siteIdFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
+            var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Id", deviceId);
 
+            var filter = Builders<Site>.Filter.And(siteIdFilter, deviceSiteFilter);
+            UpdateDefinition<Site> update = Builders<Site>.Update.Push("Devices.$.Alarms", alarm);
 
-        public void addAlarm(String deviceiId, Alarm alarm)
-        {
-           
+            collection.FindOneAndUpdate(filter, update);
 
         }
     }
