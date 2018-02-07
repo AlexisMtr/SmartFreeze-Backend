@@ -67,7 +67,7 @@ namespace SmartFreeze.Repositories
             return false;
         }
 
-        public void addAlarm(String idSite, Alarm alarm)
+        public void AddAlarm(String idSite, Alarm alarm)
         {
             UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
             this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, idSite), update);
