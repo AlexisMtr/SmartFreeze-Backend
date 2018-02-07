@@ -1,8 +1,6 @@
 ﻿using MongoDB.Driver.Linq;
 using SmartFreeze.Models;
-using System;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace SmartFreeze.Filters
 {
@@ -22,20 +20,7 @@ namespace SmartFreeze.Filters
             {
                 source = source.Where(e => e.Alarms.Any(a => a.AlarmType == AlarmType));
             }
-            //Expression expression = null;
 
-            //if (Gravity != Alarm.Gravity.All)
-            //{
-            //    Expression<Func<Alarm, bool>> gravityCheck = e => e.AlarmGravity == Gravity;
-            //    Expression.AndAlso(expression, gravityCheck);
-            //}
-            //if (AlarmType != Alarm.Type.All)
-            //{
-            //    Expression<Func<Alarm, bool>> typeCheck = e => e.AlarmType == AlarmType;
-            //    Expression.AndAlso(expression, typeCheck);
-            //}
-
-            //return source.SelectMany(Expression.Lambda(expression, source));
             return source.SelectMany(e => e.Alarms);
         }
 

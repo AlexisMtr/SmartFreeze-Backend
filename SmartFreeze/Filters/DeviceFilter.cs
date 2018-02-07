@@ -6,6 +6,7 @@ namespace SmartFreeze.Filters
 {
     public class DeviceFilter : IMongoFilter<Device>, IMongoFilter<Site, Device>
     {
+        public ApplicationContext Context { get; set; }
         public string SiteId { get; set; }
         public bool? Warning { get; set; }
         public bool? Failure { get; set; }
@@ -38,6 +39,8 @@ namespace SmartFreeze.Filters
         public IMongoQueryable<Device> FilterSource(IMongoQueryable<Site> source)
         {
             IMongoQueryable<Device> devicesSource;
+
+            source = source.Where(e => e.SiteType == Context);
 
             if(string.IsNullOrEmpty(SiteId))
             {
