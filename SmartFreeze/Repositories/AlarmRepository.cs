@@ -27,6 +27,13 @@ namespace SmartFreeze.Repositories
 
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
+            //var x = collection.AsQueryable()
+            //    .SelectMany(e => e.Devices)
+            //    .Where(e => e.Id == deviceId)
+            //    .Filter(filter);
+
+            //System.Diagnostics.Debug.WriteLine(x.ToString());
+
             return collection.AsQueryable()
                 .SelectMany(e => e.Devices)
                 .Where(e => e.Id == deviceId)

@@ -14,10 +14,12 @@ namespace SmartFreeze.Controllers
     public class SitesController : Controller
     {
         private readonly SiteService siteService;
+        private readonly AlarmService alarmService;
 
-        public SitesController(SiteService siteService)
+        public SitesController(SiteService siteService, AlarmService alarmService)
         {
             this.siteService = siteService;
+            this.alarmService = alarmService;
         }
 
         [HttpGet]
@@ -34,6 +36,14 @@ namespace SmartFreeze.Controllers
         {
             var site = siteService.Get(siteId);
             return Ok(Mapper.Map<SiteDetailsDto>(site));
+        }
+
+        [HttpGet("{siteId}/alarms")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<AlarmDetailsDto>))]
+        public async Task<IActionResult> GetAlarms(string siteId, [FromQuery]AlarmFilter filter, int rowsPerPage = 0, int pageNumber = 1)
+        {
+            PaginatedItems<Alarm> alarms = alarmService.GetBySite(siteId, filter, rowsPerPage, pageNumber);
+            return Ok(Mapper.Map<PaginatedItemsDto<AlarmDetailsDto>>(alarms));
         }
 
 
