@@ -9,26 +9,35 @@ namespace SmartFreezeFA.Parsers
     {
         public static IEnumerable<Telemetry> Parse(string frame)
         {
-            List<Telemetry> telemetries = new List<Telemetry>();
+            if (string.IsNullOrEmpty(frame) || string.IsNullOrWhiteSpace(frame)) throw new ArgumentException("Empty string is not a valid argument", nameof(frame));
 
-            dynamic dynamicFrame = JsonConvert.DeserializeObject<dynamic>(frame);
-            dynamic datas = dynamicFrame.decoded.data;
-
-            foreach(var item in datas)
+            try
             {
-                telemetries.Add(new Telemetry
-                {
-                    Id = $"{dynamicFrame.DevEUI.Value}-{DateTime.UtcNow.ToString("yyyymmddhhmm")}",
-                    DeviceId = dynamicFrame.DevEUI.Value,
-                    OccuredAt = DateTime.UtcNow.AddSeconds((int)(item.ts.Value / 1_000)),
-                    BatteryVoltage = item.battery.Value,
-                    Humidity = item.humidity.Value,
-                    Pressure = item.pressure.Value,
-                    Temperature = item.temperature.Value
-                });
-            }
+                List<Telemetry> telemetries = new List<Telemetry>();
 
-            return telemetries;
+                dynamic dynamicFrame = JsonConvert.DeserializeObject<dynamic>(frame);
+                dynamic datas = dynamicFrame.Decoded.data;
+
+                foreach (var item in datas)
+                {
+                    telemetries.Add(new Telemetry
+                    {
+                        Id = $"{dynamicFrame.DevEUI.Value}-{DateTime.UtcNow.ToString("yyyymmddhhmm")}",
+                        DeviceId = dynamicFrame.DevEUI.Value,
+                        OccuredAt = DateTime.UtcNow.AddSeconds((int)(item.ts.Value / 1_000)),
+                        BatteryVoltage = item.battery.Value,
+                        Humidity = item.humidity.Value,
+                        Pressure = item.pressure.Value,
+                        Temperature = item.temperature.Value
+                    });
+                }
+
+                return telemetries;
+            }
+            catch(Exception e)
+            {
+                throw new FormatException("Failed to parse frame", e);
+            }
         }
     }
 }
