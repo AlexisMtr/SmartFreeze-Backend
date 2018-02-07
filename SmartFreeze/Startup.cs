@@ -28,6 +28,7 @@ namespace SmartFreeze
             ConfigureContext(services);
             ConfigureDI(services);
             ConfigureSwagger(services);
+            ConfigureCors(services);
 
             services.AddMvc();
         }
@@ -41,6 +42,7 @@ namespace SmartFreeze
             }
 
             ConfigureSwaggerUI(app);
+            ConfigureCorsPolicy(app);
 
             app.UseMvc();
         }
