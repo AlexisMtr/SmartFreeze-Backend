@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartFreeze", "SmartFreeze\SmartFreeze.csproj", "{00A7823D-6A54-4903-97CE-FC4CAC634837}"
 EndProject
@@ -15,7 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFreezeFA.Tests", "Smar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartFreeze.Tests", "SmartFreeze.Tests\SmartFreeze.Tests.csproj", "{8DB61E74-8C50-462A-815C-57740A26A714}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempEventHubProcessingFA", "TempEventHubProcessingFA\TempEventHubProcessingFA.csproj", "{E66A7C51-2D79-42AC-AD2D-886A325795E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempEventHubProcessingFA", "TempEventHubProcessingFA\TempEventHubProcessingFA.csproj", "{E66A7C51-2D79-42AC-AD2D-886A325795E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartFreezeScheduleFA", "SmartFreezeScheduleFA\SmartFreezeScheduleFA.csproj", "{8FDE3FA3-BDDA-443D-AAAD-9493F27226F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFreezeScheduleFA.Tests", "SmartFreezeScheduleFA.Tests\SmartFreezeScheduleFA.Tests.csproj", "{197B0895-A236-4B82-B8B5-0E6EC9375F08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{E66A7C51-2D79-42AC-AD2D-886A325795E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E66A7C51-2D79-42AC-AD2D-886A325795E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E66A7C51-2D79-42AC-AD2D-886A325795E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FDE3FA3-BDDA-443D-AAAD-9493F27226F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FDE3FA3-BDDA-443D-AAAD-9493F27226F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FDE3FA3-BDDA-443D-AAAD-9493F27226F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FDE3FA3-BDDA-443D-AAAD-9493F27226F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{197B0895-A236-4B82-B8B5-0E6EC9375F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{197B0895-A236-4B82-B8B5-0E6EC9375F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{197B0895-A236-4B82-B8B5-0E6EC9375F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{197B0895-A236-4B82-B8B5-0E6EC9375F08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
