@@ -9,6 +9,8 @@ namespace SmartFreezeScheduleFA.Configurations
         public readonly IMongoClient Client;
         public readonly IMongoDatabase Database;
 
+
+
         public DbContext(string connectionString, string dbName)
         {
             var settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
