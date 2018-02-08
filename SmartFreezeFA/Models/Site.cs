@@ -12,7 +12,6 @@ namespace SmartFreezeFA.Models
 
         public string Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Alarm> Alarms { get; set; }
         public IEnumerable<Device> Devices { get; set; }
     }
 }

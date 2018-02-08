@@ -24,13 +24,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 40,
                 Temperature = 20
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService service = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService service = new AlarmService(deviceRepo.Object);
             service.CreateBatteryAlarm(telemetry);
 
             //THEN
@@ -56,12 +54,10 @@ namespace SmartFreezeFA.Tests
                 Temperature = 15
             };
 
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
             serviceHumidity.CreateHumidityAlarm(telemetry);
 
             //THEN
@@ -86,13 +82,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 15,
                 Temperature = 15
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
             serviceHumidity.CreateHumidityAlarm(telemetry);
 
             //THEN
@@ -118,12 +112,10 @@ namespace SmartFreezeFA.Tests
                 Temperature = 15
             };
 
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
             serviceHumidity.CreateHumidityAlarm(telemetry);
 
             //THEN
@@ -149,12 +141,10 @@ namespace SmartFreezeFA.Tests
                 Temperature = 15
             };
 
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
             serviceHumidity.CreateHumidityAlarm(telemetry);
 
             //THEN
@@ -179,13 +169,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 35,
                 Temperature = 15
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
             serviceHumidity.CreateHumidityAlarm(telemetry);
 
             //THEN
@@ -210,13 +198,10 @@ namespace SmartFreezeFA.Tests
                 Humidity = 68,
                 Temperature = 15
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
             serviceHumidity.CreateHumidityAlarm(telemetry);
 
             //THEN
@@ -242,13 +227,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = 115
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
             serviceTempérature.CreateTemperatureAlarm(telemetry);
 
             //THEN
@@ -273,13 +256,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = -400
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
             serviceTempérature.CreateTemperatureAlarm(telemetry);
 
             //THEN
@@ -305,13 +286,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = -200
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
             serviceTempérature.CreateTemperatureAlarm(telemetry);
 
             //THEN
@@ -336,13 +315,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = 95
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
             serviceTempérature.CreateTemperatureAlarm(telemetry);
 
             //THEN
@@ -367,13 +344,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = -88
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
             serviceTempérature.CreateTemperatureAlarm(telemetry);
 
             //THEN
@@ -398,13 +373,11 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = 60
             };
-
-            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
-            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(telemetryRepo.Object, alarmRepo.Object, deviceRepo.Object);
+            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
             serviceTempérature.CreateTemperatureAlarm(telemetry);
 
             //THEN
