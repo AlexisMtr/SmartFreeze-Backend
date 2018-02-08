@@ -1,6 +1,7 @@
 ﻿using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Repositories;
+using System;
 
 namespace SmartFreeze.Services
 {
@@ -22,5 +23,40 @@ namespace SmartFreeze.Services
         {
             return deviceRepository.GetAllPaginated(filter, rowsPerPage, pageNumber);
         }
+
+        public Device Create(Device device, string siteId)
+        {
+            return deviceRepository.Create(device, siteId);
+        }
+
+        public bool Update(Device device)
+        {
+            return deviceRepository.Update(device);
+        }
+
+
+        public bool Delete(string deviceId)
+        {
+            return deviceRepository.Delete(deviceId);
+        }
+
+
+        public void AddAlarm(string deviceId, Alarm alarm)
+        {
+            deviceRepository.AddAlarm(deviceId, alarm);
+        }
+
+
+        public bool Managefavorite(string deviceId, bool isFavorite)
+        {
+            return deviceRepository.Managefavorite(deviceId,isFavorite);
+        }
+
+
+        public bool UpdateLastCommunication(string deviceId, DateTime lastDate)
+        {
+            return deviceRepository.UpdateLastCommunication(deviceId, lastDate);
+        }
+
     }
 }

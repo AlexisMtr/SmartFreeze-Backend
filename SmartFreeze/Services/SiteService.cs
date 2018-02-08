@@ -40,6 +40,12 @@ namespace SmartFreeze.Services
             return siteRepository.Delete(siteId);
         }
 
-      
+        public bool AddAlarm(string siteId, Alarm alarm)
+        {
+            return siteRepository.AddAlarm(siteId, alarm);
+        }
+
+
+
     }
 }

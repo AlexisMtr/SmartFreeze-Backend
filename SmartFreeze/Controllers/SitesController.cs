@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Services;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -39,24 +39,28 @@ namespace SmartFreeze.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> RegisterSite([FromQuery]ApplicationContext context, [FromBody]SiteRegistration siteRegistration)
+        public async Task<IActionResult> RegisterSite([FromQuery]ApplicationContext context, [FromBody]SiteRegistrationDto siteRegistration)
         {
-            ObjectId newId = ObjectId.GenerateNewId();
-
+  
             Site site = Mapper.Map<Site>(siteRegistration);
-            site.Id = newId.ToString();
+            site.SiteType = context;
+            site.Alarms = Enumerable.Empty<Alarm>();
+            site.Devices = Enumerable.Empty<Device>();
+            if(site.Zones == null)
+            {
+                site.Zones = Enumerable.Empty<string>();
+            }
             Site newSite = siteService.Create(site);
 
             return Ok(Mapper.Map<SiteOverviewDto>(newSite));
         }
 
-        [HttpPut("{siteId}")]
+        [HttpPost("{siteId}/update")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateSite(string siteId, [FromBody]SiteRegistration siteRegistration)
+        public async Task<IActionResult> UpdateSite(string siteId, [FromBody]SiteUpdateDto siteUpdateDto)
         {
-            //TODO : Create DTO for update (with only allowed fields)
-            Site site = Mapper.Map<SiteRegistration, Site>(siteRegistration);
+            Site site = Mapper.Map<Site>(siteUpdateDto);
 
             var isUpdated = siteService.Update(siteId, site);
 
@@ -65,13 +69,14 @@ namespace SmartFreeze.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{siteId}")]
+        [HttpDelete("{siteId}/delete")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateSite(string siteId)
+        public async Task<IActionResult> DeleteSite(string siteId)
         {
             if(siteService.Delete(siteId)) return Ok();
             return NotFound();
         }
+
     }
 }
