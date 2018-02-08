@@ -16,8 +16,22 @@ namespace SmartFreeze.Services
 
         public PaginatedItems<Alarm> GetAll(IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
-            // TODO : return alarms
-            return null;
+            DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter
+            {
+                AlarmType = (filter as AlarmFilter).AlarmType,
+                Gravity = (filter as AlarmFilter).Gravity,
+                DeviceId = string.Empty
+            };
+
+            var totalCount = alarmRepository.Count(alarmFilter);
+            var pageCount = rowsPerPage == 0 ? 1 : (int)Math.Ceiling((double)totalCount / rowsPerPage);
+
+            return new PaginatedItems<Alarm>
+            {
+                PageCount = pageCount,
+                TotalItemsCount = totalCount,
+                Items = alarmRepository.Get(alarmFilter, rowsPerPage, pageNumber)
+            };
         }
         
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
