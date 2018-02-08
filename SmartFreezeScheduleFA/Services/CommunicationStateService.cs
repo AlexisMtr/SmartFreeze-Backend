@@ -8,7 +8,12 @@ namespace SmartFreezeScheduleFA.Services
 {
     public class CommunicationStateService
     {
-        private readonly DeviceRepository deviceRepository;
+        private readonly IDeviceRepository deviceRepository;
+
+        public CommunicationStateService(IDeviceRepository deviceRepository)
+        {
+            this.deviceRepository = deviceRepository;
+        }
 
         public IEnumerable<Device> checkDeviceCommunication (int minBoundaryMin, int? maxBoundaryMin = null)
         {
