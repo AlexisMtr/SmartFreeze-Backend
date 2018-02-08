@@ -1,8 +1,10 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
+using System;
 using System.Linq;
 
 namespace SmartFreeze.Repositories
@@ -31,6 +33,7 @@ namespace SmartFreeze.Repositories
 
         public Site Create(Site site)
         {
+            site.Id ="site" + DateTime.UtcNow.ToString("yyyyMMDDHHmmss");
             collection.InsertOne(site);
             return site;
         }
@@ -41,25 +44,27 @@ namespace SmartFreeze.Repositories
                 .Set(p => p.SurfaceArea, site.SurfaceArea)
                 .Set(p => p.ImageUri, site.ImageUri)
                 .Set(p => p.Description, site.Description)
-                .Set(p => p.Zones, site.Zones);
+                .Set(p => p.Zones, site.Zones)
+                .Set(s => s.IsFavorite, site.IsFavorite); 
+            var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
 
-            var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, site.Id), update);
-
-            return result != null;
+            return result.ModifiedCount > 0;
         }
-
 
         public bool Delete(string siteId)
         {
             var result = collection.DeleteOne(Builders<Site>.Filter.Eq("Id", siteId));
 
-            return result != null;
+            return result.DeletedCount > 0;
         }
 
-        public void AddAlarm(string siteId, Alarm alarm)
+        public bool AddAlarm(String idSite, Alarm alarm)
         {
+
             UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
-            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
+            var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, idSite), update);
+            return result.ModifiedCount > 0;
         }
+
     }
 }

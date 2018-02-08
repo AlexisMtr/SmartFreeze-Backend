@@ -69,9 +69,48 @@ namespace SmartFreeze.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> RegisterDevice([FromQuery]ApplicationContext context, [FromBody]DeviceRegistrationDto deviceRegistration)
+        public async Task<IActionResult> RegisterDevice([FromQuery] string idSite, [FromBody]DeviceRegistrationDto deviceRegistration)
         {
-            return StatusCode((int)HttpStatusCode.NotImplemented);
+
+            Device device = Mapper.Map<Device>(deviceRegistration);
+            Device newDevice = deviceService.Create(device, idSite);
+
+            return Ok(Mapper.Map<DeviceRegistrationDto>(newDevice));
+        }
+
+   
+
+        [HttpPut("{deviceId}/Update")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateDevice(string deviceId, [FromBody]DeviceRegistrationDto deviceRegistrationDto)
+        {
+            //TODO : Create DTO for update (with only allowed fields)
+            Device device = Mapper.Map<Device>(deviceRegistrationDto);
+            device.Id = deviceId;
+
+            var isUpdated = deviceService.Update(device);
+
+            if (isUpdated) return Ok();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{deviceId}/delete")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteDevice(string deviceId)
+        {
+            if (deviceService.Delete(deviceId)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPut("{deviceId}/favorite")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> ManageFavorite(string deviceId, [FromQuery]bool isFavorite)
+        {
+            deviceService.Managefavorite(deviceId, isFavorite);
+            return Ok();
         }
     }
 }
