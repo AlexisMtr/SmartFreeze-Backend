@@ -13,7 +13,6 @@ namespace SmartFreeze.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public Position Position { get; set; }
-        public IEnumerable<Alarm> Alarms { get; set; }
         public IEnumerable<Device> Devices { get; set; }
         public double SurfaceArea { get; set; }
         public string SurfaceAreaUnit { get; set; }

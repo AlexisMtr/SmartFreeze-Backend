@@ -55,11 +55,5 @@ namespace SmartFreeze.Repositories
 
             return result != null;
         }
-
-        public void AddAlarm(string siteId, Alarm alarm)
-        {
-            UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
-            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
-        }
     }
 }

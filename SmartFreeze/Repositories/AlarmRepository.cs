@@ -20,15 +20,7 @@ namespace SmartFreeze.Repositories
             this.collection = context.Database
                 .GetCollection<Site>(nameof(Site));
         }
-
-        public PaginatedItems<Alarm> GetBySite(string siteId, IMongoFilter<Site, Alarm> filter, int rowsPerPage, int pageNumber)
-        {
-            return collection.AsQueryable()
-                .Where(e => e.Id == siteId)
-                .Filter(filter)
-                .Paginate(rowsPerPage, pageNumber);
-        }
-
+        
         public IEnumerable<Alarm> GetByDevice(string deviceId, DeviceAlarmFilter filter, int rowsPerPage, int pageNumber)
         {
             IEnumerable<BsonDocument> pipeline = filter.SkipedAlarmsPipeline(rowsPerPage, pageNumber);
