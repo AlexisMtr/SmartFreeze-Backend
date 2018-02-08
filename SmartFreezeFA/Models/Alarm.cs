@@ -9,7 +9,6 @@ namespace SmartFreezeFA.Models
     {
         public enum Type
         {
-            All = 0,
             FreezeWarning = 1,
             ThawWarning = 2,
             DeviceFailure = 3,
@@ -19,7 +18,6 @@ namespace SmartFreezeFA.Models
 
         public enum Gravity
         {
-            All = 0,
             Critical = 1,
             Serious = 2,
             Information = 3

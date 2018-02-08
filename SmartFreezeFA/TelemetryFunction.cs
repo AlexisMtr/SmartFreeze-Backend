@@ -23,10 +23,14 @@ namespace SmartFreezeFA
 
             using (var scope = DependencyInjection.Container.BeginLifetimeScope())
             {
-                LowBatteryService service1 = scope.Resolve<LowBatteryService>();
-                foreach (var telemetry in telemetries)
+                AlarmService alarmService = scope.Resolve<AlarmService>();
+
+                foreach(Telemetry telemetry in telemetries)
                 {
-                    service1.CheckBatteryLevel(telemetry);
+                    alarmService.CreateHumidityAlarm(telemetry);
+                    alarmService.CreatePressureAlarm(telemetry);
+                    alarmService.CreateTemperatureAlarm(telemetry);
+                    alarmService.CreateBatteryAlarm(telemetry);
                 }
             }
         }
