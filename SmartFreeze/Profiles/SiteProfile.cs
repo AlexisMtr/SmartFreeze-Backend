@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SmartFreeze.Dtos;
 using SmartFreeze.Models;
+using System.Linq;
 
 namespace SmartFreeze.Profiles
 {
@@ -14,7 +15,9 @@ namespace SmartFreeze.Profiles
 
             CreateMap<Site, SiteOverviewDto>()
                 .ForMember(d => d.Latitude, opt => opt.MapFrom(s => s.Position.Latitude))
-                .ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.Position.Longitude));
+                .ForMember(d => d.Longitude, opt => opt.MapFrom(s => s.Position.Longitude))
+                .ForMember(d => d.HasActiveAlarms, opt => opt.MapFrom(s => s.Devices.Any(d => d.Alarms.Any(a => a.IsActive))))
+                .ForMember(d => d.ActiveAlarmsCount, opt => opt.MapFrom(s => s.Devices.SelectMany(d => d.Alarms).Count()));
 
             CreateMap<PaginatedItems<Site>, PaginatedItemsDto<SiteOverviewDto>>();
 

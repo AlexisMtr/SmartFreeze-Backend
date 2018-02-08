@@ -13,6 +13,12 @@ namespace SmartFreeze.Services
         {
             this.alarmRepository = alarmRepository;
         }
+
+        public PaginatedItems<Alarm> GetAll(IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
+        {
+            // TODO : return alarms
+            return null;
+        }
         
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
