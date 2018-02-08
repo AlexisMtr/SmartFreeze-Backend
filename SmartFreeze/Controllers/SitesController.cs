@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Services;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -28,6 +30,15 @@ namespace SmartFreeze.Controllers
         {
             var sites = siteService.Get(filter, rowsPerPage, pageNumber);
             return Ok(Mapper.Map<PaginatedItemsDto<SiteOverviewDto>>(sites));
+        }
+
+        [HttpGet("Ids")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<SiteDetailsDto>))]
+        public async Task<IActionResult> GetByIds(string ids, int rowsPerPage = 0, int pageNumber = 1)
+        {
+            IEnumerable<string> idsAsList = JsonConvert.DeserializeObject<IEnumerable<string>>(ids);
+            PaginatedItems<Site> sites = siteService.GetByIds(idsAsList, rowsPerPage, pageNumber);
+            return Ok(Mapper.Map<PaginatedItemsDto<SiteDetailsDto>>(sites));
         }
 
         [HttpGet("{siteId}")]

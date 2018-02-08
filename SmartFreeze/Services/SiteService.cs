@@ -2,6 +2,7 @@
 using SmartFreeze.Models;
 using SmartFreeze.Repositories;
 using System;
+using System.Collections.Generic;
 
 namespace SmartFreeze.Services
 {
@@ -24,6 +25,10 @@ namespace SmartFreeze.Services
             return siteRepository.GetAllPaginated(filter, rowsPerPage, pageNumber);
         }
 
+        public PaginatedItems<Site> GetByIds(IEnumerable<string> ids, int rowsPerPage, int pageNumber)
+        {
+            return siteRepository.GetPaginatedByIds(ids, rowsPerPage, pageNumber);
+        }
 
         public Site Create(Site site)
         {
