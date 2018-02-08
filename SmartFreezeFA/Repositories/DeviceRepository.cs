@@ -11,26 +11,6 @@ namespace SmartFreezeFA.Repositories
     public class DeviceRepository
     {
         private readonly IMongoCollection<Site> collection;
-
-        public DeviceRepository(SmartFreezeContext context)
-        {
-            this.collection = context.Database
-                .GetCollection<Site>(nameof(Site));
-        }
-
-        public Device Get(string deviceId)
-        {
-            return collection.AsQueryable()
-                .SelectMany(e => e.Devices)
-                .FirstOrDefault(e => e.Id.Equals(deviceId));
-        }
-
-        public PaginatedItems<Device> GetAllPaginated(IMongoFilter<Site, Device> filter, int rowsPerPage, int pageNumber)
-        {
-            return collection.AsQueryable()
-                .Filter(filter)
-                .Paginate(rowsPerPage, pageNumber);
-        }
         
         public void AddAlarm(string deviceId, Alarm alarm)
         {

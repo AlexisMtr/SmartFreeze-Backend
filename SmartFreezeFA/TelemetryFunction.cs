@@ -1,10 +1,13 @@
+using Autofac;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using SmartFreezeFA.Configurations;
 using SmartFreezeFA.Models;
 using SmartFreezeFA.Parsers;
+using SmartFreezeFA.Services;
 using System.Collections.Generic;
+using SmartFreezeFA.Repositories;
 
 namespace SmartFreezeFA
 {
@@ -17,6 +20,15 @@ namespace SmartFreezeFA
             DependencyInjection.ConfigureInjection();
 
             IEnumerable<Telemetry> telemetries = FrameParser.Parse(myEventHubMessage);
+
+            using (var scope = DependencyInjection.Container.BeginLifetimeScope())
+            {
+                LowBatteryService service1 = scope.Resolve<LowBatteryService>();
+                foreach (var telemetry in telemetries)
+                {
+                    service1.CheckBatteryLevel(telemetry);
+                }
+            }
         }
     }
 }
