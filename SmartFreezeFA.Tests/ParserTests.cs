@@ -69,5 +69,7 @@ namespace SmartFreezeFA.Tests
             Check.That(telemetries).HasSize(3);
             Check.That(telemetries).ContainsOnlyElementsThatMatch(e => e.DeviceId == deviceId);
         }
+
+        
     }
 }

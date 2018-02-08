@@ -16,7 +16,8 @@ namespace SmartFreezeFA.Repositories
 
         public Alarm AddAlarmToSite(string siteId, Alarm alarm)
         {
-            // TODO : Add alarm to the right collection
+            UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Alarms, alarm);
+            var result = collection.UpdateOne(Builders<Site>.Filter.Eq(e => e.Id, siteId), update);
             return alarm;
         }
 
@@ -25,5 +26,6 @@ namespace SmartFreezeFA.Repositories
             // TODO : Add alarm to the right collection
             return alarm;
         }
+
     }
 }
