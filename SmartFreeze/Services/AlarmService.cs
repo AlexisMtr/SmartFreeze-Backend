@@ -1,7 +1,7 @@
 ﻿using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Repositories;
-using System.Collections.Generic;
+using System;
 
 namespace SmartFreeze.Services
 {
@@ -21,11 +21,21 @@ namespace SmartFreeze.Services
 
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
+            DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter
+            {
+                AlarmType = (filter as AlarmFilter).AlarmType,
+                Gravity = (filter as AlarmFilter).Gravity,
+                DeviceId = deviceId
+            };
+            
+            var totalCount = alarmRepository.CountByDevice(deviceId, alarmFilter);
+            var pageCount = rowsPerPage == 0 ? 1 : (int)Math.Ceiling((double)totalCount / rowsPerPage);
+
             return new PaginatedItems<Alarm>
             {
-                PageCount = 1,
-                TotalItemsCount = 1,
-                Items = alarmRepository.GetByDevice(deviceId, filter, rowsPerPage, pageNumber)
+                PageCount = pageCount,
+                TotalItemsCount = totalCount,
+                Items = alarmRepository.GetByDevice(deviceId, alarmFilter, rowsPerPage, pageNumber)
             };
         }
     }

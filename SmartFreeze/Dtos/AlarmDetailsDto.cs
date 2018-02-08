@@ -8,8 +8,8 @@ namespace SmartFreeze.Dtos
         public string Id { get; set; }
         public bool IsActive { get; set; }
         public DateTime OccuredAt { get; set; }
-        public Alarm.Type Type { get; set; }
-        public Alarm.Gravity Gravity { get; set; }
+        public int Type { get; set; }
+        public int Gravity { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
     }
