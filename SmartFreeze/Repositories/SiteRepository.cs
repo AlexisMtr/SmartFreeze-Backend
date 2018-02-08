@@ -1,10 +1,13 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SmartFreeze.Repositories
@@ -28,6 +31,13 @@ namespace SmartFreeze.Repositories
         {
             return collection.AsQueryable()
                 .Filter(filter)
+                .Paginate(rowsPerPage, pageNumber);
+        }
+
+        public PaginatedItems<Site> GetPaginatedByIds(IEnumerable<string> ids, int rowsPerPage, int pageNumber)
+        {
+            return collection.AsQueryable()
+                .Where(e => ids.Contains(e.Id))
                 .Paginate(rowsPerPage, pageNumber);
         }
 
