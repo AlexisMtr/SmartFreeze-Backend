@@ -6,7 +6,6 @@ namespace SmartFreeze.Dtos
     public class SiteDetailsDto : SiteOverviewDto
     {
         public IEnumerable<DeviceOverviewDto> Devices { get; set; }
-        public IEnumerable<AlarmDetailsDto> Alarms { get; set; }
         public double SurfaceArea { get; set; }
         public string SurfaceAreaUnit { get; set; }
         public ApplicationContext SiteType { get; set; }

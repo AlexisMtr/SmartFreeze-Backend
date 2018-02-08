@@ -1,7 +1,6 @@
 ﻿using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Repositories;
-using System;
 
 namespace SmartFreeze.Services
 {
