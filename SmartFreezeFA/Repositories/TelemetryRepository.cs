@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SmartFreezeFA.Repositories
 {
-    public class TelemetryRepository
+    public class TelemetryRepository : ITelemetryRepository
     {
         private readonly IMongoCollection<Telemetry> collection;
 

@@ -4,7 +4,7 @@ using SmartFreezeFA.Models;
 
 namespace SmartFreezeFA.Repositories
 {
-    public class AlarmRepository
+    public class AlarmRepository : IAlarmRepository
     {
         private readonly IMongoCollection<Site> collection;
 

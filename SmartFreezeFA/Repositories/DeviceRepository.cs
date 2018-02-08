@@ -1,14 +1,10 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using SmartFreezeFA.Context;
-using SmartFreezeFA.Extensions;
-using SmartFreezeFA.Filters;
 using SmartFreezeFA.Models;
 using System.Linq;
 
 namespace SmartFreezeFA.Repositories
 {
-    public class DeviceRepository
+    public class DeviceRepository : IDeviceRepository
     {
         private readonly IMongoCollection<Site> collection;
         

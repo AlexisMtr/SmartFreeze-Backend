@@ -1,12 +1,12 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using SmartFreezeFA.Context;
-using SmartFreezeFA.Extensions;
-using SmartFreezeFA.Filters;
-using SmartFreezeFA.Models;
+using SmartFreeze.Context;
+using SmartFreeze.Extensions;
+using SmartFreeze.Filters;
+using SmartFreeze.Models;
 using System.Linq;
 
-namespace SmartFreezeFA.Repositories
+namespace SmartFreeze.Repositories
 {
     public class DeviceRepository
     {

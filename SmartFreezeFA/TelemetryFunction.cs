@@ -7,7 +7,6 @@ using SmartFreezeFA.Models;
 using SmartFreezeFA.Parsers;
 using SmartFreezeFA.Services;
 using System.Collections.Generic;
-using SmartFreezeFA.Repositories;
 
 namespace SmartFreezeFA
 {
