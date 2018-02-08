@@ -43,7 +43,6 @@ namespace SmartFreeze.Controllers
   
             Site site = Mapper.Map<Site>(siteRegistration);
             site.SiteType = context;
-            site.Alarms = Enumerable.Empty<Alarm>();
             site.Devices = Enumerable.Empty<Device>();
             if(site.Zones == null)
             {
