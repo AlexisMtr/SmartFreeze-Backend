@@ -23,7 +23,7 @@ namespace SmartFreezeScheduleFA
                 AlarmService alarmService= scope.Resolve<AlarmService>();
                 int minMin = 1 * 60 + 5;
                 int minMax = 2 * 60 + 5;
-                IEnumerable<Device> devices = service.checkDeviceCommunication(minMin, minMax);
+                IEnumerable<Device> devices = service.CheckDeviceCommunication(minMin, minMax);
                 alarmService.CreateAlarms(devices, Alarm.Gravity.Information, Alarm.Type.CommunicationError);
             }
 
@@ -40,7 +40,7 @@ namespace SmartFreezeScheduleFA
                 AlarmService alarmService = scope.Resolve<AlarmService>();
                 int minMin = 4 * 60 + 5;
                 int minMax = 5 * 60 + 5;
-                IEnumerable<Device> devices = service.checkDeviceCommunication(minMin, minMax);
+                IEnumerable<Device> devices = service.CheckDeviceCommunication(minMin, minMax);
                 alarmService.CreateAlarms(devices, Alarm.Gravity.Serious, Alarm.Type.CommunicationError);
             }
 
@@ -57,7 +57,7 @@ namespace SmartFreezeScheduleFA
                 AlarmService alarmService = scope.Resolve<AlarmService>();
                 int minMin = 7 * 60 + 5;
                 int minMax = 8 * 60 + 5;
-                IEnumerable<Device> devices = service.checkDeviceCommunication(minMin, minMax);
+                IEnumerable<Device> devices = service.CheckDeviceCommunication(minMin, minMax);
                 alarmService.CreateAlarms(devices, Alarm.Gravity.Critical, Alarm.Type.CommunicationError);
             }
 
