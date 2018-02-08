@@ -80,7 +80,7 @@ namespace SmartFreeze.Controllers
 
    
 
-        [HttpPut("{deviceId}/Update")]
+        [HttpPut("{deviceId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateDevice(string deviceId, [FromBody]DeviceRegistrationDto deviceRegistrationDto)
@@ -96,7 +96,7 @@ namespace SmartFreeze.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{deviceId}/delete")]
+        [HttpDelete("{deviceId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteDevice(string deviceId)

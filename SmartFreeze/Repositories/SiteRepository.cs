@@ -44,8 +44,7 @@ namespace SmartFreeze.Repositories
                 .Set(p => p.SurfaceArea, site.SurfaceArea)
                 .Set(p => p.ImageUri, site.ImageUri)
                 .Set(p => p.Description, site.Description)
-                .Set(p => p.Zones, site.Zones)
-                .Set(s => s.IsFavorite, site.IsFavorite); 
+                .Set(p => p.Zones, site.Zones); 
             var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
 
             return result.ModifiedCount > 0;

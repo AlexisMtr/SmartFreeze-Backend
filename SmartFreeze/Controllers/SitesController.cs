@@ -65,7 +65,7 @@ namespace SmartFreeze.Controllers
             return Ok(Mapper.Map<SiteOverviewDto>(newSite));
         }
 
-        [HttpPost("{siteId}/update")]
+        [HttpPut("{siteId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> UpdateSite(string siteId, [FromBody]SiteUpdateDto siteUpdateDto)
@@ -79,7 +79,7 @@ namespace SmartFreeze.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{siteId}/delete")]
+        [HttpDelete("{siteId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteSite(string siteId)
