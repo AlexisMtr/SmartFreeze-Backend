@@ -1,11 +1,12 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
+using WeatherLibrary.Abstraction;
 
 namespace SmartFreezeScheduleFA.Models
 {
     [BsonIgnoreExtraElements]
-    public class Telemetry
+    public class Telemetry : IWeather
     {
         [BsonId]
         private ObjectId ObjectId { get; set; }
@@ -17,5 +18,8 @@ namespace SmartFreezeScheduleFA.Models
         public double Pressure { get; set; }
         public double Humidity { get; set; }
         public double Temperature { get; set; }
+
+        public double WindSpeed { get => 0; set => throw new NotImplementedException(); }
+        public DateTime Date { get => OccuredAt; set => throw new NotImplementedException(); }
     }
 }

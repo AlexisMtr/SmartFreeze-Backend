@@ -6,6 +6,7 @@ using SmartFreezeScheduleFA.Configurations;
 using SmartFreezeScheduleFA.Services;
 using SmartFreezeScheduleFA.Models;
 using System.Collections.Generic;
+using WeatherLibrary.Algorithmes.Freeze;
 
 namespace SmartFreezeScheduleFA
 {
@@ -24,7 +25,10 @@ namespace SmartFreezeScheduleFA
                 int minMin = 1 * 60 + 5;
                 int minMax = 2 * 60 + 5;
                 IEnumerable<Device> devices = service.CheckDeviceCommunication(minMin, minMax);
-                alarmService.CreateAlarms(devices, Alarm.Gravity.Information, Alarm.Type.CommunicationError);
+                foreach (var device in devices)
+                {
+                    alarmService.CreateCommunicationAlarm(device.Id, Alarm.Gravity.Critical);
+                }
             }
 
         }
@@ -41,7 +45,10 @@ namespace SmartFreezeScheduleFA
                 int minMin = 4 * 60 + 5;
                 int minMax = 5 * 60 + 5;
                 IEnumerable<Device> devices = service.CheckDeviceCommunication(minMin, minMax);
-                alarmService.CreateAlarms(devices, Alarm.Gravity.Serious, Alarm.Type.CommunicationError);
+                foreach (var device in devices)
+                {
+                    alarmService.CreateCommunicationAlarm(device.Id, Alarm.Gravity.Critical);
+                }
             }
 
         }
@@ -58,7 +65,34 @@ namespace SmartFreezeScheduleFA
                 int minMin = 7 * 60 + 5;
                 int minMax = 8 * 60 + 5;
                 IEnumerable<Device> devices = service.CheckDeviceCommunication(minMin, minMax);
-                alarmService.CreateAlarms(devices, Alarm.Gravity.Critical, Alarm.Type.CommunicationError);
+                foreach(var device in devices)
+                {
+                    alarmService.CreateCommunicationAlarm(device.Id, Alarm.Gravity.Critical);
+                }
+            }
+
+        }
+
+        public static async void Run12([TimerTrigger("0 */0 */12 * * *")]TimerInfo myTimer, TraceWriter log)
+        {
+            log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
+            ServiceLocator.ConfigureDI();
+
+            using (var scope = ServiceLocator.Container.BeginLifetimeScope())
+            {
+                AlarmService alarmService = scope.Resolve<AlarmService>();
+                FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
+
+                Dictionary<string, Telemetry> devices = new Dictionary<string, Telemetry>();
+                foreach(var item in devices)
+                {
+                    FreezeForecast freeze = await algorithme.Execute(item.Value);
+                    if(freeze.FreezingStart.HasValue)
+                    {
+                        // TODO : complete process
+                        //alarmService.CreateAlarm(item.Key, null, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
+                    }
+                }
             }
 
         }
