@@ -7,16 +7,12 @@ namespace SmartFreezeFA.Services
 {
     public class AlarmService
     {
-        private readonly ITelemetryRepository telemetryRepository;
-        private readonly IAlarmRepository alarmRepository;
         private readonly IDeviceRepository deviceRepository;
 
         const double maxVoltageValue = 3.6;
 
-        public AlarmService(ITelemetryRepository telemetryRepository, IAlarmRepository alarmRepository, IDeviceRepository deviceRepository)
+        public AlarmService(IDeviceRepository deviceRepository)
         {
-            this.telemetryRepository = telemetryRepository;
-            this.alarmRepository = alarmRepository;
             this.deviceRepository = deviceRepository;
         }
 

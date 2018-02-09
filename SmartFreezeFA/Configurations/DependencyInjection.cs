@@ -15,9 +15,9 @@ namespace SmartFreezeFA.Configurations
 
             DbContext context = new DbContext(ConfigurationManager.ConnectionStrings["DefaultConnectionString"].ConnectionString, ConfigurationManager.AppSettings["DefaultDbName"]);
             builder.RegisterInstance(context);
-
-            builder.RegisterType<AlarmRepository>();
-            builder.RegisterType<TelemetryRepository>();
+            
+            builder.RegisterType<TelemetryRepository>().As<ITelemetryRepository>();
+            builder.RegisterType<DeviceRepository>().As<IDeviceRepository>();
 
             builder.RegisterType<AlarmService>();
 
