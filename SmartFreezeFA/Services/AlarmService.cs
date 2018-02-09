@@ -130,36 +130,45 @@ namespace SmartFreezeFA.Services
 
         public void CreateBatteryAlarm(Telemetry telemetry)
         {
-            string ShortDescription, Description = null;
+            string shortDescription, description = null;
             if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.15))
             {
                 //créer alarme level 3 15%
-                ShortDescription = "batterie < 15%";
-                Description = "Batterie très faible pour le capteur (moins de 15%)";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Critical, ShortDescription, Description);
+                shortDescription = "batterie < 15%";
+                description = "Batterie très faible pour le capteur (moins de 15%)";
+                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Critical, shortDescription, description);
             }
             else if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.3))
             {
                 //créer alarme level 2 30%
-                ShortDescription = "batterie < 30%";
-                Description = "Batterie faible pour le capteur (moins de 30%)";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Serious, ShortDescription, Description);
+                shortDescription = "batterie < 30%";
+                description = "Batterie faible pour le capteur (moins de 30%)";
+                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Serious, shortDescription, description);
 
             }
             else if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.5))
             {
                 //créer alarme level 1 50%
-                ShortDescription = "batterie < 50%";
-                Description = "Batterie à 50% pour le capteur";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Information, ShortDescription, Description);
+                shortDescription = "batterie < 50%";
+                description = "Batterie à 50% pour le capteur";
+                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Information, shortDescription, description);
 
             }
         }
 
         public void CreateFreezingAlarm(Telemetry telemetry, DateTime? start, DateTime? end)
         {
-            // TODO : Create alarm
+            String shortDescription = "", description = "";
+
+            if (start.HasValue)
+            {
+                shortDescription = "Gel!";
+                description = "Le capteur detecte du gel";
+                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, shortDescription, description);
+            }
+
         }
+
 
         private void CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string shortDescription, string description)
         {

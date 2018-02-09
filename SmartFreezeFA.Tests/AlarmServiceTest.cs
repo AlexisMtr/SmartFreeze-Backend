@@ -445,5 +445,37 @@ namespace SmartFreezeFA.Tests
                 e.Description == "La température  est anormale" &&
                 e.ShortDescription == "température entre 50 et 79")), Times.Once);
         }
+
+        [TestMethod]
+        public void CreateFreezingAlarmTest()
+        {
+
+            //GIVEN
+            Telemetry telemetry = new Telemetry
+            {
+                Id = "2",
+                DeviceId = "2",
+                OccuredAt = DateTime.UtcNow,
+                BatteryVoltage = 0.9,
+                Pressure = 99800,
+                Humidity = 42,
+                Temperature = 0
+            };
+
+            DateTime dateStart = DateTime.UtcNow;
+            DateTime dateEnd = new DateTime();
+
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+
+            //WHEN
+            AlarmService serviceGel = new AlarmService(deviceRepo.Object);
+            serviceGel.CreateFreezingAlarm(telemetry, dateStart, dateEnd);
+
+            deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
+               e.AlarmGravity == Alarm.Gravity.Critical &&
+               e.AlarmType == Alarm.Type.FreezeWarning &&
+               e.Description == "Le capteur detecte du gel" &&
+               e.ShortDescription == "Gel!")), Times.Once);
+        }
     }
 }
