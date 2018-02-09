@@ -64,7 +64,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlarmServiceTest.cs" />
+    <Compile Include="AlarmServiceTests.cs" />
+    <Compile Include="CommunicationStateServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
