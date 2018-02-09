@@ -8,7 +8,7 @@ using Moq;
 namespace SmartFreezeScheduleFA.Tests
 {
     [TestClass]
-    public class AlarmServiceTest
+    public class AlarmServiceTests
     {
         [TestMethod]
         public void TestCreateCommunicationAlarm1h()
