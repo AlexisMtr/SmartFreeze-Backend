@@ -7,13 +7,16 @@ using SmartFreezeFA.Models;
 using SmartFreezeFA.Parsers;
 using SmartFreezeFA.Services;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WeatherLibrary.Algorithmes.Freeze;
 
 namespace SmartFreezeFA
 {
     public static class TelemetryFunction
     {
         [FunctionName("TelemetryFunction")]
-        public static void Run([EventHubTrigger("device-data", Connection = "EventHubConnectionString")]string myEventHubMessage, TraceWriter log)
+        public static async void Run([EventHubTrigger("device-data", Connection = "EventHubConnectionString")]string myEventHubMessage, TraceWriter log)
         {
             log.Info($"C# Event Hub trigger function processed a message: {myEventHubMessage}");
             DependencyInjection.ConfigureInjection();
@@ -23,13 +26,22 @@ namespace SmartFreezeFA
             using (var scope = DependencyInjection.Container.BeginLifetimeScope())
             {
                 AlarmService alarmService = scope.Resolve<AlarmService>();
+                FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
 
-                foreach(Telemetry telemetry in telemetries)
+                Task<FreezeForecast> forecast = algorithme.Execute(telemetries.Last());
+
+                foreach (Telemetry telemetry in telemetries)
                 {
                     alarmService.CreateHumidityAlarm(telemetry);
                     alarmService.CreatePressureAlarm(telemetry);
                     alarmService.CreateTemperatureAlarm(telemetry);
                     alarmService.CreateBatteryAlarm(telemetry);
+                }
+
+                FreezeForecast freeze = await forecast;
+                if (freeze.FreezingStart.HasValue)
+                {
+                    alarmService.CreateFreezingAlarm(telemetries.Last(), freeze.FreezingStart, freeze.FreezingEnd);
                 }
             }
         }

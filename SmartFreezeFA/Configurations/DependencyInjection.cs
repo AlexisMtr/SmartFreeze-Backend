@@ -2,6 +2,9 @@
 using SmartFreezeFA.Repositories;
 using SmartFreezeFA.Services;
 using System.Configuration;
+using WeatherLibrary.Abstraction;
+using WeatherLibrary.Algorithmes.Freeze;
+using WeatherLibrary.GoogleMapElevation;
 
 namespace SmartFreezeFA.Configurations
 {
@@ -16,10 +19,18 @@ namespace SmartFreezeFA.Configurations
             DbContext context = new DbContext(ConfigurationManager.ConnectionStrings["DefaultConnectionString"].ConnectionString, ConfigurationManager.AppSettings["DefaultDbName"]);
             builder.RegisterInstance(context);
             
-            builder.RegisterType<TelemetryRepository>().As<ITelemetryRepository>();
-            builder.RegisterType<DeviceRepository>().As<IDeviceRepository>();
+            builder.RegisterType<TelemetryRepository>()
+                .As<ITelemetryRepository>();
+            builder.RegisterType<DeviceRepository>()
+                .As<IDeviceRepository>();
 
             builder.RegisterType<AlarmService>();
+
+            builder.RegisterType<GoogleMapElevationClient>()
+                .As<IAltitudeClient>();
+            builder.RegisterType<FreezingAlgorithme>()
+                .As<IAlgorithme<FreezeForecast>>()
+                .UsingConstructor(typeof(IAltitudeClient));
 
             Container = builder.Build();
         }

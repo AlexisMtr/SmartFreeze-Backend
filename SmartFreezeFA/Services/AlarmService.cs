@@ -156,6 +156,11 @@ namespace SmartFreezeFA.Services
             }
         }
 
+        public void CreateFreezingAlarm(Telemetry telemetry, DateTime? start, DateTime? end)
+        {
+            // TODO : Create alarm
+        }
+
         private void CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string shortDescription, string description)
         {
             Alarm alarm = new Alarm()
