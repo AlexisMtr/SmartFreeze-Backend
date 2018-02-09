@@ -54,7 +54,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
         {
 
             FreezeForecast freezeForecast = new FreezeForecast();
-            UtilTemperature temperature = new UtilTemperature(client,forecastStation, forecast);
+            UtilTemperature temperature = new UtilTemperature(client, devicePosition, device);
             double coefTemperature = device.Temperature / currentWeather.Temperature;
             double coefHumidity = device.Humidity / currentWeather.Humidity;
 
@@ -115,14 +115,10 @@ namespace WeatherLibrary.Algorithmes.Freeze
             double result = CelsiusToKelvin(dewPoint) + (2671.02 / ((2954.61 / temperatureK) + (2.193665 * Math.Log(temperatureK)) - 13.3448)) - temperatureK;
             return Math.Round(KelvinToCelsius(result), 2);
         }
-        
+
         // Use only when the temperature is <=0
         private bool IsFreezing(IWeather device)
         {
-            if (device.Temperature <= -48.0)
-            {
-                return true;
-            }
 
             //In this case the dew temperature is greater than the freezing temperature
             double dewTemperature = DewPoint(device.Humidity, device.Temperature);

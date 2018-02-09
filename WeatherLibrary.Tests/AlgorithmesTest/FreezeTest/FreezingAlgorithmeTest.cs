@@ -20,53 +20,6 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             algo = new FreezingAlgorithme();
         }
 
-        //[TestMethod]
-        //public void DewPointTest()
-        //{
-        //    double temperature = 20.0; // Celsius
-        //    double humidity = 45.0;
-
-        //    double result = algo.DewPoint(humidity, temperature);
-        //    Console.WriteLine(result);
-        //    Check.That(result).IsEqualTo(7.65);
-        //}
-
-        //[TestMethod]
-        //public void FreezingPointTest()
-        //{
-        //    double temperature = -20; // Celsius
-        //    double dewPoint = 7.65;
-
-
-        //    double result = algo.FreezingPoint(dewPoint, temperature);
-        //    Console.WriteLine(result);
-        //    Check.That(result).IsEqualTo(9.70);
-        //}
-
-        //[TestMethod]
-        //public void IsFreezingTest()
-        //{
-        //    Mock<IWeather> deviceMock = new Mock<IWeather>();
-        //    deviceMock.Setup(e => e.Temperature).Returns(-48.1);
-
-        //    IWeather device = deviceMock.Object;
-        //    bool freezing = algo.IsFreezing(device);
-
-        //    Check.That(freezing).IsEqualTo(true);
-
-        //    deviceMock.Setup(e => e.Temperature).Returns(-30.0);
-        //    deviceMock.Setup(e => e.Humidity).Returns(80.0);
-
-        //    freezing = algo.IsFreezing(device);
-        //    Check.That(freezing).IsEqualTo(true);
-
-        //    deviceMock.Setup(e => e.Temperature).Returns(-1.0);
-        //    deviceMock.Setup(e => e.Humidity).Returns(1.0);
-
-        //    freezing = algo.IsFreezing(device);
-        //    Check.That(freezing).IsEqualTo(false);
-        //}
-
         [TestMethod]
         public void ExecuteDeviceTest()
         {
@@ -109,10 +62,12 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             IWeather device = deviceMock.Object;
 
             Mock<IStationPosition> stationDeviceMock = new Mock<IStationPosition>();
+            stationDeviceMock.Setup(e => e.Altitude).Returns(1600);
             IStationPosition stationDevice = stationDeviceMock.Object;
 
             Mock<IWeather> freezingTodayMock = new Mock<IWeather>();
             freezingTodayMock.Setup(e => e.Temperature).Returns(-48.1);
+            freezingTodayMock.Setup(e => e.Humidity).Returns(80.0);
             freezingTodayMock.Setup(e => e.Date).Returns(DateTime.Now);
 
             IWeather freezingToday = freezingTodayMock.Object;
@@ -120,18 +75,21 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
 
             Mock<IWeather> tomorrowMock = new Mock<IWeather>();
             tomorrowMock.Setup(e => e.Temperature).Returns(-48.1);
+            tomorrowMock.Setup(e => e.Humidity).Returns(80.0);
             tomorrowMock.Setup(e => e.Date).Returns(DateTime.Now.AddDays(1));
             IWeather tomorrow = tomorrowMock.Object;
             (forecastList as List<IWeather>).Add(tomorrow);
 
             Mock<IWeather> afterTomorrowMock = new Mock<IWeather>();
             afterTomorrowMock.Setup(e => e.Temperature).Returns(-48.1);
+            afterTomorrowMock.Setup(e => e.Humidity).Returns(80.0);
             afterTomorrowMock.Setup(e => e.Date).Returns(DateTime.Now.AddDays(2));
             IWeather afterTomorrow = afterTomorrowMock.Object;
             (forecastList as List<IWeather>).Add(afterTomorrow);
 
             Mock<IWeather> afterMock = new Mock<IWeather>();
             afterMock.Setup(e => e.Temperature).Returns(-48.1);
+            afterMock.Setup(e => e.Humidity).Returns(80.0);
             afterMock.Setup(e => e.Date).Returns(DateTime.Now.AddDays(3));
             IWeather after = afterMock.Object;
             (forecastList as List<IWeather>).Add(after);
@@ -150,23 +108,28 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             IWeather endFreezeing = endFreezeingMock.Object;
             (forecastList as List<IWeather>).Add(endFreezeing);
 
-            Mock<IStationPosition> stationMock = new Mock<IStationPosition>();
-            IStationPosition station = stationMock.Object;
+            //39.7391536, -104.9847034 => Elevation : 1600m 
+            Mock<IStationPosition> weatherStationMock = new Mock<IStationPosition>();
+            weatherStationMock.Setup(e => e.Latitude).Returns(39.7391536);
+            weatherStationMock.Setup(e => e.Longitude).Returns(-104.9847034);
+            IStationPosition weatherStation = weatherStationMock.Object;
+            
 
 
             //execute 
-            Task<FreezeForecast> freeze = algo.Execute(device, stationDevice, freezingToday, forecastList, station);
+            Task<FreezeForecast> freeze = algo.Execute(device, stationDevice, freezingToday, forecastList, weatherStation);
 
             //test
+
             Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(true);
             Check.That(freeze.Result.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
             Check.That(freeze.Result.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
             Check.That(freeze.Result.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
 
             Check.That(freeze.Result.FreezingEnd.HasValue).IsEqualTo(true);
-            Check.That(freeze.Result.FreezingEnd.Value.Day).IsEqualTo(DateTime.Now.AddDays(5).Day);
-            Check.That(freeze.Result.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(5).Month);
-            Check.That(freeze.Result.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(5).Year);
+            Check.That(freeze.Result.FreezingEnd.Value.Day).IsEqualTo(DateTime.Now.AddDays(3).Day);
+            Check.That(freeze.Result.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(3).Month);
+            Check.That(freeze.Result.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(3).Year);
         }
         [TestMethod]
         public void ExecuteForecastFreezingSecondDayToFourthTest()
