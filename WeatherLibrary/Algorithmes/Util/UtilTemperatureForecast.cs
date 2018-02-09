@@ -1,12 +1,9 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using WeatherLibrary.Abstraction;
 
 namespace WeatherLibrary.Algorithmes.Util
 {
-    public class UtilTemperatureForecast
+    internal class UtilTemperatureForecast
     {
         public List<double> TemperatureList { get; set; }
 

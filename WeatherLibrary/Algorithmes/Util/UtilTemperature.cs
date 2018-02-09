@@ -1,27 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WeatherLibrary.Abstraction;
-using WeatherLibrary.GoogleMapElevation;
 
 namespace WeatherLibrary.Algorithmes.Util
 {
-    public class UtilTemperature : IWeatherClient<UtilTemperatureCurrent, UtilTemperatureForecast>
+    internal class UtilTemperature : IWeatherClient<UtilTemperatureCurrent, UtilTemperatureForecast>
     {
-        private readonly GoogleMapElevationClient client;
-        private IStationPosition siteStationPosition;
-        private IWeather weatherCurrent;
-        private IEnumerable<IWeather> forecast;
+        private readonly IAltitudeClient client;
+        private readonly IStationPosition siteStationPosition;
+        private readonly IWeather weatherCurrent;
+        private readonly IEnumerable<IWeather> forecast;
 
-        public UtilTemperature(GoogleMapElevationClient client, IStationPosition siteStationPosition, IWeather weatherCurrent)
+        public UtilTemperature(IAltitudeClient client, IStationPosition siteStationPosition, IWeather weatherCurrent)
         {
             this.client = client;
             this.siteStationPosition = siteStationPosition;
             this.weatherCurrent = weatherCurrent;
         }
 
-        public UtilTemperature(GoogleMapElevationClient client, IStationPosition siteStationPosition, IEnumerable<IWeather> forecast)
+        public UtilTemperature(IAltitudeClient client, IStationPosition siteStationPosition, IEnumerable<IWeather> forecast)
         {
             this.client = client;
             this.siteStationPosition = siteStationPosition;
