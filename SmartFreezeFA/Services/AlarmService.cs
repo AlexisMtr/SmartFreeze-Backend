@@ -143,7 +143,7 @@ namespace SmartFreezeFA.Services
                 //créer alarme level 2 30%
                 ShortDescription = "batterie < 30%";
                 Description = "Batterie faible pour le capteur (moins de 30%)";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Critical, ShortDescription, Description);
+                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Serious, ShortDescription, Description);
 
             }
             else if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.5))
@@ -151,7 +151,7 @@ namespace SmartFreezeFA.Services
                 //créer alarme level 1 50%
                 ShortDescription = "batterie < 50%";
                 Description = "Batterie à 50% pour le capteur";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Critical, ShortDescription, Description);
+                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.BatteryWarning, Alarm.Gravity.Information, ShortDescription, Description);
 
             }
         }

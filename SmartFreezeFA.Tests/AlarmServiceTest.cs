@@ -11,7 +11,7 @@ namespace SmartFreezeFA.Tests
     public class AlarmServiceTest
     {
         [TestMethod]
-        public void TestCreateBatteryAlarm()
+        public void TestCreateBatteryAlarmVeryLow()
         {
             //GIVEN
             Telemetry telemetry = new Telemetry
@@ -37,6 +37,64 @@ namespace SmartFreezeFA.Tests
                 e.AlarmType == Alarm.Type.BatteryWarning &&
                 e.Description == "Batterie très faible pour le capteur (moins de 15%)" &&
                 e.ShortDescription == "batterie < 15%")), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestCreateBatteryAlarmMediumLow()
+        {
+            //GIVEN
+            Telemetry telemetry = new Telemetry
+            {
+                Id = "1",
+                DeviceId = "1",
+                OccuredAt = DateTime.UtcNow,
+                BatteryVoltage = 1.0,
+                Pressure = 98500,
+                Humidity = 40,
+                Temperature = 20
+            };
+
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+
+            //WHEN
+            AlarmService service = new AlarmService(deviceRepo.Object);
+            service.CreateBatteryAlarm(telemetry);
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Serious &&
+                e.AlarmType == Alarm.Type.BatteryWarning &&
+                e.Description == "Batterie faible pour le capteur (moins de 30%)" &&
+                e.ShortDescription == "batterie < 30%")), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestCreateBatteryAlarmLow()
+        {
+            //GIVEN
+            Telemetry telemetry = new Telemetry
+            {
+                Id = "1",
+                DeviceId = "1",
+                OccuredAt = DateTime.UtcNow,
+                BatteryVoltage = 1.6,
+                Pressure = 98500,
+                Humidity = 40,
+                Temperature = 20
+            };
+
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+
+            //WHEN
+            AlarmService service = new AlarmService(deviceRepo.Object);
+            service.CreateBatteryAlarm(telemetry);
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Information &&
+                e.AlarmType == Alarm.Type.BatteryWarning &&
+                e.Description == "Batterie à 50% pour le capteur" &&
+                e.ShortDescription == "batterie < 50%")), Times.Once);
         }
 
         [TestMethod]
