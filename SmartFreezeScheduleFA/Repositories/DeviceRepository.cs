@@ -59,7 +59,5 @@ namespace SmartFreezeScheduleFA.Repositories
             collection.FindOneAndUpdate(filter, update);
 
         }
-
-
     }
 }

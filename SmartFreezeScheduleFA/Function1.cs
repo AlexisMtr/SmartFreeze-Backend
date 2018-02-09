@@ -82,11 +82,12 @@ namespace SmartFreezeScheduleFA
             {
                 AlarmService alarmService = scope.Resolve<AlarmService>();
                 FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
-
-                Dictionary<string, Telemetry> devices = new Dictionary<string, Telemetry>();
-                foreach(var item in devices)
+                TelemetryService telemetryService = scope.Resolve<TelemetryService>();
+                
+                IEnumerable<Telemetry> telemetries = telemetryService.GetLatestTelemetryByDevice();
+                foreach(var telemetry in telemetries)
                 {
-                    FreezeForecast freeze = await algorithme.Execute(item.Value);
+                    FreezeForecast freeze = await algorithme.Execute(telemetry);
                     if(freeze.FreezingStart.HasValue)
                     {
                         // TODO : complete process

@@ -64,5 +64,11 @@ namespace SmartFreezeScheduleFA.Services
             };
             deviceRepository.AddAlarm(DeviceId, alarm);
         }
+
+
+        public IEnumerable<AlarmNotification> GetNotifications(IEnumerable<string> devicesId)
+        {
+            return null;
+        }
     }
 }
