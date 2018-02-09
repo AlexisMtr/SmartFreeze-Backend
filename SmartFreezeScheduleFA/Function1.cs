@@ -24,7 +24,10 @@ namespace SmartFreezeScheduleFA
                 int minMin = 1 * 60 + 5;
                 int minMax = 2 * 60 + 5;
                 IEnumerable<Device> devices = service.checkDeviceCommunication(minMin, minMax);
-                alarmService.CreateAlarms(devices, Alarm.Gravity.Information, Alarm.Type.CommunicationError);
+                foreach (var device in devices)
+                {
+                    alarmService.CreateCommunicationAlarm(device.Id, Alarm.Gravity.Information);
+                }
             }
 
         }
@@ -41,7 +44,10 @@ namespace SmartFreezeScheduleFA
                 int minMin = 4 * 60 + 5;
                 int minMax = 5 * 60 + 5;
                 IEnumerable<Device> devices = service.checkDeviceCommunication(minMin, minMax);
-                alarmService.CreateAlarms(devices, Alarm.Gravity.Serious, Alarm.Type.CommunicationError);
+                foreach (var device in devices)
+                {
+                    alarmService.CreateCommunicationAlarm(device.Id, Alarm.Gravity.Serious);
+                }
             }
 
         }
@@ -58,7 +64,10 @@ namespace SmartFreezeScheduleFA
                 int minMin = 7 * 60 + 5;
                 int minMax = 8 * 60 + 5;
                 IEnumerable<Device> devices = service.checkDeviceCommunication(minMin, minMax);
-                alarmService.CreateAlarms(devices, Alarm.Gravity.Critical, Alarm.Type.CommunicationError);
+                foreach (var device in devices)
+                {
+                    alarmService.CreateCommunicationAlarm(device.Id, Alarm.Gravity.Critical);
+                }
             }
 
         }

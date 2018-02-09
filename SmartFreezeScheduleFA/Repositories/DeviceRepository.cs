@@ -12,7 +12,7 @@ using System.Linq.Expressions;
 
 namespace SmartFreezeScheduleFA.Repositories
 {
-    public class DeviceRepository
+    public class DeviceRepository : IDeviceRepository
     {
         private readonly IMongoCollection<Site> collection;
 
