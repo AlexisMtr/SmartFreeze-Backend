@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -21,52 +20,52 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             algo = new FreezingAlgorithme();
         }
 
-        [TestMethod]
-        public void DewPointTest()
-        {
-            double temperature = 20.0; // Celsius
-            double humidity = 45.0;
+        //[TestMethod]
+        //public void DewPointTest()
+        //{
+        //    double temperature = 20.0; // Celsius
+        //    double humidity = 45.0;
 
-            double result = algo.DewPoint(humidity, temperature);
-            Console.WriteLine(result);
-            Check.That(result).IsEqualTo(7.65);
-        }
+        //    double result = algo.DewPoint(humidity, temperature);
+        //    Console.WriteLine(result);
+        //    Check.That(result).IsEqualTo(7.65);
+        //}
 
-        [TestMethod]
-        public void FreezingPointTest()
-        {
-            double temperature = -20; // Celsius
-            double dewPoint = 7.65;
+        //[TestMethod]
+        //public void FreezingPointTest()
+        //{
+        //    double temperature = -20; // Celsius
+        //    double dewPoint = 7.65;
 
 
-            double result = algo.FreezingPoint(dewPoint, temperature);
-            Console.WriteLine(result);
-            Check.That(result).IsEqualTo(9.70);
-        }
+        //    double result = algo.FreezingPoint(dewPoint, temperature);
+        //    Console.WriteLine(result);
+        //    Check.That(result).IsEqualTo(9.70);
+        //}
 
-        [TestMethod]
-        public void IsFreezingTest()
-        {
-            Mock<IWeather> deviceMock = new Mock<IWeather>();
-            deviceMock.Setup(e => e.Temperature).Returns(-48.1);
+        //[TestMethod]
+        //public void IsFreezingTest()
+        //{
+        //    Mock<IWeather> deviceMock = new Mock<IWeather>();
+        //    deviceMock.Setup(e => e.Temperature).Returns(-48.1);
 
-            IWeather device = deviceMock.Object;
-            bool freezing = algo.isFreezing(device);
+        //    IWeather device = deviceMock.Object;
+        //    bool freezing = algo.IsFreezing(device);
 
-            Check.That(freezing).IsEqualTo(true);
+        //    Check.That(freezing).IsEqualTo(true);
 
-            deviceMock.Setup(e => e.Temperature).Returns(-30.0);
-            deviceMock.Setup(e => e.Humidity).Returns(80.0);
+        //    deviceMock.Setup(e => e.Temperature).Returns(-30.0);
+        //    deviceMock.Setup(e => e.Humidity).Returns(80.0);
 
-            freezing = algo.isFreezing(device);
-            Check.That(freezing).IsEqualTo(true);
+        //    freezing = algo.IsFreezing(device);
+        //    Check.That(freezing).IsEqualTo(true);
 
-            deviceMock.Setup(e => e.Temperature).Returns(-1.0);
-            deviceMock.Setup(e => e.Humidity).Returns(1.0);
+        //    deviceMock.Setup(e => e.Temperature).Returns(-1.0);
+        //    deviceMock.Setup(e => e.Humidity).Returns(1.0);
 
-            freezing = algo.isFreezing(device);
-            Check.That(freezing).IsEqualTo(false);
-        }
+        //    freezing = algo.IsFreezing(device);
+        //    Check.That(freezing).IsEqualTo(false);
+        //}
 
         [TestMethod]
         public void ExecuteDeviceTest()
@@ -74,14 +73,11 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             //initialize
             Mock<IWeather> deviceMock = new Mock<IWeather>();
             deviceMock.Setup(e => e.Temperature).Returns(-48.1);
-
-            Mock<IStationPosition> stationMock = new Mock<IStationPosition>();
-
+            
             IWeather device = deviceMock.Object;
-            IStationPosition station = stationMock.Object;
 
             //execute
-            Task<FreezeForecast> freeze = algo.Execute(device, station);
+            Task<FreezeForecast> freeze = algo.Execute(device);
 
             //tests
             Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(true);
@@ -96,7 +92,7 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             device = deviceMock.Object;
 
             //execute
-            freeze = algo.Execute(device, station);
+            freeze = algo.Execute(device);
 
             //test
             Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(false);

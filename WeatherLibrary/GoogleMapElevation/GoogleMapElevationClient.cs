@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WeatherLibrary.Abstraction;
 using WeatherLibrary.GoogleMapElevation.DTOs;
 using WeatherLibrary.GoogleMapElevation.Internals;
 
 namespace WeatherLibrary.GoogleMapElevation
 {
-    public class GoogleMapElevationClient
+    public class GoogleMapElevationClient : IDisposable, IAltitudeClient
     {
         private readonly HttpClient client;
         private readonly string apiKey;
@@ -29,9 +29,10 @@ namespace WeatherLibrary.GoogleMapElevation
 
         public async Task<List<GMEAltitude>> GetAltitude(double latitude, double longitude)
         {
-            var response = await this.client.GetAsync($"json?locations={latitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"))},{longitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"))}&key={this.apiKey}");
+            string lat = latitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+            string lng = longitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+            var response = await this.client.GetAsync($"json?locations={lat},{lng}&key={this.apiKey}");
             var jsonRoot = JsonConvert.DeserializeObject<GMERoot>(await response.Content.ReadAsStringAsync());
-            IEnumerable<GMEAltitude> altitudeList = new List<GMEAltitude>();
             return (jsonRoot.Results as List<GMEAltitude>);
         }
 

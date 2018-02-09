@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using WeatherLibrary.Abstraction;
 
 namespace WeatherLibrary.Algorithmes.Util
 {
-    public class UtilTemperatureCurrent : IWeather
+    internal class UtilTemperatureCurrent : IWeather
     {
         public double Temperature { get; set; }
         public double Pressure { get; set; }

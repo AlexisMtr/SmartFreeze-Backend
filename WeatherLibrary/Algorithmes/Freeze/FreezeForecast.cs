@@ -7,9 +7,6 @@ namespace WeatherLibrary.Algorithmes.Freeze
         public DateTime? FreezingStart { get; set; }
         public DateTime? FreezingEnd { get; set; }
 
-        public DateTime ThawStart { get; set; }
-        public DateTime ThawEnd { get; set; }
-
         public FreezeForecast()
         {
             this.FreezingStart = null;
