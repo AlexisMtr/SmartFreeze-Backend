@@ -31,11 +31,12 @@ namespace SmartFreezeScheduleFA.Tests
                     }
                 });
 
-            IEnumerable<Device> devices = service.checkDeviceCommunication(7, 8);
+            IEnumerable<Device> devices = service.CheckDeviceCommunication(7, 8);
 
             Check.That(devices).ContainsOnlyElementsThatMatch(e => e.LastCommunication < DateTime.Now.AddMinutes(-(7 * 60)));
             //THEN
             deviceRepo.Verify(a => a.GetFailsCommunicationBetween(7, 8), Times.Once);
         }
+
     }
 }

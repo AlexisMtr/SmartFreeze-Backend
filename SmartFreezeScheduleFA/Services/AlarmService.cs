@@ -4,25 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SmartFreezeScheduleFA.Models;
+using SmartFreezeScheduleFA.Repositories;
 
 namespace SmartFreezeScheduleFA.Services
 {
     public class AlarmService
     {
-        public Alarm CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string ShortDescription, string Description)
+        private readonly IDeviceRepository deviceRepository;
+
+        public AlarmService(IDeviceRepository deviceRepository)
+        {
+            this.deviceRepository = deviceRepository;
+        }
+
+        public Alarm CreateAlarm(string deviceId, string siteId, Alarm.Type alarmType, Alarm.Gravity alarmGravity, string shortDescription, string description)
         {
             Alarm alarm = new Alarm()
             {
                 Id = DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
-                DeviceId = DeviceId,
-                SiteId = SiteId,
+                DeviceId = deviceId,
+                SiteId = siteId,
                 IsActive = true,
-                AlarmType = AlarmType,
-                AlarmGravity = AlarmGravity,
+                AlarmType = alarmType,
+                AlarmGravity = alarmGravity,
                 OccuredAt = DateTime.UtcNow,
-                ShortDescription = ShortDescription,
-                Description = Description
+                ShortDescription = shortDescription,
+                Description = description
             };
+
+            deviceRepository.AddAlarm(deviceId, alarm);
             return alarm;
         }
             
@@ -62,7 +72,7 @@ namespace SmartFreezeScheduleFA.Services
                     break;
 
             }
-            return (Desc, ShortDesc);
+            return (ShortDesc, Desc);
         }
 
     }
