@@ -5,6 +5,7 @@ using System.Configuration;
 using WeatherLibrary.Abstraction;
 using WeatherLibrary.Algorithmes.Freeze;
 using WeatherLibrary.GoogleMapElevation;
+using WeatherLibrary.OpenWeatherMap;
 
 namespace SmartFreezeScheduleFA.Configurations
 {
@@ -28,6 +29,12 @@ namespace SmartFreezeScheduleFA.Configurations
 
             builder.RegisterType<DeviceRepository>()
                 .As<IDeviceRepository>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<OpenWeatherMapClient>()
+                .As<IWeatherClient<OwmCurrentWeather, OwmForecastWeather>>()
+                .UsingConstructor(typeof(string), typeof(string), typeof(Unit))
+                .WithParameter("apiKey", ConfigurationManager.AppSettings["OwmApiKey"])
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<GoogleMapElevationClient>()

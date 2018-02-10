@@ -7,6 +7,8 @@ using SmartFreezeScheduleFA.Services;
 using SmartFreezeScheduleFA.Models;
 using System.Collections.Generic;
 using WeatherLibrary.Algorithmes.Freeze;
+using WeatherLibrary.OpenWeatherMap;
+using System.Linq;
 
 namespace SmartFreezeScheduleFA
 {
@@ -83,17 +85,26 @@ namespace SmartFreezeScheduleFA
                 AlarmService alarmService = scope.Resolve<AlarmService>();
                 FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
                 TelemetryService telemetryService = scope.Resolve<TelemetryService>();
+
+                OpenWeatherMapClient weatherClient = scope.Resolve<OpenWeatherMapClient>();
                 
+                // TODO : Need Position of device with latest telemetry
                 IEnumerable<Telemetry> telemetries = telemetryService.GetLatestTelemetryByDevice();
                 foreach(var telemetry in telemetries)
                 {
-                    FreezeForecast freeze = await algorithme.Execute(telemetry);
+                    OwmCurrentWeather current = await weatherClient.GetCurrentWeather(0.00, 0.00);
+                    OwmForecastWeather forecast = await weatherClient.GetForecastWeather(0.00, 0.00);
+
+                    FreezeForecast freeze = await algorithme.Execute(telemetry, null, current.Weather, forecast.Forecast, forecast.StationPosition);
+
                     if(freeze.FreezingStart.HasValue)
                     {
                         // TODO : complete process
                         //alarmService.CreateAlarm(item.Key, null, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
                     }
                 }
+
+                weatherClient.Dispose();
             }
 
         }

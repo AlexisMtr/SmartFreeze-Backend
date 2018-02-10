@@ -50,7 +50,7 @@ namespace WeatherLibrary.OpenWeatherMap
             return new OwmForecastWeather
             {
                 StationPosition = Mapper.Map<OwmStationPosition>(root),
-                Foracast = Mapper.Map<IEnumerable<OwmWeather>>(root.Forecast)
+                Forecast = Mapper.Map<IEnumerable<OwmWeather>>(root.Forecast)
             };
         }
 
