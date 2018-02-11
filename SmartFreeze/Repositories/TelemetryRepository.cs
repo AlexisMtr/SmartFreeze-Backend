@@ -1,5 +1,4 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
@@ -16,7 +15,7 @@ namespace SmartFreeze.Repositories
         public TelemetryRepository(SmartFreezeContext context)
         {
             this.collection = context.Database
-                .GetCollection<Telemetry>("Temp_Telemetry");
+                .GetCollection<Telemetry>(nameof(Telemetry));
         }
 
 

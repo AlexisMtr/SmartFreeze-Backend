@@ -1,12 +1,10 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using SmartFreeze.Context;
 using SmartFreeze.Extensions;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
