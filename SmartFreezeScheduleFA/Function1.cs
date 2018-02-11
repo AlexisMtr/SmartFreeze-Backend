@@ -8,7 +8,6 @@ using SmartFreezeScheduleFA.Models;
 using System.Collections.Generic;
 using WeatherLibrary.Algorithmes.Freeze;
 using WeatherLibrary.OpenWeatherMap;
-using System.Linq;
 
 namespace SmartFreezeScheduleFA
 {
@@ -85,17 +84,18 @@ namespace SmartFreezeScheduleFA
                 AlarmService alarmService = scope.Resolve<AlarmService>();
                 FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
                 TelemetryService telemetryService = scope.Resolve<TelemetryService>();
+                DeviceService deviceService = scope.Resolve<DeviceService>();
 
                 OpenWeatherMapClient weatherClient = scope.Resolve<OpenWeatherMapClient>();
                 
                 // TODO : Need Position of device with latest telemetry
-                IEnumerable<Telemetry> telemetries = telemetryService.GetLatestTelemetryByDevice();
-                foreach(var telemetry in telemetries)
+                Dictionary<Device, Telemetry> telemetries = deviceService.GetLatestTelemetryByDevice();
+                foreach(var item in telemetries)
                 {
-                    OwmCurrentWeather current = await weatherClient.GetCurrentWeather(0.00, 0.00);
-                    OwmForecastWeather forecast = await weatherClient.GetForecastWeather(0.00, 0.00);
+                    OwmCurrentWeather current = await weatherClient.GetCurrentWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
+                    OwmForecastWeather forecast = await weatherClient.GetForecastWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
 
-                    FreezeForecast freeze = await algorithme.Execute(telemetry, null, current.Weather, forecast.Forecast, forecast.StationPosition);
+                    FreezeForecast freeze = await algorithme.Execute(item.Value, item.Key, current.Weather, forecast.Forecast, forecast.StationPosition);
 
                     if(freeze.FreezingStart.HasValue)
                     {

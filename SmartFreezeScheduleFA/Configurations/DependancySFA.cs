@@ -36,10 +36,13 @@ namespace SmartFreezeScheduleFA.Configurations
                 .UsingConstructor(typeof(string), typeof(string), typeof(Unit))
                 .WithParameter("apiKey", ConfigurationManager.AppSettings["OwmApiKey"])
                 .InstancePerLifetimeScope();
-
+            
             builder.RegisterType<GoogleMapElevationClient>()
                 .As<IAltitudeClient>()
+                .UsingConstructor(typeof(string))
+                .WithParameter("apiKey", ConfigurationManager.AppSettings["GmeApiKey"])
                 .InstancePerLifetimeScope();
+
             builder.RegisterType<FreezingAlgorithme>()
                 .As<IAlgorithme<FreezeForecast>>()
                 .UsingConstructor(typeof(IAltitudeClient))

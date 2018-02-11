@@ -16,11 +16,5 @@ namespace SmartFreezeScheduleFA.Services
         {
             this.telemetryRepository = telemetryRepository;
         }
-
-
-        public IEnumerable<Telemetry> GetLatestTelemetryByDevice()
-        {
-            return null;
-        }
     }
 }

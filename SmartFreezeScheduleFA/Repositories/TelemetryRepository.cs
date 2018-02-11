@@ -4,7 +4,7 @@ using SmartFreezeScheduleFA.Models;
 
 namespace SmartFreezeScheduleFA.Repositories
 {
-    public class TelemetryRepository
+    public class TelemetryRepository : ITelemetryRepository
     {
         private readonly IMongoCollection<Telemetry> collection;
 
@@ -12,6 +12,11 @@ namespace SmartFreezeScheduleFA.Repositories
         {
             this.collection = context.Database
                 .GetCollection<Telemetry>("Temp_Telemetry");
+        }
+
+        public Telemetry GetLastTelemetry()
+        {
+            return null;
         }
     }
 }
