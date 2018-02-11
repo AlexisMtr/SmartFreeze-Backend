@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NFluent;
 using WeatherLibrary.Abstraction;
 using WeatherLibrary.Algorithmes.Freeze;
+using WeatherLibrary.GoogleMapElevation;
 
 namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
 {
@@ -17,7 +17,8 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
         [TestInitialize]
         public void Setup()
         {
-            algo = new FreezingAlgorithme();
+            Mock<IAltitudeClient> altitudeClientMock = new Mock<IAltitudeClient>();
+            algo = new FreezingAlgorithme(altitudeClientMock.Object);
         }
 
         [TestMethod]
@@ -30,14 +31,14 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             IWeather device = deviceMock.Object;
 
             //execute
-            Task<FreezeForecast> freeze = algo.Execute(device);
+            FreezeForecast freeze = algo.Execute(device).Result;
 
             //tests
-            Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(true);
-            Check.That(freeze.Result.FreezingEnd.HasValue).IsEqualTo(false);
-            Check.That(freeze.Result.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
-            Check.That(freeze.Result.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
-            Check.That(freeze.Result.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
+            Check.That(freeze.FreezingStart.HasValue).IsEqualTo(true);
+            Check.That(freeze.FreezingEnd.HasValue).IsEqualTo(false);
+            Check.That(freeze.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
+            Check.That(freeze.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
+            Check.That(freeze.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
 
             //initialize
             deviceMock.Setup(e => e.Temperature).Returns(-1.0);
@@ -45,11 +46,11 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             device = deviceMock.Object;
 
             //execute
-            freeze = algo.Execute(device);
+            freeze = algo.Execute(device).Result;
 
             //test
-            Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(false);
-            Check.That(freeze.Result.FreezingEnd.HasValue).IsEqualTo(false);
+            Check.That(freeze.FreezingStart.HasValue).IsEqualTo(false);
+            Check.That(freeze.FreezingEnd.HasValue).IsEqualTo(false);
 
         }
         [TestMethod]
@@ -62,7 +63,7 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             IWeather device = deviceMock.Object;
 
             Mock<IStationPosition> stationDeviceMock = new Mock<IStationPosition>();
-            stationDeviceMock.Setup(e => e.Altitude).Returns(1600);
+            stationDeviceMock.Setup(e => e.Altitude).Returns(1_600);
             IStationPosition stationDevice = stationDeviceMock.Object;
 
             Mock<IWeather> freezingTodayMock = new Mock<IWeather>();
@@ -113,23 +114,29 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             weatherStationMock.Setup(e => e.Latitude).Returns(39.7391536);
             weatherStationMock.Setup(e => e.Longitude).Returns(-104.9847034);
             IStationPosition weatherStation = weatherStationMock.Object;
+
+            Mock<IAltitudeClient> altitudeClient = new Mock<IAltitudeClient>();
+            altitudeClient.Setup(o => o.GetAltitude(It.IsAny<double>(), It.IsAny<double>())).ReturnsAsync(new GmeElevation
+            {
+                Altitude = 0
+            });
+            var freezeAlgo = new FreezingAlgorithme(altitudeClient.Object);
             
-
-
             //execute 
-            Task<FreezeForecast> freeze = algo.Execute(device, stationDevice, freezingToday, forecastList, weatherStation);
+            FreezeForecast freeze = freezeAlgo.Execute(device, stationDevice, freezingToday, forecastList, weatherStation).Result;
 
             //test
 
-            Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(true);
-            Check.That(freeze.Result.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
-            Check.That(freeze.Result.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
-            Check.That(freeze.Result.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
+            Check.That(freeze.FreezingStart.HasValue).IsEqualTo(true);
+            Check.That(freeze.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
+            Check.That(freeze.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
+            Check.That(freeze.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
 
-            Check.That(freeze.Result.FreezingEnd.HasValue).IsEqualTo(true);
-            Check.That(freeze.Result.FreezingEnd.Value.Day).IsEqualTo(DateTime.Now.AddDays(3).Day);
-            Check.That(freeze.Result.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(3).Month);
-            Check.That(freeze.Result.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(3).Year);
+            // TODO : Clarck, check values, test failed
+            Check.That(freeze.FreezingEnd.HasValue).IsEqualTo(true);
+            Check.That(freeze.FreezingEnd.Value.Day).IsEqualTo(DateTime.Now.AddDays(3).Day);
+            Check.That(freeze.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(3).Month);
+            Check.That(freeze.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(3).Year);
         }
         [TestMethod]
         public void ExecuteForecastFreezingSecondDayToFourthTest()
@@ -190,20 +197,27 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             Mock<IStationPosition> stationMock = new Mock<IStationPosition>();
             IStationPosition station = stationMock.Object;
 
+            Mock<IAltitudeClient> altitudeClient = new Mock<IAltitudeClient>();
+            altitudeClient.Setup(o => o.GetAltitude(It.IsAny<double>(), It.IsAny<double>())).ReturnsAsync(new GmeElevation
+            {
+                Altitude = 0
+            });
+            var freezeAlgo = new FreezingAlgorithme(altitudeClient.Object);
 
             //execute 
-            Task<FreezeForecast> freeze = algo.Execute(device, stationDevice, freezingToday, forecastList, station);
+            FreezeForecast freeze = freezeAlgo.Execute(device, stationDevice, freezingToday, forecastList, station).Result;
 
             //test
-            Check.That(freeze.Result.FreezingStart.HasValue).IsEqualTo(true);
-            Check.That(freeze.Result.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
-            Check.That(freeze.Result.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
-            Check.That(freeze.Result.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
+            // TODO : Clark, check values, test failed
+            Check.That(freeze.FreezingStart.HasValue).IsEqualTo(true);
+            Check.That(freeze.FreezingStart.Value.Day).IsEqualTo(DateTime.Now.Day);
+            Check.That(freeze.FreezingStart.Value.Month).IsEqualTo(DateTime.Now.Month);
+            Check.That(freeze.FreezingStart.Value.Year).IsEqualTo(DateTime.Now.Year);
 
-            Check.That(freeze.Result.FreezingEnd.HasValue).IsEqualTo(true);
-            Check.That(freeze.Result.FreezingEnd.Value.Day).IsEqualTo(DateTime.Now.AddDays(5).Day);
-            Check.That(freeze.Result.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(5).Month);
-            Check.That(freeze.Result.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(5).Year);
+            Check.That(freeze.FreezingEnd.HasValue).IsEqualTo(true);
+            Check.That(freeze.FreezingEnd.Value.Day).IsEqualTo(DateTime.Now.AddDays(5).Day);
+            Check.That(freeze.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(5).Month);
+            Check.That(freeze.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(5).Year);
 
         }
     }
