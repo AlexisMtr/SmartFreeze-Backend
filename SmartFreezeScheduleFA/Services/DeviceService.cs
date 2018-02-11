@@ -1,6 +1,7 @@
 ﻿using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SmartFreezeScheduleFA.Services
 {
@@ -15,9 +16,23 @@ namespace SmartFreezeScheduleFA.Services
             this.telemetryRepository = telemetryRepository;
         }
 
+        public IEnumerable<Device> CheckDeviceCommunication(int minBoundaryMin, int? maxBoundaryMin = null)
+        {
+            return deviceRepository.GetFailsCommunicationBetween(minBoundaryMin, maxBoundaryMin);
+        }
+
         public Dictionary<Device, Telemetry> GetLatestTelemetryByDevice()
         {
-            return null;
+            var telemetries = telemetryRepository.GetLastTelemetryByDevice();
+            var devices = deviceRepository.Get(telemetries.Keys);
+            System.Diagnostics.Debug.WriteLine(devices);
+            Dictionary<Device, Telemetry> telemetryByDevice = new Dictionary<Device, Telemetry>();
+            foreach(var item in devices)
+            {
+                telemetryByDevice.Add(item, telemetries.FirstOrDefault(e => e.Key == item.Id).Value);
+            }
+
+            return telemetryByDevice;
         }
     }
 }

@@ -1,22 +1,35 @@
 ﻿using SmartFreezeScheduleFA.Models;
-using SmartFreezeScheduleFA.Repositories;
 using System.Collections.Generic;
 
 namespace SmartFreezeScheduleFA.Services
 {
     public class CommunicationStateService
     {
-        private readonly IDeviceRepository deviceRepository;
+        private readonly DeviceService deviceService;
+        private readonly AlarmService alarmService;
+        private readonly NotificationService notificationService;
 
-        public CommunicationStateService(IDeviceRepository deviceRepository)
+        public CommunicationStateService(DeviceService deviceService, AlarmService alarmService, NotificationService notificationService)
         {
-            this.deviceRepository = deviceRepository;
+            this.deviceService = deviceService;
+            this.alarmService = alarmService;
+            this.notificationService = notificationService;
         }
 
-        public IEnumerable<Device> CheckDeviceCommunication (int minBoundaryMin, int? maxBoundaryMin = null)
+        public void Run(int minHour, int maxHour, Alarm.Gravity gravity)
         {
-            return deviceRepository.GetFailsCommunicationBetween(minBoundaryMin, maxBoundaryMin);
-            
+            int minMin = minHour * 60 + 5;
+            int minMax = maxHour * 60 + 5;
+
+            IEnumerable<Device> devices = deviceService.CheckDeviceCommunication(minMin, minMax);
+            IList<Alarm> alarms = new List<Alarm>();
+
+            foreach (var device in devices)
+            {
+                alarmService.CreateCommunicationAlarm(device.Id, gravity);
+            }
+
+            notificationService.SendNotifications(alarms);
         }
     }
 }

@@ -1,7 +1,10 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace SmartFreezeScheduleFA.Models
 {
+    [BsonIgnoreExtraElements]
     public class Alarm
     {
         public enum Type
@@ -10,7 +13,7 @@ namespace SmartFreezeScheduleFA.Models
             FreezeWarning = 1,
             ThawWarning = 2,
             DeviceFailure = 3,
-            CommunicationError = 4,
+            CommuniationFailure = 4,
             BatteryWarning = 5
         }
 
@@ -21,6 +24,9 @@ namespace SmartFreezeScheduleFA.Models
             Serious = 2,
             Information = 3
         }
+
+        [BsonId]
+        private ObjectId ObjectId { get; set; }
 
         public string Id { get; set; }
         public string DeviceId { get; set; }

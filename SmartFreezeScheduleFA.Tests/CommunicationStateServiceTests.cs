@@ -16,7 +16,8 @@ namespace SmartFreezeScheduleFA.Tests
         public void GetFailCommunicationTest()
         {
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
-            CommunicationStateService service = new CommunicationStateService(deviceRepo.Object);
+            Mock<ITelemetryRepository> telemetryRepo = new Mock<ITelemetryRepository>();
+            DeviceService service = new DeviceService(deviceRepo.Object, telemetryRepo.Object);
 
             deviceRepo.Setup(o => o.GetFailsCommunicationBetween(7, It.IsAny<int>()))
                 .Returns(new List<Device>

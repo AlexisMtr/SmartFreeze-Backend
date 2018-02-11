@@ -1,9 +1,10 @@
 ﻿using SmartFreezeScheduleFA.Models;
+using System.Collections.Generic;
 
 namespace SmartFreezeScheduleFA.Repositories
 {
     public interface ITelemetryRepository
     {
-        Telemetry GetLastTelemetry();
+        Dictionary<string, Telemetry> GetLastTelemetryByDevice();
     }
 }

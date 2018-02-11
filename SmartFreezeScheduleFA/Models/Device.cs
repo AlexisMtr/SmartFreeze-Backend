@@ -1,11 +1,17 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using WeatherLibrary.Abstraction;
 
 namespace SmartFreezeScheduleFA.Models
 {
+    [BsonIgnoreExtraElements]
     public class Device : IStationPosition
     {
+        [BsonId]
+        private ObjectId ObjectId { get; set; }
+
         public string Id { get; set; }
         public string Name { get; set; }
         public bool IsFavorite { get; set; }

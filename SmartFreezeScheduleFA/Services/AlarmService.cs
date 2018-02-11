@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
 
@@ -17,58 +13,48 @@ namespace SmartFreezeScheduleFA.Services
             this.deviceRepository = deviceRepository;
         }
 
-        public void CreateCommunicationAlarm(string deviceId, Alarm.Gravity gravity)
+        public Alarm CreateCommunicationAlarm(string deviceId, Alarm.Gravity gravity)
         {
-            String Desc = "";
-            String ShortDesc = "";
+            string desc = string.Empty;
+            string shortDesc = "Erreur de communication";
 
             switch (gravity)
             {
                 case Alarm.Gravity.Information:
-                    {
-                        Desc = "Pas de reception de mesures depuis plus d'une heure (entre 1 et 2 heures)";
-                        ShortDesc = "echec communication 1h";
-                        CreateAlarm(deviceId, null, Alarm.Type.CommunicationError, gravity, ShortDesc, Desc);
-                    }
+                    desc += "Le capteur n'a pas communiqué depuis plus d'une heure";
                     break;
                 case Alarm.Gravity.Serious:
-                    {
-                        Desc = "Pas de reception de mesures depuis plus de 4 heures (entre 4 et 5 heures)";
-                        ShortDesc = "echec communication 4h";
-                        CreateAlarm(deviceId, null, Alarm.Type.CommunicationError, gravity, ShortDesc, Desc);
-                    }
+                    desc = "Le capteur n'a pas communiqué depuis plus de 4 heures";
                     break;
                 case Alarm.Gravity.Critical:
-                    {
-                        Desc = "Pas de reception de mesures depuis plus de 7 heures (entre 7 et 8 heures)";
-                        ShortDesc = "echec communication 7h";
-                        CreateAlarm(deviceId, null, Alarm.Type.CommunicationError, gravity, ShortDesc, Desc);
-                    }
+                    desc = "Le capteur n'a pas communiqué depuis plus de 7 heures";
+                    break;
+                default:
                     break;
             }
+
+            return CreateAlarm(deviceId, null, Alarm.Type.CommuniationFailure, gravity, shortDesc, desc);
         }
 
-        public void CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string ShortDescription, string Description)
+        public Alarm CreateAlarm(string deviceId, string siteId, Alarm.Type alarmType, Alarm.Gravity alarmGravity, string shortDescription, string description)
         {
             Alarm alarm = new Alarm()
             {
-                Id = DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
-                DeviceId = DeviceId,
-                SiteId = SiteId,
+                Id = $"{deviceId}-alarm{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}",
+                DeviceId = deviceId,
+                SiteId = siteId,
                 IsActive = true,
-                AlarmType = AlarmType,
-                AlarmGravity = AlarmGravity,
+                AlarmType = alarmType,
+                AlarmGravity = alarmGravity,
                 OccuredAt = DateTime.UtcNow,
-                ShortDescription = ShortDescription,
-                Description = Description
+                ShortDescription = shortDescription,
+                Description = description
             };
-            deviceRepository.AddAlarm(DeviceId, alarm);
-        }
+            deviceRepository.AddAlarm(deviceId, alarm);
 
-
-        public IEnumerable<AlarmNotification> GetNotifications(IEnumerable<string> devicesId)
-        {
-            return null;
+            return alarm;
         }
+        
+
     }
 }

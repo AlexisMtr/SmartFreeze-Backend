@@ -25,9 +25,9 @@ namespace SmartFreezeScheduleFA.Tests
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
-                e.AlarmType == Alarm.Type. CommunicationError &&
-                e.Description == "Pas de reception de mesures depuis plus d'une heure (entre 1 et 2 heures)" &&
-                e.ShortDescription == "echec communication 1h")), Times.Once);
+                e.AlarmType == Alarm.Type.CommuniationFailure &&
+                e.Description == "Le capteur n'a pas communiqué depuis plus d'une heure" &&
+                e.ShortDescription == "Erreur de communication")), Times.Once);
 
         }
 
@@ -46,9 +46,9 @@ namespace SmartFreezeScheduleFA.Tests
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
-                e.AlarmType == Alarm.Type.CommunicationError &&
-                e.Description == "Pas de reception de mesures depuis plus de 4 heures (entre 4 et 5 heures)" &&
-                e.ShortDescription == "echec communication 4h")), Times.Once);
+                e.AlarmType == Alarm.Type.CommuniationFailure &&
+                e.Description == "Le capteur n'a pas communiqué depuis plus de 4 heures" &&
+                e.ShortDescription == "Erreur de communication")), Times.Once);
 
         }
 
@@ -67,9 +67,9 @@ namespace SmartFreezeScheduleFA.Tests
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
-                e.AlarmType == Alarm.Type.CommunicationError &&
-                e.Description == "Pas de reception de mesures depuis plus de 7 heures (entre 7 et 8 heures)" &&
-                e.ShortDescription == "echec communication 7h")), Times.Once);
+                e.AlarmType == Alarm.Type.CommuniationFailure &&
+                e.Description == "Le capteur n'a pas communiqué depuis plus de 7 heures" &&
+                e.ShortDescription == "Erreur de communication")), Times.Once);
 
         }
     }

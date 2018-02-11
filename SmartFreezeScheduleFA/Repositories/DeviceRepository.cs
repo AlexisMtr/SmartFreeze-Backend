@@ -1,14 +1,14 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using SmartFreezeScheduleFA.Extensions;
 using SmartFreezeScheduleFA.Configurations;
-using SmartFreezeScheduleFA.Filters;
 using SmartFreezeScheduleFA.Models;
-using SmartFreezeScheduleFA.Repositories;
 using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
+using SmartFreezeScheduleFA.Helpers;
+using Newtonsoft.Json;
+using MongoDB.Bson;
 
 namespace SmartFreezeScheduleFA.Repositories
 {
@@ -58,6 +58,40 @@ namespace SmartFreezeScheduleFA.Repositories
 
             collection.FindOneAndUpdate(filter, update);
 
+        }
+
+        public IEnumerable<Device> Get(IEnumerable<string> ids)
+        {
+            return collection.AsQueryable()
+                .SelectMany(e => e.Devices)
+                .Where(e => ids.Contains(e.Id));
+        }
+
+        public IEnumerable<AlarmNotification> GetNotificationDetails(IEnumerable<string> devicesIds)
+        {
+            BsonDocument unwindStage = new BsonDocument("$unwind", "$Devices");
+            BsonDocument matchStage = new BsonDocument("$match", new BsonDocument
+            {
+                { "Devices.Id", new BsonDocument("$in", new BsonArray(devicesIds)) }
+            });
+            BsonDocument projectStage = new BsonDocument("$project", new BsonDocument
+            {
+                { "_id", 0 },
+                { "SiteId", "$Id" },
+                { "SiteName", "$Name" },
+                { "DeviceId", "$Devices.Id" },
+                { "DeviceName", "$Devices.Name" }
+            });
+
+            PipelineDefinition<Site, BsonDocument> pipelineDefinition = PipelineDefinition<Site, BsonDocument>.Create(new List<BsonDocument> { unwindStage, matchStage, projectStage });
+
+            return BsonIterator.Iterate<Site, IList<AlarmNotification>>(collection, pipelineDefinition, (e, items) =>
+            {
+                if (items == null) items = new List<AlarmNotification>();
+
+                items.Add(JsonConvert.DeserializeObject<AlarmNotification>(e));
+                return items;
+            });
         }
     }
 }
