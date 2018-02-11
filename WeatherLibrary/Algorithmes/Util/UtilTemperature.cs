@@ -28,7 +28,7 @@ namespace WeatherLibrary.Algorithmes.Util
         public async Task<UtilTemperatureCurrent> GetCurrentWeather(double latitude, double longitude)
         {
 
-            double siteElevation = client.GetAltitude(latitude, longitude).Result[0].Elevation;
+            double siteElevation = (await client.GetAltitude(latitude, longitude)).Altitude;
             double temperatureSite = this.weatherCurrent.Temperature;
             double elevationBetweenWeatherStationAndSite = siteElevation - siteStationPosition.Altitude;
             if (elevationBetweenWeatherStationAndSite >= 100.0 || elevationBetweenWeatherStationAndSite <= -100.0)
@@ -42,7 +42,7 @@ namespace WeatherLibrary.Algorithmes.Util
         public async Task<UtilTemperatureForecast> GetForecastWeather(double latitude, double longitude)
         {
             List<double> temperatureSiteList = new List<double>();
-            double weatherStationElevation = client.GetAltitude(latitude, longitude).Result[0].Elevation;
+            double weatherStationElevation = (await client.GetAltitude(latitude, longitude)).Altitude;
             double elevationBetweenWeatherStationAndSite = weatherStationElevation - siteStationPosition.Altitude;
 
             if (elevationBetweenWeatherStationAndSite >= 100.0)

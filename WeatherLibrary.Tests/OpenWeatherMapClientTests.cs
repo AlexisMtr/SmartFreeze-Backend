@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using WeatherLibrary.OpenWeatherMap;
-using WeatherLibrary.Test.Mocks;
+using WeatherLibrary.Tests.Mocks;
 
-namespace WeatherLibrary.Test
+namespace WeatherLibrary.Tests
 {
     [TestClass]
-    public class OpenWeatherMapTest
+    public class OpenWeatherMapClientTests
     {
         private OpenWeatherMapClient client;
 
@@ -37,7 +37,7 @@ namespace WeatherLibrary.Test
         [TestCleanup]
         public void TearDown()
         {
-            if(client != null)
+            if (client != null)
                 client.Dispose();
         }
 
@@ -45,11 +45,12 @@ namespace WeatherLibrary.Test
         public void Owm_GetCurrentWeather()
         {
             var weather = client.GetCurrentWeather(45.1822, 5.7275).Result;
-            
+
             Check.That(weather.Weather).IsNotNull()
                 .And.IsInstanceOf<OwmWeather>();
             Check.That(weather.StationPosition).IsNotNull()
                 .And.IsInstanceOf<OwmStationPosition>();
         }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using WeatherLibrary.GoogleMapElevation;
 using WeatherLibrary.OpenWeatherMap;
 
 namespace WeatherLibrary.Configurations
@@ -15,6 +16,7 @@ namespace WeatherLibrary.Configurations
             var cfg = new MapperConfigurationExpression();
 
             cfg.AddProfile<OwmMapperProfile>();
+            cfg.AddProfile<GmeMapperProfile>();
 
             Mapper.Initialize(cfg);
             isInitialized = true;
