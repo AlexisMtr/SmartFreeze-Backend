@@ -7,7 +7,7 @@ using WeatherLibrary.Abstraction;
 using WeatherLibrary.Algorithmes.Freeze;
 using WeatherLibrary.GoogleMapElevation;
 
-namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
+namespace WeatherLibrary.Tests
 {
     [TestClass]
     public class FreezingAlgorithmeTest
@@ -219,6 +219,42 @@ namespace WeatherLibrary.Tests.AlgorithmesTest.FreezeTest
             Check.That(freeze.FreezingEnd.Value.Month).IsEqualTo(DateTime.Now.AddDays(5).Month);
             Check.That(freeze.FreezingEnd.Value.Year).IsEqualTo(DateTime.Now.AddDays(5).Year);
 
+        }
+
+        [TestMethod]
+        public void ExecuteAlgorithmeOnDevice_FreezingTest()
+        {
+            // TODO : test with device telemetry only and freeze
+        }
+
+        [TestMethod]
+        public void ExecuteAlorithmeOnDevice_NotFreezingTest()
+        {
+            // TODO : test with device telemetry only and not freeze
+        }
+
+        [TestMethod]
+        public void ExecuteAlgorithmeWithForecast_ElevationOverThousandTest()
+        {
+            // TODO : test with elevation diff greater than 1 000
+        }
+
+        [TestMethod]
+        public void ExecuteAlgorithmeWithForecast_ElevationUnderThousandTest()
+        {
+            // TODO : test with elevation diff less than 1 000
+        }
+
+        [TestMethod]
+        public void ExecuteAlgorithmeWithForecast_FreezingOnDaysOneTest()
+        {
+            // TODO : test with freeze on first day
+        }
+
+        [TestMethod]
+        public void ExecuteAlgortihmeWithForecast_FreezingOnFourthFirstDaysTest()
+        {
+            // TODO : test with freeze on first, second, third and fourth day
         }
     }
 

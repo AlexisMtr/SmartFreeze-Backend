@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WeatherLibrary.Test.Mocks
+namespace WeatherLibrary.Tests.Mocks
 {
     public class HttpClientMessageHandlerMock : HttpMessageHandler
     {

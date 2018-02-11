@@ -16,6 +16,7 @@ namespace WeatherLibrary.GoogleMapElevation
 
         public GoogleMapElevationClient(string apiKey)
         {
+            Configurations.MapperConfiguration.ConfigureMapper();
             this.client = new HttpClient { BaseAddress = new Uri("https://maps.googleapis.com/maps/api/elevation/") };
             this.apiKey = apiKey;
         }
