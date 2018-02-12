@@ -16,7 +16,7 @@ namespace SmartFreezeScheduleFA
     {
         //"0 0 */12 * * *" timer
         [FunctionName("Schedule12Hours")]
-        public static async Task Run([TimerTrigger("* */1 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             DependencyInjection.ConfigureInjection();

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WeatherLibrary.Abstraction;
-using WeatherLibrary.Algorithmes.Util;
-using WeatherLibrary.GoogleMapElevation;
 
 namespace WeatherLibrary.Algorithmes.Freeze
 {
