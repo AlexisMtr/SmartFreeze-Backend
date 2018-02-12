@@ -49,7 +49,7 @@ namespace SmartFreeze.Repositories
                Builders<Site>.Update.Set("Devices.$.Name", device.Name)
                .Set("Devices.$.IsFavorite", device.IsFavorite)
                .Set("Devices.$.Zone", device.Zone)
-               .Set("Devices.$.SiteName", device.SiteName)
+               .Set("Devices.$.SiteId", device.SiteId)
                .Set("Devices.$.Position", device.Position));
 
             return result != null;

@@ -50,7 +50,7 @@ namespace SmartFreeze.Repositories
         {
             UpdateDefinition<Site> update = Builders<Site>.Update.Set(p => p.Name, site.Name)
                 .Set(p => p.SurfaceArea, site.SurfaceArea)
-                .Set(p => p.ImageUri, site.ImageUri)
+                .Set(p => p.Image, site.Image)
                 .Set(p => p.Description, site.Description)
                 .Set(p => p.Zones, site.Zones); 
             var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
