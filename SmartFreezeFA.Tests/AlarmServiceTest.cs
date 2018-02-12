@@ -98,7 +98,7 @@ namespace SmartFreezeFA.Tests
         }
 
         [TestMethod]
-        public void CreateHumidityAlarmPlus80()
+        public void CreateHumidityAlarmPlus100()
         {
             //GIVEN
             Telemetry telemetry = new Telemetry
@@ -108,7 +108,7 @@ namespace SmartFreezeFA.Tests
                 OccuredAt = DateTime.UtcNow,
                 BatteryVoltage = 0.9,
                 Pressure = 99800,
-                Humidity = 90,
+                Humidity = 180,
                 Temperature = 15
             };
 
@@ -122,12 +122,12 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité intérieur est anormalement élevée" &&
-                e.ShortDescription == "humidité > 80")), Times.Once);
+                e.Description == "L'humidité est anormalement élevée" &&
+                e.ShortDescription == "humidité > 100")), Times.Once);
         }
 
         [TestMethod]
-        public void CreateHumidityAlarmMoins20()
+        public void CreateHumidityAlarmMoins0()
         {
             //GIVEN
             Telemetry telemetry = new Telemetry
@@ -137,7 +137,7 @@ namespace SmartFreezeFA.Tests
                 OccuredAt = DateTime.UtcNow,
                 BatteryVoltage = 0.9,
                 Pressure = 99800,
-                Humidity = 15,
+                Humidity = 0,
                 Temperature = 15
             };
             
@@ -151,125 +151,9 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité intérieur est anormalement basse" &&
-                e.ShortDescription == "humidité < 20")), Times.Once);
+                e.Description == "L'humidité est anormalement basse" &&
+                e.ShortDescription == "humidité <=0")), Times.Once);
         }
-
-        [TestMethod]
-        public void CreateHumidityAlarm2030()
-        {
-            //GIVEN
-            Telemetry telemetry = new Telemetry
-            {
-                Id = "2",
-                DeviceId = "2",
-                OccuredAt = DateTime.UtcNow,
-                BatteryVoltage = 0.9,
-                Pressure = 99800,
-                Humidity = 25,
-                Temperature = 15
-            };
-
-            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
-
-            //WHEN
-            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
-            serviceHumidity.CreateHumidityAlarm(telemetry);
-
-            //THEN
-            deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
-                e.AlarmGravity == Alarm.Gravity.Serious &&
-                e.AlarmType == Alarm.Type.DeviceFailure  &&
-                e.Description == "L'humidité intérieur est critique" &&
-                e.ShortDescription == "humidité entre 20 et 30")), Times.Once);
-        }
-
-        [TestMethod]
-        public void CreateHumidityAlarm7080()
-        {
-            //GIVEN
-            Telemetry telemetry = new Telemetry
-            {
-                Id = "2",
-                DeviceId = "2",
-                OccuredAt = DateTime.UtcNow,
-                BatteryVoltage = 0.9,
-                Pressure = 99800,
-                Humidity = 78,
-                Temperature = 15
-            };
-
-            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
-
-            //WHEN
-            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
-            serviceHumidity.CreateHumidityAlarm(telemetry);
-
-            //THEN
-            deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
-                e.AlarmGravity == Alarm.Gravity.Serious &&
-                e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité intérieur est critique" &&
-                e.ShortDescription == "humidité entre 70 et 80")), Times.Once);
-        }
-
-        [TestMethod]
-        public void CreateHumidityAlarm3039()
-        {
-            //GIVEN
-            Telemetry telemetry = new Telemetry
-            {
-                Id = "2",
-                DeviceId = "2",
-                OccuredAt = DateTime.UtcNow,
-                BatteryVoltage = 0.9,
-                Pressure = 99800,
-                Humidity = 35,
-                Temperature = 15
-            };
-            
-            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
-
-            //WHEN
-            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
-            serviceHumidity.CreateHumidityAlarm(telemetry);
-
-            //THEN
-            deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
-                e.AlarmGravity == Alarm.Gravity.Information &&
-                e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité intérieur est anormale" &&
-                e.ShortDescription == "humidité entre 30 et 39")), Times.Once);
-        }
-
-        [TestMethod]
-        public void CreateHumidityAlarm6070()
-        {
-            //GIVEN
-            Telemetry telemetry = new Telemetry
-            {
-                Id = "2",
-                DeviceId = "2",
-                OccuredAt = DateTime.UtcNow,
-                BatteryVoltage = 0.9,
-                Pressure = 99800,
-                Humidity = 68,
-                Temperature = 15
-            };
-            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
-
-            //WHEN
-            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
-            serviceHumidity.CreateHumidityAlarm(telemetry);
-
-            //THEN
-            deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
-                e.AlarmGravity == Alarm.Gravity.Information &&
-                e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité intérieur est anormale" &&
-                e.ShortDescription == "humidité entre 60 et 70")), Times.Once);
-        }
-
 
         [TestMethod]
         public void CreateTemperatureAlarmPlus100()
