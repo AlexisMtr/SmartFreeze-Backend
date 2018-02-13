@@ -31,35 +31,31 @@ namespace SmartFreezeFA.Tests
             object frame = new
             {
                 DevEUI = deviceId,
-                Data = "123123",
-                Decoded = new
+                Data  = new List<object>
                 {
-                    data = new object[]
+                    new
                     {
-                        new
-                        {
-                            ts = 1517911845000,
-                            temperature = 14.5,
-                            humidity = 45,
-                            pressure = 97300,
-                            battery = 3.5
-                        },
-                        new
-                        {
-                            ts = 1517913645000,
-                            temperature = 14.5,
-                            humidity = 45,
-                            pressure = 97300,
-                            battery = 3.5
-                        },
-                        new
-                        {
-                            ts = 1517915445000,
-                            temperature = 14.5,
-                            humidity = 45,
-                            pressure = 97300,
-                            battery = 3.5
-                        }
+                        ts = 1517911845000,
+                        temperature = 14.5,
+                        humidity = 45,
+                        pressure = 97300,
+                        battery = 3.5
+                    },
+                    new
+                    {
+                        ts = 1517913645000,
+                        temperature = 14.5,
+                        humidity = 45,
+                        pressure = 97300,
+                        battery = 3.5
+                    },
+                    new
+                    {
+                        ts = 1517915445000,
+                        temperature = 14.5,
+                        humidity = 45,
+                        pressure = 97300,
+                        battery = 3.5
                     }
                 }
             };
@@ -69,7 +65,5 @@ namespace SmartFreezeFA.Tests
             Check.That(telemetries).HasSize(3);
             Check.That(telemetries).ContainsOnlyElementsThatMatch(e => e.DeviceId == deviceId);
         }
-
-        
     }
 }

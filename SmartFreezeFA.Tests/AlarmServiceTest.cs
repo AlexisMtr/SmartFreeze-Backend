@@ -34,7 +34,7 @@ namespace SmartFreezeFA.Tests
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e => 
                 e.AlarmGravity == Alarm.Gravity.Critical &&
-                e.AlarmType == Alarm.Type.BatteryWarning &&
+                e.AlarmType == Alarm.Type.DeviceFailure &&
                 e.Description == "Batterie très faible pour le capteur (moins de 15%)" &&
                 e.ShortDescription == "batterie < 15%")), Times.Once);
         }
@@ -63,7 +63,7 @@ namespace SmartFreezeFA.Tests
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
-                e.AlarmType == Alarm.Type.BatteryWarning &&
+                e.AlarmType == Alarm.Type.DeviceFailure &&
                 e.Description == "Batterie faible pour le capteur (moins de 30%)" &&
                 e.ShortDescription == "batterie < 30%")), Times.Once);
         }
@@ -92,7 +92,7 @@ namespace SmartFreezeFA.Tests
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
-                e.AlarmType == Alarm.Type.BatteryWarning &&
+                e.AlarmType == Alarm.Type.DeviceFailure &&
                 e.Description == "Batterie à 50% pour le capteur" &&
                 e.ShortDescription == "batterie < 50%")), Times.Once);
         }

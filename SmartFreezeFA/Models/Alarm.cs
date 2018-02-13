@@ -12,8 +12,7 @@ namespace SmartFreezeFA.Models
             FreezeWarning = 1,
             ThawWarning = 2,
             DeviceFailure = 3,
-            CommunicationError = 4,
-            BatteryWarning = 5
+            CommunicationError = 4
         }
 
         public enum Gravity
@@ -30,10 +29,16 @@ namespace SmartFreezeFA.Models
         public string DeviceId { get; set; }
         public string SiteId { get; set; }
         public bool IsActive { get; set; }
+        [BsonRepresentation(BsonType.Int32)]
         public Type AlarmType { get; set; }
+        [BsonRepresentation(BsonType.Int32)]
         public Gravity AlarmGravity { get; set; }
         public DateTime OccuredAt { get; set; }
+        public DateTime LastUpdate { get; set; }
+
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 }
