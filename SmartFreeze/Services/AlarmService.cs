@@ -18,6 +18,7 @@ namespace SmartFreeze.Services
         {
             DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter
             {
+                Context = (filter as AlarmFilter).Context,
                 AlarmType = (filter as AlarmFilter).AlarmType,
                 Gravity = (filter as AlarmFilter).Gravity,
                 DeviceId = string.Empty
