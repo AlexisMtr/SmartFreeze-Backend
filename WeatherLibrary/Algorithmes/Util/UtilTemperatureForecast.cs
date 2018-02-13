@@ -9,11 +9,13 @@ namespace WeatherLibrary.Algorithmes.Util
 
         public UtilTemperatureForecast(IEnumerable<IWeather> weatherList)
         {
+            TemperatureList = new List<double>();
             (weatherList as List<IWeather>).ForEach(w => this.TemperatureList.Add(w.Temperature));
         }
 
         public UtilTemperatureForecast(IEnumerable<double> temperatureList)
         {
+            TemperatureList = new List<double>();
             this.TemperatureList = temperatureList as List<double>;
         }
     }

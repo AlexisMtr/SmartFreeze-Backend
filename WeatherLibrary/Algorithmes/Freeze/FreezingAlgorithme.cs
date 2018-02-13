@@ -22,13 +22,12 @@ namespace WeatherLibrary.Algorithmes.Freeze
         /// <returns></returns>
         public async Task<FreezeForecast> Execute(IWeather device)
         {
-            FreezeForecast freezeForecast = new FreezeForecast();
-            if (IsFreezing(device))
+            FreezeForecast freezeForecast = new FreezeForecast
             {
-                freezeForecast.FreezingStart = DateTime.Now;
-                return freezeForecast;
-            }
+                FreezingStart = device.Date
+            };
 
+            freezeForecast.FreezingProbabilityList.Add(device.Date, GetProbabilityFreezing(device));
             return freezeForecast;
 
         }
@@ -45,39 +44,36 @@ namespace WeatherLibrary.Algorithmes.Freeze
         public async Task<FreezeForecast> Execute(IWeather device, IStationPosition devicePosition,
             IWeather currentWeather, IEnumerable<IWeather> forecast, IStationPosition forecastStation)
         {
-            FreezeForecast freezeForecast = new FreezeForecast();
-
-            double coefTemperature = device.Temperature / currentWeather.Temperature;
-            double coefHumidity = device.Humidity / currentWeather.Humidity;
-
-            if (IsFreezing(device))
+            FreezeForecast freezeForecast = new FreezeForecast
             {
-                freezeForecast.FreezingStart = currentWeather.Date;
-            }
-            IWeather theoricWeather = device;
+                FreezingStart = forecast.OrderBy(e => e.Date).First().Date,
+                FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date
+            };
+            IWeather estimationWeather = await EstimateWeatherByAltitudeDiff(device, forecastStation, devicePosition);
+            double diffTemperature = estimationWeather.Temperature - device.Temperature;
+            double diffHumidity = device.Humidity - currentWeather.Humidity;
 
+            IWeather theoricWeather = device;
+            theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
+            theoricWeather.Humidity = diffHumidity + currentWeather.Humidity;
+
+            freezeForecast.FreezingProbabilityList[currentWeather.Date] = GetProbabilityFreezing(theoricWeather);
+
+            IEnumerable<IWeather> forecastEstimation = await EstimateWeatherByAltitudeDiffForecast(forecast, forecastStation, devicePosition);
+            int i = 0;
             foreach (IWeather forecastItem in forecast)
             {
-                IWeather estimationWeather = await EstimateWeatherByAltitudeDiff(forecastItem, forecastStation, devicePosition);
 
-                theoricWeather.Temperature = coefTemperature * estimationWeather.Temperature;
-                theoricWeather.Humidity = coefHumidity * forecastItem.Humidity;
+                estimationWeather = forecastEstimation.ElementAt(i);
+                i++;
+                theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
+                theoricWeather.Humidity = diffHumidity + forecastItem.Humidity;
 
-                if (IsFreezing(theoricWeather) && (!freezeForecast.FreezingStart.HasValue))
-                {
-                    freezeForecast.FreezingStart = forecastItem.Date;
-                }
-                else if (!IsFreezing(theoricWeather) && (!freezeForecast.FreezingEnd.HasValue))
-                {
-                    freezeForecast.FreezingEnd = forecastItem.Date;
-                }
+                freezeForecast.FreezingProbabilityList[forecastItem.Date] = GetProbabilityFreezing(theoricWeather);
 
             }
-            if (!freezeForecast.FreezingEnd.HasValue && freezeForecast.FreezingStart.HasValue)
-            {
-                freezeForecast.FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date;
-            }
-
+            freezeForecast.FreezingStart = forecast.OrderBy(e => e.Date).First().Date;
+            freezeForecast.FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date;
             return freezeForecast;
         }
 
@@ -95,20 +91,40 @@ namespace WeatherLibrary.Algorithmes.Freeze
             return weather;
         }
 
+        //Reduce the number of calls to Google Map Elevation API
+        private async Task<IEnumerable<IWeather>> EstimateWeatherByAltitudeDiffForecast(IEnumerable<IWeather> forecast, IStationPosition forecastStation, IStationPosition expectedStation)
+        {
+            forecastStation.Altitude = (await client.GetAltitude(forecastStation.Latitude, forecastStation.Longitude)).Altitude;
+
+            IEnumerable<IWeather> theoricWeatherList = new List<IWeather>();
+
+            double elevationBetweenWeatherStationAndSite = forecastStation.Altitude - expectedStation.Altitude;
+            // Only if altitude diff is greater than 100
+            if (Math.Abs(elevationBetweenWeatherStationAndSite) >= 100.0)
+            {
+                foreach (IWeather f in forecast)
+                {
+                    f.Temperature = ConvertTemperature(f.Temperature, elevationBetweenWeatherStationAndSite);
+                    (theoricWeatherList as List<IWeather>).Add(f);
+                }
+                return theoricWeatherList;
+            }
+            return forecast;
+        }
+
         private double ConvertTemperature(double temperature, double altitudeDiff)
         {
             double temperatureAdiabatic = (altitudeDiff * (-6.5)) / 1_000;
             double predictedTemperature = temperature + temperatureAdiabatic;
             return predictedTemperature;
         }
-        
-        // TODO : Clarck, need to be check, tests failed
+
         private double DewPoint(double humidity, double temperature)
         {
             double result = Math.Pow(humidity / 100.0, 1.0 / 8.0) * (112.0 + (0.9 * temperature)) + (0.1 * temperature) - 112.0;
             return Math.Round(result, 2);
         }
-        
+
         private double FreezingPoint(double dewPoint, double temperature)
         {
             double temperatureK = CelsiusToKelvin(temperature);
@@ -120,7 +136,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
         private bool IsFreezing(IWeather device)
         {
 
-            //In this case the dew temperature is greater than the freezing temperature
+            //The dew temperature is greater than the freezing temperature
             double dewTemperature = DewPoint(device.Humidity, device.Temperature);
             if (device.Temperature <= dewTemperature)
             {
@@ -135,6 +151,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
             return false;
         }
 
+
         private double CelsiusToKelvin(double celsiusTemp)
         {
             return celsiusTemp + 273.15;
@@ -145,6 +162,28 @@ namespace WeatherLibrary.Algorithmes.Freeze
             return kelvinTemp - 273.15;
         }
 
-
+        private FreezeForecast.FreezingProbability GetProbabilityFreezing(IWeather theoricWeather)
+        {
+            if (IsFreezing(theoricWeather))
+            {
+                return FreezeForecast.FreezingProbability.IMMINENT;
+            }
+            else if ((theoricWeather.Temperature <= 0.0) && (theoricWeather.Humidity >= 80.0))
+            {
+                return FreezeForecast.FreezingProbability.HIGH;
+            }
+            else if ((theoricWeather.Temperature <= 0.0) && (theoricWeather.Humidity < 80.0))
+            {
+                return FreezeForecast.FreezingProbability.MEDIUM;
+            }
+            else if (((theoricWeather.Temperature <= 5.0) && (theoricWeather.Temperature > 0)))
+            {
+                return FreezeForecast.FreezingProbability.MINIMUM;
+            }
+            else
+            {
+                return FreezeForecast.FreezingProbability.ZERO;
+            }
+        }
     }
 }
