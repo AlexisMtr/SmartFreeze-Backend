@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using WeatherLibrary.GoogleMapElevation.Internals;
+﻿using System.Threading.Tasks;
 
 namespace WeatherLibrary.Abstraction
 {
     public interface IAltitudeClient
     {
-        Task<List<GMEAltitude>> GetAltitude(double latitude, double longitude);
+        Task<IStationPosition> GetAltitude(double latitude, double longitude);
     }
 }

@@ -24,6 +24,7 @@ namespace SmartFreezeFA
             DependencyInjection.ConfigureInjection();
 
             IEnumerable<Telemetry> telemetries = FrameParser.Parse(myEventHubMessage);
+            if (!telemetries.Any()) return;
 
             using (var scope = DependencyInjection.Container.BeginLifetimeScope())
             {
