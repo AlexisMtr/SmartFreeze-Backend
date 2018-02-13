@@ -25,51 +25,20 @@ namespace SmartFreezeFA.Services
        
             string shortDescription, description = null;
 
-            if (humidity > 80)
+            if (humidity > 100)
             {
-                description = "L'humidité intérieur est anormalement élevée";
-                shortDescription = "humidité > 80";
+                description = "L'humidité est anormalement élevée";
+                shortDescription = "humidité > 100";
                 CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
             }
 
-            if (humidity < 20)
+            else if (humidity <=0)
             {
-                description = "L'humidité intérieur est anormalement basse";
-                shortDescription = "humidité < 20";
+                description = "L'humidité est anormalement basse";
+                shortDescription = "humidité <=0";
                 CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
             }
 
-
-
-            else if ((humidity >= 20) && (humidity < 30))
-            {
-                description = "L'humidité intérieur est critique";
-                shortDescription = "humidité entre 20 et 30";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Serious, shortDescription, description);
-            }
-
-            else if ((humidity > 70) && (humidity < 80))
-            {
-                description = "L'humidité intérieur est critique";
-                shortDescription = "humidité entre 70 et 80";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Serious, shortDescription, description);
-            }
-
-            else if ((humidity >= 30) && (humidity < 39)) 
-            {
-                description = "L'humidité intérieur est anormale";
-                shortDescription = "humidité entre 30 et 39";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Information, shortDescription, description);
-            }
-
-
-            else if ((humidity > 60) && (humidity <= 70))
-            {
-                description = "L'humidité intérieur est anormale";
-                shortDescription = "humidité entre 60 et 70";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Information, shortDescription, description);
-
-            }
         }
 
         public void CreateTemperatureAlarm(Telemetry telemetry)
