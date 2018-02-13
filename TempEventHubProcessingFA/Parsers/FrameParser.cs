@@ -20,6 +20,8 @@ namespace TempEventHubProcessingFA.Parsers
 
                 foreach (var item in datas)
                 {
+                    if (dynamicFrame.DevEUI == null || string.IsNullOrEmpty(dynamicFrame.DevEUI)) continue;
+
                     telemetries.Add(new Telemetry
                     {
                         Id = $"{dynamicFrame.DevEUI}-{item.Ts}",

@@ -8,6 +8,7 @@
         public int ActiveAlarmsCount { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public string ImageUri { get; set; }
+        public string Region { get; set; }
+        public string Department { get; set; }
     }
 }

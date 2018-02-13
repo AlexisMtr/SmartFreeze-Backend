@@ -7,6 +7,8 @@ namespace SmartFreeze.Dtos
     {
         public string Id { get; set; }
         public bool IsActive { get; set; }
+        public string DeviceId { get; set; }
+        public string SiteId { get; set; }
         public DateTime OccuredAt { get; set; }
         public int Type { get; set; }
         public int Gravity { get; set; }

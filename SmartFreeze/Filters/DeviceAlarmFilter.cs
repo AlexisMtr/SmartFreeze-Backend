@@ -7,6 +7,7 @@ namespace SmartFreeze.Filters
 {
     public class DeviceAlarmFilter
     {
+        public ApplicationContext Context { get; set; }
         public Alarm.Gravity Gravity { get; set; }
         public Alarm.Type AlarmType { get; set; }
         public string DeviceId { get; set; }
@@ -44,6 +45,12 @@ namespace SmartFreeze.Filters
         private IList<BsonDocument> GetPipelineDocuments()
         {
             List<BsonDocument> pipeline = new List<BsonDocument>();
+
+            BsonDocument contextStage = new BsonDocument("$match", new BsonDocument
+            {
+                { "SiteType", Context }
+            });
+            pipeline.Add(contextStage);
 
             BsonDocument unwindDevices = new BsonDocument("$unwind", "$Devices");
             pipeline.Add(unwindDevices);

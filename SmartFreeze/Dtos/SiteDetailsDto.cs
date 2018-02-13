@@ -13,5 +13,6 @@ namespace SmartFreeze.Dtos
         public string Department { get; set; }
         public string Region { get; set; }
         public string Description { get; set; }
+        public string Image { get; set; }
     }
 }

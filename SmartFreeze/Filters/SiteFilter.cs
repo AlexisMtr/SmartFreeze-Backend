@@ -12,6 +12,12 @@ namespace SmartFreeze.Filters
         public IMongoQueryable<Site> FilterSource(IMongoQueryable<Site> source)
         {
             source = source.Where(e => e.SiteType == Context);
+
+            if(HasAlarms.HasValue)
+            {
+                source = source.Where(e => e.Devices.Any(d => d.Alarms.Any(a => a.IsActive == HasAlarms)));
+            }
+
             return source;
         }
     }

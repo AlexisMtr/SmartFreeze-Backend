@@ -6,11 +6,13 @@ namespace SmartFreeze.Filters
 {
     public class AlarmFilter : IMongoFilter<Device, Alarm>
     {
+        public ApplicationContext Context { get; set; }
         public Alarm.Gravity Gravity { get; set; }
         public Alarm.Type AlarmType { get; set; }
         
         public IMongoQueryable<Alarm> FilterSource(IMongoQueryable<Device> source)
         {
+
             if(Gravity != Alarm.Gravity.All)
             {
                 source = source.Where(e => e.Alarms.Any(a => a.AlarmGravity == Gravity));
