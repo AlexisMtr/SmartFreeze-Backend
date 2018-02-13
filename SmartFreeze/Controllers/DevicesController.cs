@@ -77,9 +77,7 @@ namespace SmartFreeze.Controllers
 
             return Ok(Mapper.Map<DeviceRegistrationDto>(newDevice));
         }
-
-   
-
+        
         [HttpPut("{deviceId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -110,6 +108,13 @@ namespace SmartFreeze.Controllers
         public async Task<IActionResult> ManageFavorite(string deviceId, [FromQuery]bool isFavorite)
         {
             deviceService.Managefavorite(deviceId, isFavorite);
+            return Ok();
+        }
+
+        [HttpGet("{deviceId}/freeze")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(WeekFreezeDto))]
+        public async Task<IActionResult> GetFreezeForecast(string deviceId)
+        {
             return Ok();
         }
     }
