@@ -51,7 +51,16 @@ namespace SmartFreeze.Services
 
         public IEnumerable<Freeze> GetFreezeOnDevice(string deviceId)
         {
-            return null;
+            DateTime from;
+            if (DateTime.UtcNow.Hour < 12)
+            {
+                from = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 0, 0, 0);
+            }
+            else
+            {
+                from = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 12, 0, 0);
+            }
+            return freezeRepository.GetByDevice(deviceId, from);
         }
     }
 }

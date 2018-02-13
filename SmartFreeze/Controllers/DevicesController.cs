@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
+using SmartFreeze.Profiles;
 using SmartFreeze.Services;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -117,7 +119,10 @@ namespace SmartFreeze.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(WeekFreezeDto))]
         public async Task<IActionResult> GetFreezeForecast(string deviceId)
         {
-            return Ok();
+            IEnumerable<Freeze> freeze = freezeService.GetFreezeOnDevice(deviceId);
+            WeekFreezeDto weekFreeze = FreezeProfile.Merge(freeze);
+            weekFreeze.Id = deviceId;
+            return Ok(weekFreeze);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SmartFreeze.Repositories
         public IEnumerable<Freeze> GetByDevice(string deviceId, DateTime? from = null)
         {
             return collection.AsQueryable()
-                .Where(e => e.DeviceId == deviceId);
+                .Where(e => e.DeviceId == deviceId && e.Date >= from);
         }
 
         public Dictionary<string, IEnumerable<Freeze>> GetByDevice(IEnumerable<string> devicesIds = null, DateTime? from = null)
@@ -43,7 +43,7 @@ namespace SmartFreeze.Repositories
             });
         }
 
-        private IEnumerable<BsonDocument> GetPipeline(IEnumerable<string> ids = null)
+        private IEnumerable<BsonDocument> GetPipeline(IEnumerable<string> ids = null, DateTime? date = null)
         {
             List<BsonDocument> pipeline = new List<BsonDocument>();
 
@@ -54,6 +54,15 @@ namespace SmartFreeze.Repositories
                     { "DeviceId", new BsonDocument("$in", new BsonArray(ids)) }
                 });
                 pipeline.Add(matchStage);
+            }
+
+            if(date.HasValue)
+            {
+                BsonDocument matchDateStage = new BsonDocument("$match", new BsonDocument
+                {
+                    { "Date", new BsonDocument("$gte", new BsonDateTime(date.Value)) }
+                });
+                pipeline.Add(matchDateStage);
             }
 
             BsonDocument groupStage = new BsonDocument("$group", new BsonDocument
