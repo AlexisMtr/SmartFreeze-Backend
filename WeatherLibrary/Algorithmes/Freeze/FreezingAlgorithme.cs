@@ -50,14 +50,14 @@ namespace WeatherLibrary.Algorithmes.Freeze
                 FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date
             };
             IWeather estimationWeather = await EstimateWeatherByAltitudeDiff(device, forecastStation, devicePosition);
-            double diffTemperature = device.Temperature - estimationWeather.Temperature;
+            double diffTemperature = estimationWeather.Temperature - device.Temperature;
             double diffHumidity = device.Humidity - currentWeather.Humidity;
 
-            IWeather theoricWeather = currentWeather;
+            IWeather theoricWeather = device;
             theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
             theoricWeather.Humidity = diffHumidity + currentWeather.Humidity;
 
-            freezeForecast.FreezingProbabilityList.Add(currentWeather.Date, GetProbabilityFreezing(theoricWeather));
+            freezeForecast.FreezingProbabilityList[currentWeather.Date] = GetProbabilityFreezing(theoricWeather);
 
             IEnumerable<IWeather> forecastEstimation = await EstimateWeatherByAltitudeDiffForecast(forecast, forecastStation, devicePosition);
             int i = 0;
@@ -69,7 +69,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
                 theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
                 theoricWeather.Humidity = diffHumidity + forecastItem.Humidity;
 
-                freezeForecast.FreezingProbabilityList.Add(forecastItem.Date, GetProbabilityFreezing(theoricWeather));
+                freezeForecast.FreezingProbabilityList[forecastItem.Date] = GetProbabilityFreezing(theoricWeather);
 
             }
             freezeForecast.FreezingStart = forecast.OrderBy(e => e.Date).First().Date;
