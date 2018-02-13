@@ -26,6 +26,8 @@ namespace SmartFreezeFA.Configurations
 
             builder.RegisterType<AlarmService>();
 
+            builder.RegisterType<FreezingAlgorithme>().As<IAlgorithme<FreezeForecast>, FreezingAlgorithme>();
+
             builder.RegisterType<GoogleMapElevationClient>()
                 .As<IAltitudeClient>();
             builder.RegisterType<FreezingAlgorithme>()
