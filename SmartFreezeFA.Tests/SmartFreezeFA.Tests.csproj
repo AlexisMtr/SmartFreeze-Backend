@@ -80,6 +80,10 @@
       <Project>{155b739e-3abc-4346-9ac2-865cb3bb5a6a}</Project>
       <Name>SmartFreezeFA</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WeatherLibrary\WeatherLibrary.csproj">
+      <Project>{42C9B9AA-6D44-4A9B-8F48-546089822759}</Project>
+      <Name>WeatherLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

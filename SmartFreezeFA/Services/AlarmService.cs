@@ -4,6 +4,7 @@ using SmartFreezeFA.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WeatherLibrary.Algorithmes.Freeze;
 
 namespace SmartFreezeFA.Services
 {
@@ -140,35 +141,40 @@ namespace SmartFreezeFA.Services
 
         }
 
-        public Dictionary<DateTime, object> CalculAverageFreezePrediction12h(Dictionary<DateTime, object> predictions3h)
+        public Dictionary<DateTime, FreezeForecast.FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezeForecast.FreezingProbability> predictions3h)
         {
-            Dictionary<DateTime, object> averageFreezePrediction12h = new Dictionary<DateTime, object>();
-            //List<int> averagePredictions = new List<int>();
+            Dictionary<DateTime, FreezeForecast.FreezingProbability> averageFreezePrediction12h = new Dictionary<DateTime, FreezeForecast.FreezingProbability>();
 
             DateTime start = new DateTime();
             
             if(predictions3h.First().Key.Hour < 12)
             {
-                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0); //matin
+                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0); //AM
             }
             else
             {
-                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0); //aprèm
+                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0); //PM
             }
             DateTime end = start.AddHours(12);
+            //compte le nombre de demie-journée
+            double halfDayNumber = ((predictions3h.Last().Key) - (predictions3h.First().Key)).TotalDays;
 
-            foreach (var prediction3h in predictions3h)
+
+            while (start <= predictions3h.Last().Key)
             {
-                Dictionary<DateTime, object> predictionsForOneHalfDay = predictions3h
-                    .Where(e => e.Key > start && e.Key < end)
-                    .ToDictionary(k => k.Key, v => v.Value);
-                //calculer la moyenne des prédictions sur cette demie-journée
+                //prédictions pour la demie-journée en cours
+                Dictionary<DateTime, int> predictionsForOneHalfDay = predictions3h
+                    .Where(e => e.Key >= start && e.Key < end)
+                    .ToDictionary(k => k.Key, v => (int)v.Value);
 
-                start.AddHours(12);
-                end.AddHours(12);
+                //calcule la moyenne des prédictions sur cette demie-journée
+                double avg = predictionsForOneHalfDay.Values.Average();
+                double avgRounded = Math.Round(avg);
 
-                // TODO créer entrées en base (prédictions) + créer tableau résultant
+                averageFreezePrediction12h.Add(start, (FreezeForecast.FreezingProbability)(avgRounded));
 
+                start = start.AddHours(12);
+                end = end.AddHours(12);
             }
             return averageFreezePrediction12h;
         }
