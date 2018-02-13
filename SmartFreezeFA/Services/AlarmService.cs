@@ -2,6 +2,8 @@
 using SmartFreezeFA.Models;
 using SmartFreezeFA.Repositories;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SmartFreezeFA.Services
 {
@@ -138,9 +140,44 @@ namespace SmartFreezeFA.Services
 
         }
 
+        public Dictionary<DateTime, object> CalculAverageFreezePrediction12h(Dictionary<DateTime, object> predictions3h)
+        {
+            Dictionary<DateTime, object> averageFreezePrediction12h = new Dictionary<DateTime, object>();
+            //List<int> averagePredictions = new List<int>();
+
+            DateTime start = new DateTime();
+            
+            if(predictions3h.First().Key.Hour < 12)
+            {
+                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0); //matin
+            }
+            else
+            {
+                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0); //aprèm
+            }
+            DateTime end = start.AddHours(12);
+
+            foreach (var prediction3h in predictions3h)
+            {
+                Dictionary<DateTime, object> predictionsForOneHalfDay = predictions3h
+                    .Where(e => e.Key > start && e.Key < end)
+                    .ToDictionary(k => k.Key, v => v.Value);
+                //calculer la moyenne des prédictions sur cette demie-journée
+
+                start.AddHours(12);
+                end.AddHours(12);
+
+                // TODO créer entrées en base (prédictions) + créer tableau résultant
+
+            }
+            return averageFreezePrediction12h;
+        }
+
 
         private void CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string shortDescription, string description)
         {
+            var list = new List<int>();
+            list.Average();
             Alarm alarm = new Alarm()
             {
                 Id = DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
