@@ -49,9 +49,9 @@ namespace WeatherLibrary.Algorithmes.Freeze
                 FreezingStart = forecast.OrderBy(e => e.Date).First().Date,
                 FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date
             };
-            IWeather estimationWeather = await EstimateWeatherByAltitudeDiff(currentWeather, forecastStation, devicePosition);
-            double diffTemperature = currentWeather.Temperature - currentWeather.Temperature;
-            double diffHumidity = currentWeather.Humidity - currentWeather.Humidity;
+            IWeather estimationWeather = await EstimateWeatherByAltitudeDiff(device, forecastStation, devicePosition);
+            double diffTemperature = device.Temperature - estimationWeather.Temperature;
+            double diffHumidity = device.Humidity - currentWeather.Humidity;
 
             IWeather theoricWeather = currentWeather;
             theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
