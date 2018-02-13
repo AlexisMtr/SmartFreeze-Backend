@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace SmartFreeze.Controllers
@@ -9,7 +10,11 @@ namespace SmartFreeze.Controllers
         [HttpGet("ping")]
         public async Task<IActionResult> Ping()
         {
-            return Ok("pong");
+            return Ok(new
+            {
+                Message = "pong",
+                ServerDate = DateTime.UtcNow
+            });
         }
     }
 }
