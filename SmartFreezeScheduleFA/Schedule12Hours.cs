@@ -27,6 +27,7 @@ namespace SmartFreezeScheduleFA
                 FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
                 DeviceService deviceService = scope.Resolve<DeviceService>();
                 NotificationService notificationService = scope.Resolve<NotificationService>();
+                FreezeService freezeService = scope.Resolve<FreezeService>();
 
                 OpenWeatherMapClient weatherClient = scope.Resolve<OpenWeatherMapClient>();
 
@@ -44,6 +45,8 @@ namespace SmartFreezeScheduleFA
                     {
                         log.Info($"Create Alarm");
                         // TODO : complete process
+                        Dictionary<DateTime, FreezeForecast.FreezingProbability> averageFreezePrediction12h = alarmService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
+                        freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
                         // - check gravity
                         // - check with Clarck possible values
                         Alarm alarm = alarmService.CreateAlarm(item.Key.Id, null, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);

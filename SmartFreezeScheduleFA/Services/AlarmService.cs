@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
+using WeatherLibrary.Algorithmes.Freeze;
 
 namespace SmartFreezeScheduleFA.Services
 {
@@ -54,7 +56,10 @@ namespace SmartFreezeScheduleFA.Services
 
             return alarm;
         }
-        
 
+        internal Dictionary<DateTime, FreezeForecast.FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezeForecast.FreezingProbability> freezingProbabilityList)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

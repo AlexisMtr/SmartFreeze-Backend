@@ -4,30 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WeatherLibrary.Algorithmes.Freeze;
 
 namespace SmartFreezeScheduleFA.Services
 {
-    class FreezeService
+    public class FreezeService
     {
-        private readonly IDeviceRepository deviceRepository;
+        private readonly IFreezeRepository freezeRepository;
 
-        public FreezeService(IDeviceRepository deviceRepository)
+        public FreezeService(IFreezeRepository freezeRepository)
         {
-            this.deviceRepository = deviceRepository;
+            this.freezeRepository = freezeRepository;
         }
 
-        public void CreateFreezeAndThawByDevice(string deviceId, object dicoPredictionBy12h)
+        public void CreateFreezeAndThawByDevice(string deviceId, Dictionary<DateTime, FreezeForecast.FreezingProbability> dicoPredictionBy12h)
         {
             foreach (var prediction in dicoPredictionBy12h)
             {
-
+                freezeRepository.AddFreeze(deviceId, prediction.Key, (int)prediction.Value);
             }
-        }
-
-        public createFreeze(string deviceId, trustIndication)
-        {
-
-            deviceRepository.AddFreeze(deviceId, date, TrustIndication);
         }
     }
 }

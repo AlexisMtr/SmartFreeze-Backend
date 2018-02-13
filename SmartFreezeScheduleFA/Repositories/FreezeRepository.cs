@@ -21,8 +21,12 @@ namespace SmartFreezeScheduleFA.Repositories
 
         public void AddFreeze(string deviceId, DateTime date, int TrustIndication)
         {
-            // TODO
-
+            collection.InsertOne(new Freeze()
+            {
+                DeviceId = deviceId,
+                Date = date,
+                TrustIndication = TrustIndication
+            });
         }
     }
 }

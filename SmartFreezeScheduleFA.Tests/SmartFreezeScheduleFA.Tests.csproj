@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="AlarmServiceTests.cs" />
     <Compile Include="CommunicationStateServiceTests.cs" />
+    <Compile Include="FreezeServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +76,10 @@
     <ProjectReference Include="..\SmartFreezeScheduleFA\SmartFreezeScheduleFA.csproj">
       <Project>{8fde3fa3-bdda-443d-aaad-9493f27226f8}</Project>
       <Name>SmartFreezeScheduleFA</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeatherLibrary\WeatherLibrary.csproj">
+      <Project>{42c9b9aa-6d44-4a9b-8f48-546089822759}</Project>
+      <Name>WeatherLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

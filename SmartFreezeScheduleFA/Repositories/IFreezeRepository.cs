@@ -1,6 +1,9 @@
-﻿namespace SmartFreezeScheduleFA.Repositories
+﻿using System;
+
+namespace SmartFreezeScheduleFA.Repositories
 {
-    internal interface IFreezeRepository
+    public interface IFreezeRepository
     {
+        void AddFreeze(string deviceId, DateTime date, int TrustIndication);
     }
 }
