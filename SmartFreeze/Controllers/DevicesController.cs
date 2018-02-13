@@ -69,10 +69,11 @@ namespace SmartFreeze.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> RegisterDevice([FromQuery] string idSite, [FromBody]DeviceRegistrationDto deviceRegistration)
+        public async Task<IActionResult> RegisterDevice([FromQuery] string idSite, [FromQuery] string idDevice, [FromBody]DeviceRegistrationDto deviceRegistration)
         {
 
             Device device = Mapper.Map<Device>(deviceRegistration);
+            device.Id = idDevice;
             Device newDevice = deviceService.Create(device, idSite);
 
             return Ok(Mapper.Map<DeviceRegistrationDto>(newDevice));

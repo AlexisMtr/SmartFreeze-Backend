@@ -6,11 +6,13 @@ using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace SmartFreeze.Repositories
 {
-    public class SiteRepository
+    public class SiteRepository : ISiteRepository
     {
         private readonly IMongoCollection<Site> collection;
 
@@ -41,7 +43,14 @@ namespace SmartFreeze.Repositories
 
         public Site Create(Site site)
         {
-            site.Id ="site" + DateTime.UtcNow.ToString("yyyyMMDDHHmmss");
+                if (!String.IsNullOrEmpty(site.Name))
+            {
+                site.Name = site.Name.Normalize(NormalizationForm.FormD);
+                var chars = site.Name.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray();
+                site.Name =  new string(chars).Normalize(NormalizationForm.FormC);
+            }
+
+            site.Id = site.Name.Replace(" ","")+ DateTime.UtcNow.ToString("yyyyMMddHHmmss");
             collection.InsertOne(site);
             return site;
         }

@@ -7,9 +7,10 @@ namespace SmartFreeze.Services
 {
     public class AlarmService
     {
-        private readonly AlarmRepository alarmRepository;
+        private readonly IAlarmRepository alarmRepository;
 
-        public AlarmService(AlarmRepository alarmRepository)
+
+        public AlarmService(IAlarmRepository alarmRepository)
         {
             this.alarmRepository = alarmRepository;
         }
@@ -33,7 +34,7 @@ namespace SmartFreeze.Services
                 Items = alarmRepository.Get(alarmFilter, rowsPerPage, pageNumber)
             };
         }
-        
+
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
             DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter

@@ -10,10 +10,10 @@ namespace SmartFreeze
     {
         public void ConfigureDI(IServiceCollection services)
         {
-            services.AddScoped<DeviceRepository>();
-            services.AddScoped<TelemetryRepository>();
-            services.AddScoped<SiteRepository>();
-            services.AddScoped<AlarmRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<ITelemetryRepository, TelemetryRepository>();
+            services.AddScoped<ISiteRepository, SiteRepository>();
+            services.AddScoped<IAlarmRepository, AlarmRepository>();
 
             services.AddScoped<DeviceService>();
             services.AddScoped<TelemetryService>();

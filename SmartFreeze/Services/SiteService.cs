@@ -8,9 +8,9 @@ namespace SmartFreeze.Services
 {
     public class SiteService
     {
-        private readonly SiteRepository siteRepository;
+        private readonly ISiteRepository siteRepository;
 
-        public SiteService(SiteRepository siteRepository)
+        public SiteService(ISiteRepository siteRepository)
         {
             this.siteRepository = siteRepository;
         }

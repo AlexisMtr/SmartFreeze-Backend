@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace SmartFreeze.Repositories
 {
-    public class DeviceRepository
+    public class DeviceRepository : IDeviceRepository
     {
         private readonly IMongoCollection<Site> collection;
 

@@ -8,7 +8,7 @@ using System;
 
 namespace SmartFreeze.Repositories
 {
-    public class TelemetryRepository
+    public class TelemetryRepository : ITelemetryRepository
     {
         private readonly IMongoCollection<Telemetry> collection;
 
