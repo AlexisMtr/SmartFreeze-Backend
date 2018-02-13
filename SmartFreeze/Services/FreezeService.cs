@@ -3,7 +3,6 @@ using SmartFreeze.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SmartFreeze.Services
 {
@@ -43,12 +42,11 @@ namespace SmartFreeze.Services
                 {
                     Date = date,
                     TrustIndication = freezeAtDate.Max(e => e.TrustIndication),
-                    DeviceId = null
+                    DeviceId = freezeAtDate.First(e => e.TrustIndication == freezeAtDate.Max(i => i.TrustIndication)).DeviceId
                 });
             }
 
-
-            return null;
+            return freezeForecast;
         }
 
         public IEnumerable<Freeze> GetFreezeOnDevice(string deviceId)

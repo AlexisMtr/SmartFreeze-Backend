@@ -7,7 +7,6 @@ namespace SmartFreeze.Repositories
     public interface IFreezeRepository
     {
         IEnumerable<Freeze> GetByDevice(string deviceId, DateTime? from = null);
-        Dictionary<string, IEnumerable<Freeze>> GetByDevice(IEnumerable<string> devicesId, DateTime? from = null)
-        Dictionary<string, IEnumerable<Freeze>> GetByDevice(DateTime? from = null);
+        Dictionary<string, IEnumerable<Freeze>> GetByDevice(IEnumerable<string> devicesIds = null, DateTime? from = null);
     }
 }

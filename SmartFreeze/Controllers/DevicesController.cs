@@ -16,12 +16,14 @@ namespace SmartFreeze.Controllers
         private readonly DeviceService deviceService;
         private readonly TelemetryService telemetryService;
         private readonly AlarmService alarmService;
+        private readonly FreezeService freezeService;
 
-        public DevicesController(DeviceService deviceService, TelemetryService telemetryService, AlarmService alarmService)
+        public DevicesController(DeviceService deviceService, TelemetryService telemetryService, AlarmService alarmService, FreezeService freezeService)
         {
             this.deviceService = deviceService;
             this.telemetryService = telemetryService;
             this.alarmService = alarmService;
+            this.freezeService = freezeService;
         }
 
         [HttpGet]
