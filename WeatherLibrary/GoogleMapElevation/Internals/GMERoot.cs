@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using WeatherLibrary.GoogleMapElevation.Internals;
 
-namespace WeatherLibrary.GoogleMapElevation.DTOs
+namespace WeatherLibrary.GoogleMapElevation.Internals
 {
     public class GMERoot
     {

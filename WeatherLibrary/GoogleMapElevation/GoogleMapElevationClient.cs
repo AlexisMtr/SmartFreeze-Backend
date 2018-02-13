@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper;
 using Newtonsoft.Json;
 using WeatherLibrary.Abstraction;
-using WeatherLibrary.GoogleMapElevation.DTOs;
 using WeatherLibrary.GoogleMapElevation.Internals;
 
 namespace WeatherLibrary.GoogleMapElevation
@@ -17,23 +16,20 @@ namespace WeatherLibrary.GoogleMapElevation
 
         public GoogleMapElevationClient(string apiKey)
         {
+            Configurations.MapperConfiguration.ConfigureMapper();
             this.client = new HttpClient { BaseAddress = new Uri("https://maps.googleapis.com/maps/api/elevation/") };
             this.apiKey = apiKey;
         }
 
-        public GoogleMapElevationClient()
-        {
-            this.client = new HttpClient { BaseAddress = new Uri("https://maps.googleapis.com/maps/api/elevation/") };
-            this.apiKey = "AIzaSyCSpneEWisPNL0ZP7W6ayidLegkn-8MxaY";
-        }
-
-        public async Task<List<GMEAltitude>> GetAltitude(double latitude, double longitude)
+        public async Task<IStationPosition> GetAltitude(double latitude, double longitude)
         {
             string lat = latitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
             string lng = longitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+
             var response = await this.client.GetAsync($"json?locations={lat},{lng}&key={this.apiKey}");
             var jsonRoot = JsonConvert.DeserializeObject<GMERoot>(await response.Content.ReadAsStringAsync());
-            return (jsonRoot.Results as List<GMEAltitude>);
+
+            return Mapper.Map<GmeElevation>(jsonRoot);
         }
 
 

@@ -7,30 +7,30 @@ namespace WeatherLibrary.Algorithmes.Util
     internal class UtilTemperature : IWeatherClient<UtilTemperatureCurrent, UtilTemperatureForecast>
     {
         private readonly IAltitudeClient client;
-        private readonly IStationPosition siteStationPosition;
+        private readonly IStationPosition sitePosition;
         private readonly IWeather weatherCurrent;
         private readonly IEnumerable<IWeather> forecast;
 
-        public UtilTemperature(IAltitudeClient client, IStationPosition siteStationPosition, IWeather weatherCurrent)
+        public UtilTemperature(IAltitudeClient client, IStationPosition sitePosition, IWeather weatherCurrent)
         {
             this.client = client;
-            this.siteStationPosition = siteStationPosition;
+            this.sitePosition = sitePosition;
             this.weatherCurrent = weatherCurrent;
         }
 
-        public UtilTemperature(IAltitudeClient client, IStationPosition siteStationPosition, IEnumerable<IWeather> forecast)
+        public UtilTemperature(IAltitudeClient client, IStationPosition sitePosition, IEnumerable<IWeather> forecast)
         {
             this.client = client;
-            this.siteStationPosition = siteStationPosition;
+            this.sitePosition = sitePosition;
             this.forecast = forecast;
         }
 
         public async Task<UtilTemperatureCurrent> GetCurrentWeather(double latitude, double longitude)
         {
 
-            double siteElevation = client.GetAltitude(latitude, longitude).Result[0].Elevation;
+            double siteElevation = (await client.GetAltitude(latitude, longitude)).Altitude;
             double temperatureSite = this.weatherCurrent.Temperature;
-            double elevationBetweenWeatherStationAndSite = siteElevation - siteStationPosition.Altitude;
+            double elevationBetweenWeatherStationAndSite = siteElevation - sitePosition.Altitude;
             if (elevationBetweenWeatherStationAndSite >= 100.0 || elevationBetweenWeatherStationAndSite <= -100.0)
             {
                 temperatureSite = ConvertTemperature(this.weatherCurrent.Temperature, elevationBetweenWeatherStationAndSite);
@@ -42,10 +42,10 @@ namespace WeatherLibrary.Algorithmes.Util
         public async Task<UtilTemperatureForecast> GetForecastWeather(double latitude, double longitude)
         {
             List<double> temperatureSiteList = new List<double>();
-            double weatherStationElevation = client.GetAltitude(latitude, longitude).Result[0].Elevation;
-            double elevationBetweenWeatherStationAndSite = weatherStationElevation - siteStationPosition.Altitude;
+            double weatherStationElevation = (await client.GetAltitude(latitude, longitude)).Altitude;
+            double elevationBetweenWeatherStationAndSite = weatherStationElevation - sitePosition.Altitude;
 
-            if (elevationBetweenWeatherStationAndSite >= 100.0)
+            if (elevationBetweenWeatherStationAndSite >= 100.0 || elevationBetweenWeatherStationAndSite <= -100.0)
             {
                 foreach (IWeather f in forecast)
                 {

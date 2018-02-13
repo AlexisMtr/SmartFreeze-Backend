@@ -259,4 +259,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+WeatherLibrary.Tests/app.config
+WeatherLibrary.Tests/appsettings.json
+*.pyc
 SmartFreeze/Properties/PublishProfiles/
