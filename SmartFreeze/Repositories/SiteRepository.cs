@@ -57,6 +57,8 @@ namespace SmartFreeze.Repositories
 
         public bool Update(string siteId, Site site)
         {
+            Site oldSite = collection.AsQueryable().FirstOrDefault(e => e.Id == siteId);
+
             UpdateDefinition<Site> update = Builders<Site>.Update
                 .Set(p => p.Name, site.Name)
                 .Set(p => p.SurfaceArea, site.SurfaceArea)
@@ -68,8 +70,15 @@ namespace SmartFreeze.Repositories
                 .Set(p => p.Region, site.Region)
                 .Set(p => p.Department, site.Department)
                 .Set(p => p.Zones, site.Zones); 
-            var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
+            
+            var result = collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
 
+            for(int i = 0; i < oldSite.Devices.Count(); i++)
+            {
+                UpdateDefinition<Site> updateDevicesPosition = Builders<Site>.Update.Set(e => e.Devices.ElementAt(i).Position, site.Position);
+                collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), updateDevicesPosition);
+            }
+            
             return result.ModifiedCount > 0;
         }
 
