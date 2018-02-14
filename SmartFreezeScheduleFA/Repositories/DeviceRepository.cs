@@ -34,7 +34,7 @@ namespace SmartFreezeScheduleFA.Repositories
             DateTime maxDate = DateTime.Now.AddMinutes(-minBundaryMin);
 
             Expression<Func<Device, bool>> expression;
-            if(maxBoundaryMin.HasValue)
+            if (maxBoundaryMin.HasValue)
             {
                 DateTime minDate = DateTime.Now.AddMinutes(-maxBoundaryMin.Value);
                 expression = e => e.LastCommunication < maxDate && e.LastCommunication > minDate;
@@ -58,6 +58,16 @@ namespace SmartFreezeScheduleFA.Repositories
 
             collection.FindOneAndUpdate(filter, update);
 
+        }
+
+        public bool UpdateAlarm(string deviceId, Alarm alarm)
+        {
+            var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarm.Id);
+            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
+
+            var result = this.collection.FindOneAndUpdate(filter, Builders<Site>.Update.Set("Alarm.$.IsActive", alarm.IsActive));
+
+            return result != null;
         }
 
         public IEnumerable<Device> Get(IEnumerable<string> ids)

@@ -26,7 +26,25 @@ namespace SmartFreezeScheduleFA.Services
 
             foreach (var device in devices)
             {
-                alarmService.CreateCommunicationAlarm(device.Id, gravity);
+                bool createAlarm = true;
+                foreach (Alarm alarm in device.Alarms)
+                {
+                    if (alarm.AlarmType.Equals(Alarm.Type.CommuniationFailure)
+                        && alarm.AlarmGravity.Equals(gravity)
+                        && alarm.IsActive)
+                    {
+                        createAlarm = false;
+                    }
+
+
+                }
+                if (createAlarm)
+                {
+                    Alarm alarm = (device.Alarms as List<Alarm>).FindLast(e => e.AlarmGravity.Equals(gravity + 1) && e.IsActive);
+                    alarm.IsActive = false;
+                    alarmService.UpdateAlarm(device.Id, alarm);
+                    alarmService.CreateCommunicationAlarm(device.Id, gravity);
+                }
             }
 
             notificationService.SendNotifications(alarms);

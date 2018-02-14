@@ -57,6 +57,12 @@ namespace SmartFreezeScheduleFA.Services
             return alarm;
         }
 
+
+        public bool UpdateAlarm(string deviceId, Alarm alarm)
+        {
+            return deviceRepository.UpdateAlarm(deviceId, alarm);
+        }
+
         internal Dictionary<DateTime, FreezeForecast.FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezeForecast.FreezingProbability> freezingProbabilityList)
         {
             throw new NotImplementedException();
