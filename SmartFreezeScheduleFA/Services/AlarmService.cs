@@ -198,9 +198,10 @@ namespace SmartFreezeScheduleFA.Services
             return alarm;
         }
 
-        internal Dictionary<DateTime, FreezeForecast.FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezeForecast.FreezingProbability> freezingProbabilityList)
+        public void UpdateAlarm(String deviceId, Alarm alarm)
         {
-            throw new NotImplementedException();
+            deviceRepository.UpdateStatusAlarm(deviceId, alarm);
         }
+
     }
 }

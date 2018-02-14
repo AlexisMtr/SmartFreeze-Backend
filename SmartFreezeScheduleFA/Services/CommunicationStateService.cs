@@ -43,7 +43,7 @@ namespace SmartFreezeScheduleFA.Services
                     Alarm alarm = (device.Alarms as List<Alarm>).FindLast(e => e.AlarmGravity.Equals(gravity + 1) && e.IsActive);
                     alarm.IsActive = false;
                     alarmService.UpdateAlarm(device.Id, alarm);
-                    alarmService.CreateCommunicationAlarm(device.Id, gravity);
+                    alarmService.CreateCommunicationAlarm(device.Id, device.SiteId, device.LastCommunication, gravity);
                 }
             }
 

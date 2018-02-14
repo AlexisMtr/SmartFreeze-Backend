@@ -59,15 +59,6 @@ namespace SmartFreezeScheduleFA.Repositories
             collection.FindOneAndUpdate(filter, update);
         }
 
-        public bool UpdateAlarm(string deviceId, Alarm alarm)
-        {
-            var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarm.Id);
-            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
-
-            var result = this.collection.FindOneAndUpdate(filter, Builders<Site>.Update.Set("Alarm.$.IsActive", alarm.IsActive));
-
-            return result != null;
-        }
 
         public IEnumerable<Device> Get(IEnumerable<string> ids)
         {
@@ -135,6 +126,16 @@ namespace SmartFreezeScheduleFA.Repositories
 
             //var update = Builders<Site>.Update.PullFilter(e => e.Devices, a => a.alarmId == alarmId);
             //collection.FindOneAndUpdate(filter, update);
+        }
+
+        public bool UpdateStatusAlarm(string deviceId, Alarm alarm)
+        {
+            var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarm.Id);
+            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
+
+            var result = this.collection.FindOneAndUpdate(filter, Builders<Site>.Update.Set("Alarm.$.IsActive", alarm.IsActive));
+
+            return result != null;
         }
     }
 }
