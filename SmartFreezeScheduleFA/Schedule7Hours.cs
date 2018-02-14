@@ -18,7 +18,7 @@ namespace SmartFreezeScheduleFA
             using (var scope = DependencyInjection.Container.BeginLifetimeScope())
             {
                 CommunicationStateService service = scope.Resolve<CommunicationStateService>();
-                service.Run(7, 8, Models.Alarm.Gravity.Critical);
+                service.Run(7, null, Models.Alarm.Gravity.Critical);
             }
 
         }

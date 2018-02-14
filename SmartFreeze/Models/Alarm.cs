@@ -30,7 +30,9 @@ namespace SmartFreeze.Models
         public string DeviceId { get; set; }
         public string SiteId { get; set; }
         public bool IsActive { get; set; }
+        [BsonRepresentation(BsonType.Int32)]
         public Type AlarmType { get; set; }
+        [BsonRepresentation(BsonType.Int32)]
         public Gravity AlarmGravity { get; set; }
         public DateTime OccuredAt { get; set; }
         public string ShortDescription { get; set; }

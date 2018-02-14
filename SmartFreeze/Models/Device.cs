@@ -15,7 +15,7 @@ namespace SmartFreeze.Models
         public string Name { get; set; }
         public bool IsFavorite { get; set; }
         public string Zone { get; set; }
-        public string SiteName { get; set; }
+        public string SiteId { get; set; }
         public IEnumerable<Alarm> Alarms { get; set; }
         public DateTime LastCommunication { get; set; }
         public Position Position { get; set; }

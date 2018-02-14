@@ -6,9 +6,9 @@ namespace SmartFreeze.Services
 {
     public class TelemetryService
     {
-        private readonly TelemetryRepository telemetryRepository;
+        private readonly ITelemetryRepository telemetryRepository;
 
-        public TelemetryService(TelemetryRepository telemetryRepository)
+        public TelemetryService(ITelemetryRepository telemetryRepository)
         {
             this.telemetryRepository = telemetryRepository;
         }
