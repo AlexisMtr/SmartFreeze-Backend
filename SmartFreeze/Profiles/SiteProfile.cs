@@ -39,7 +39,14 @@ namespace SmartFreeze.Profiles
                 }));
              
 
-            CreateMap<SiteUpdateDto, Site>();
+            CreateMap<SiteUpdateDto, Site>()
+                .ForMember(d => d.Position, opt => opt.MapFrom(s => new Position
+                {
+                    Latitude = s.Latitude,
+                    Longitude = s.Longitude,
+                    Altitude = s.Altitude
+                }))
+                .ForMember(d => d.Image, opt => opt.MapFrom(s => s.ImageUri));
         }
     }
 }
