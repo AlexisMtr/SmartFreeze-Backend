@@ -43,24 +43,30 @@ namespace SmartFreeze.Repositories
 
         public Site Create(Site site)
         {
-                if (!String.IsNullOrEmpty(site.Name))
+            if (!String.IsNullOrEmpty(site.Name))
             {
                 site.Name = site.Name.Normalize(NormalizationForm.FormD);
                 var chars = site.Name.Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark).ToArray();
                 site.Name =  new string(chars).Normalize(NormalizationForm.FormC);
             }
 
-            site.Id = site.Name.Replace(" ","")+ DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+            site.Id = site.Name.Replace(" ", "")+ DateTime.UtcNow.ToString("yyyyMMddHHmmss");
             collection.InsertOne(site);
             return site;
         }
 
         public bool Update(string siteId, Site site)
         {
-            UpdateDefinition<Site> update = Builders<Site>.Update.Set(p => p.Name, site.Name)
+            UpdateDefinition<Site> update = Builders<Site>.Update
+                .Set(p => p.Name, site.Name)
                 .Set(p => p.SurfaceArea, site.SurfaceArea)
                 .Set(p => p.Image, site.Image)
                 .Set(p => p.Description, site.Description)
+                .Set(p => p.Position.Latitude, site.Position.Latitude)
+                .Set(p => p.Position.Longitude, site.Position.Longitude)
+                .Set(p => p.Position.Altitude, site.Position.Altitude)
+                .Set(p => p.Region, site.Region)
+                .Set(p => p.Department, site.Department)
                 .Set(p => p.Zones, site.Zones); 
             var result = this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
 
