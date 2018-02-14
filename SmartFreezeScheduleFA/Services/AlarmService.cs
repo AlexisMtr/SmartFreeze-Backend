@@ -64,7 +64,8 @@ namespace SmartFreezeScheduleFA.Services
         }
 
         public void CreateFreezeAlarm(string deviceId, string siteId, Dictionary<DateTime, FreezeForecast.FreezingProbability> dicoPredictionBy12h)
-        {//créé des alarmes de freeze (date début et date fin) et thaw (date début)
+        {
+            //créé des alarmes de freeze (date début et date fin) et thaw (date début)
             //TODO ajouter la condition ou lastFreeze est 
             Freeze lastFreeze = freezeRepository.getLastFreezeByDevice(deviceId);
             bool haveToCheckEndDate = false;
@@ -79,7 +80,8 @@ namespace SmartFreezeScheduleFA.Services
             foreach (var prediction in dicoPredictionBy12h)
             {
                 if(!previousPrediction.HasValue)
-                {//première valeur
+                {
+                    //première valeur
                     if (!haveToCheckEndDate && !haveToCheckEndDateForProlongation)
                     {
                         if(lastFreeze != null)
@@ -100,7 +102,7 @@ namespace SmartFreezeScheduleFA.Services
                             }
                             else 
                             {
-
+                                // TODO : Hugo ! un else vide ? :O
                             }
                         }
                         else
@@ -114,13 +116,15 @@ namespace SmartFreezeScheduleFA.Services
                     }
                     else
                     {
-                        
+                        // TODO : Hugo ! un else vide ? :O
                     }
                 }
                 else
-                {//à partir du deuxième élément
+                {
+                    //à partir du deuxième élément
                     if (haveToCheckEndDate && (int)prediction.Value < 1)
-                    {   //méthode pour vérifier qu'il n'existe pas une alarm qui croise celle là
+                    {   
+                        //méthode pour vérifier qu'il n'existe pas une alarm qui croise celle là
                         crossAlarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, startFreeze, prediction.Key);
                         //update la première alarm de la liste
                         deviceRepository.UpdateAlarm(deviceId, crossAlarms.First().Id, startFreeze, prediction.Key);
@@ -131,7 +135,10 @@ namespace SmartFreezeScheduleFA.Services
                             deviceRepository.deleteAlarmById(deviceId, alarm.Id);
                         }
                         haveToCheckEndDate = false;
-                    }else if (haveToCheckEndDateForProlongation && (int)prediction.Value < 1 || (haveToCheckEndDateForProlongation && prediction.Key == dicoPredictionBy12h.Last().Key))
+                    }
+                    else if (haveToCheckEndDateForProlongation && 
+                        (prediction.Value != FreezingProbability.ZERO && prediction.Value != FreezingProbability.MINIMUM) ||
+                        (haveToCheckEndDateForProlongation && prediction.Key == dicoPredictionBy12h.Last().Key))
                     {
                         DateTime start = DateTime.UtcNow.AddHours(-12);
                         //verifie si il a une alarme dans les dernières 12h
@@ -140,23 +147,26 @@ namespace SmartFreezeScheduleFA.Services
                         if (alarms.Count > 1) throw new Exception("plusieurs alarmes dans les dernières 12h");
                         deviceRepository.UpdateAlarm(deviceId, alarms.First().Id, alarms.First().Start.Value, prediction.Key);
                         haveToCheckEndDateForProlongation = false;
-                    }else if ((int)prediction.Value > 1 && !checkForEndOFGel && !lookingForEnd && !haveToCheckEndDate && !haveToCheckEndDateForProlongation)
+                    }
+                    else if ((int)prediction.Value > 1 && !checkForEndOFGel && !lookingForEnd && !haveToCheckEndDate && !haveToCheckEndDateForProlongation)
                     {   //créer alarm de GEL puis boucler pour avoir la fin et créer alarme de dégel
                         startFreezeV2 = prediction.Key;
                         checkForEndOFGel = true;
 
-                    }else if ((checkForEndOFGel && (int)prediction.Value == 0))
+                    }
+                    else if ((checkForEndOFGel && prediction.Value == FreezingProbability.ZERO))
                     {   //créer alarm de gel
                         CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + startFreezeV2 + " au " + previousPrediction.Value.Key, startFreezeV2, previousPrediction.Value.Key);
                         // créer alam de dégel
                         CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le " + prediction.Key, prediction.Key, null);
                         checkForEndOFGel = false;
-                    }else if ((checkForEndOFGel && prediction.Key == dicoPredictionBy12h.Last().Key))
+                    }
+                    else if ((checkForEndOFGel && prediction.Key == dicoPredictionBy12h.Last().Key))
                     {   //créer alarm de gel
                         CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + startFreezeV2 + " au " + prediction.Key, startFreezeV2, prediction.Key);
                         checkForEndOFGel = false;
                     }
-                    else if (lookingForEnd && (int)prediction.Value == 0)
+                    else if (lookingForEnd && prediction.Value == FreezingProbability.ZERO)
                     {
                         //créer alarm de gel
                         CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + dicoPredictionBy12h.First().Key + " au " + previousPrediction.Value.Key, dicoPredictionBy12h.First().Key, previousPrediction.Value.Key);
