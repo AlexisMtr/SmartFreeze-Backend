@@ -34,12 +34,17 @@ namespace SmartFreezeScheduleFA.Configurations
                 .InstancePerLifetimeScope();
             builder.RegisterType<TelemetryService>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<FreezeService>()
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<DeviceRepository>()
                 .As<IDeviceRepository>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<TelemetryRepository>()
                 .As<ITelemetryRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<FreezeRepository>()
+                .As<IFreezeRepository>()
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<OpenWeatherMapClient>()

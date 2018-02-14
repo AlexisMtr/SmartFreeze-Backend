@@ -57,7 +57,6 @@ namespace SmartFreezeScheduleFA.Repositories
             UpdateDefinition<Site> update = Builders<Site>.Update.Push("Devices.$.Alarms", alarm);
 
             collection.FindOneAndUpdate(filter, update);
-
         }
 
         public IEnumerable<Device> Get(IEnumerable<string> ids)

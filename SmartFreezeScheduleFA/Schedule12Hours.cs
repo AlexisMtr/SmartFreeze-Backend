@@ -8,6 +8,7 @@ using SmartFreezeScheduleFA.Configurations;
 using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Services;
 using WeatherLibrary.Algorithmes.Freeze;
+using static WeatherLibrary.Algorithmes.Freeze.FreezeForecast;
 using WeatherLibrary.OpenWeatherMap;
 
 namespace SmartFreezeScheduleFA
@@ -16,7 +17,7 @@ namespace SmartFreezeScheduleFA
     {
         //"0 0 */12 * * *" timer
         [FunctionName("Schedule12Hours")]
-        public static async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static async Task Run([TimerTrigger("0 */3 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             DependencyInjection.ConfigureInjection();
@@ -45,11 +46,11 @@ namespace SmartFreezeScheduleFA
                     {
                         log.Info($"Create Alarm");
                         // TODO : complete process
-                        Dictionary<DateTime, FreezeForecast.FreezingProbability> averageFreezePrediction12h = alarmService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
+                        Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = alarmService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
                         freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
                         // - check gravity
                         // - check with Clarck possible values
-                        Alarm alarm = alarmService.CreateAlarm(item.Key.Id, null, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
+                        Alarm alarm = alarmService.CreateAlarm(item.Key.Id, item.Key.SiteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
                         alarms.Add(alarm);
                     }
                 }

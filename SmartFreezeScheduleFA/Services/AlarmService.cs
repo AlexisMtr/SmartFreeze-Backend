@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
-using WeatherLibrary.Algorithmes.Freeze;
+using static WeatherLibrary.Algorithmes.Freeze.FreezeForecast;
 
 namespace SmartFreezeScheduleFA.Services
 {
@@ -15,27 +15,10 @@ namespace SmartFreezeScheduleFA.Services
             this.deviceRepository = deviceRepository;
         }
 
-        public Alarm CreateCommunicationAlarm(string deviceId, Alarm.Gravity gravity)
+        public Alarm CreateCommunicationAlarm(string deviceId, string siteId, DateTime lastCommunication, Alarm.Gravity gravity)
         {
-            string desc = string.Empty;
-            string shortDesc = "Erreur de communication";
-
-            switch (gravity)
-            {
-                case Alarm.Gravity.Information:
-                    desc += "Le capteur n'a pas communiqué depuis plus d'une heure";
-                    break;
-                case Alarm.Gravity.Serious:
-                    desc = "Le capteur n'a pas communiqué depuis plus de 4 heures";
-                    break;
-                case Alarm.Gravity.Critical:
-                    desc = "Le capteur n'a pas communiqué depuis plus de 7 heures";
-                    break;
-                default:
-                    break;
-            }
-
-            return CreateAlarm(deviceId, null, Alarm.Type.CommuniationFailure, gravity, shortDesc, desc);
+            return CreateAlarm(deviceId, siteId, Alarm.Type.CommuniationFailure, gravity,
+                "Erreur de communication", $"Le capteur n'a pas communiqué depuis le {lastCommunication.ToString("dd/MM/yyyy HH:mm")}");
         }
 
         public Alarm CreateAlarm(string deviceId, string siteId, Alarm.Type alarmType, Alarm.Gravity alarmGravity, string shortDescription, string description)
@@ -57,7 +40,7 @@ namespace SmartFreezeScheduleFA.Services
             return alarm;
         }
 
-        internal Dictionary<DateTime, FreezeForecast.FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezeForecast.FreezingProbability> freezingProbabilityList)
+        internal Dictionary<DateTime, FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezingProbability> freezingProbabilityList)
         {
             throw new NotImplementedException();
         }

@@ -16,17 +16,18 @@ namespace SmartFreezeScheduleFA.Services
             this.notificationService = notificationService;
         }
 
-        public void Run(int minHour, int maxHour, Alarm.Gravity gravity)
+        public void Run(int minHour, int? maxHour, Alarm.Gravity gravity)
         {
             int minMin = minHour * 60 + 5;
-            int minMax = maxHour * 60 + 5;
+            int? minMax = maxHour.HasValue ? (maxHour.Value * 60 + 5) : (int?)null;
 
             IEnumerable<Device> devices = deviceService.CheckDeviceCommunication(minMin, minMax);
             IList<Alarm> alarms = new List<Alarm>();
 
             foreach (var device in devices)
             {
-                alarmService.CreateCommunicationAlarm(device.Id, gravity);
+                Alarm alarm = alarmService.CreateCommunicationAlarm(device.Id, device.SiteId, device.LastCommunication, gravity);
+                alarms.Add(alarm);
             }
 
             notificationService.SendNotifications(alarms);

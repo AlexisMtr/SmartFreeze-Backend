@@ -1,10 +1,9 @@
-﻿using SmartFreezeScheduleFA.Repositories;
+﻿using SmartFreezeScheduleFA.Models;
+using SmartFreezeScheduleFA.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WeatherLibrary.Algorithmes.Freeze;
+using static WeatherLibrary.Algorithmes.Freeze.FreezeForecast;
 
 namespace SmartFreezeScheduleFA.Services
 {
@@ -17,12 +16,20 @@ namespace SmartFreezeScheduleFA.Services
             this.freezeRepository = freezeRepository;
         }
 
-        public void CreateFreezeAndThawByDevice(string deviceId, Dictionary<DateTime, FreezeForecast.FreezingProbability> dicoPredictionBy12h)
+        public void CreateFreezeAndThawByDevice(string deviceId, Dictionary<DateTime, FreezingProbability> dicoPredictionBy12h)
         {
+            IList<Freeze> freezeList = new List<Freeze>();
             foreach (var prediction in dicoPredictionBy12h)
             {
-                freezeRepository.AddFreeze(deviceId, prediction.Key, (int)prediction.Value);
+                freezeList.Add(new Freeze
+                {
+                    DeviceId = deviceId,
+                    Date = prediction.Key,
+                    TrustIndication = (int)prediction.Value
+                });
             }
+
+            freezeRepository.AddFreeze(freezeList.OrderBy(e => e.Date));
         }
     }
 }

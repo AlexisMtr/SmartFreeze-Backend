@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
 using SmartFreezeScheduleFA.Services;
 using WeatherLibrary.Algorithmes.Freeze;
@@ -24,14 +26,20 @@ namespace SmartFreezeScheduleFA.Tests
                 {date2, FreezeForecast.FreezingProbability.ZERO}
             };
             Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            freezeRepo.Setup(o => o.AddFreeze(It.IsAny<IEnumerable<Freeze>>())).Verifiable();
 
             //WHEN
             FreezeService service = new FreezeService(freezeRepo.Object);
             service.CreateFreezeAndThawByDevice(deviceId, dicoPredictionBy12h);
 
             //THEN
-            freezeRepo.Verify(o => o.AddFreeze("1", new DateTime(2018, 02, 13, 0, 0, 0), (int)FreezeForecast.FreezingProbability.IMMINENT));
-            freezeRepo.Verify(o => o.AddFreeze("1", new DateTime(2018, 02, 13, 12, 0, 0), (int)FreezeForecast.FreezingProbability.ZERO));
+            IEnumerable<Freeze> freezeList = new List<Freeze>
+            {
+                new Freeze { DeviceId = "1", Date = date, TrustIndication = (int)FreezeForecast.FreezingProbability.IMMINENT },
+                new Freeze { DeviceId = "1", Date = date2, TrustIndication = (int)FreezeForecast.FreezingProbability.ZERO }
+            };
+
+            freezeRepo.Verify(o => o.AddFreeze(It.Is<IEnumerable<Freeze>>(e => e.Count() == 2 && e.Any(i => i.Date == date) && e.Any(i => i.Date == date2))), Times.Once);
         }
     }
 }

@@ -3,13 +3,10 @@ using SmartFreezeScheduleFA.Configurations;
 using SmartFreezeScheduleFA.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartFreezeScheduleFA.Repositories
 {
-    class FreezeRepository
+    class FreezeRepository : IFreezeRepository
     {
         private readonly IMongoCollection<Freeze> collection;
 
@@ -27,6 +24,11 @@ namespace SmartFreezeScheduleFA.Repositories
                 Date = date,
                 TrustIndication = TrustIndication
             });
+        }
+
+        public void AddFreeze(IEnumerable<Freeze> freezeList)
+        {
+            collection.InsertMany(freezeList);
         }
     }
 }
