@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SmartFreezeScheduleFA.Models;
 
 namespace SmartFreezeScheduleFA.Repositories
@@ -10,5 +11,6 @@ namespace SmartFreezeScheduleFA.Repositories
         IEnumerable<Device> Get(IEnumerable<string> ids);
         IEnumerable<Device> GetFailsCommunicationBetween(int minBundaryMin, int? maxBoundaryMin = null);
         IEnumerable<AlarmNotification> GetNotificationDetails(IEnumerable<string> devicesIds);
+        IList<Alarm> GetCrossAlarmsByDevice(string deviceId, DateTime start, DateTime end);
     }
 }

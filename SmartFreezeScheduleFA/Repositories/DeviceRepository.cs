@@ -92,5 +92,28 @@ namespace SmartFreezeScheduleFA.Repositories
                 return items;
             });
         }
+
+        //TODO test
+        public IList<Alarm> GetCrossAlarmsByDevice(string deviceId, DateTime start, DateTime end)
+        {
+            return collection.AsQueryable()
+                .SelectMany(e => e.Devices)
+                .Where(e => e.Id == deviceId)
+                .SelectMany(e => e.Alarms)
+                .Where(e => ((start < e.End) && (start > e.Start)) || ((start < e.Start) && (end > e.Start)))
+                .ToList();
+        }
+
+        //TODO test
+        public void UpdateAlarm(string deviceId, string alarmId, DateTime start, DateTime end)
+        {
+            var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
+            var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
+            var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
+            UpdateDefinition<Site> update = Builders<Site>.Update.Set("Devices.$.Alarms.Start", start)
+                .Set("Devices.$.Alarms.End", end);
+
+            collection.FindOneAndUpdate(filter, update);
+        }
     }
 }

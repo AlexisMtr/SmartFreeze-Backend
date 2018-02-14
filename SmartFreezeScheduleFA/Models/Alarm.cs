@@ -37,5 +37,7 @@ namespace SmartFreezeScheduleFA.Models
         public DateTime OccuredAt { get; set; } 
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        public DateTime? Start { get; set; }
+        public DateTime? End { get; set; }
     }
 }

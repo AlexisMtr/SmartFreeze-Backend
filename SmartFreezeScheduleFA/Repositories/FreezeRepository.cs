@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using SmartFreezeScheduleFA.Configurations;
 using SmartFreezeScheduleFA.Models;
 using System;
@@ -29,6 +30,11 @@ namespace SmartFreezeScheduleFA.Repositories
         public void AddFreeze(IEnumerable<Freeze> freezeList)
         {
             collection.InsertMany(freezeList);
+        }
+
+        public Freeze getLastFreezeByDevice(string deviceId)
+        {
+            return (Freeze)collection.AsQueryable().Where(e => e.DeviceId == deviceId && e.Date < DateTime.UtcNow).OrderByDescending(e => e.Date).Take(1);
         }
     }
 }

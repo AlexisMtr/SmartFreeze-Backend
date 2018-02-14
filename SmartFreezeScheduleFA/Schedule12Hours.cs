@@ -42,16 +42,17 @@ namespace SmartFreezeScheduleFA
 
                     FreezeForecast freeze = await algorithme.Execute(item.Value, item.Key, current.Weather, forecast.Forecast, forecast.StationPosition);
 
-                    if (freeze.FreezingStart.HasValue)
+                    if (freeze.FreezingStart.HasValue) // TODO refactor le if car tj valeur de début
                     {
                         log.Info($"Create Alarm");
                         // TODO : complete process
-                        Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = alarmService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
+                        Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = freezeService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
                         freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
+                        alarmService.createFreezeAlarm(item.Value.DeviceId, item.Key.SiteId, averageFreezePrediction12h);
                         // - check gravity
                         // - check with Clarck possible values
-                        Alarm alarm = alarmService.CreateAlarm(item.Key.Id, item.Key.SiteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
-                        alarms.Add(alarm);
+                        //Alarm alarm = alarmService.CreateAlarm(item.Key.Id, item.Key.SiteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
+                        //alarms.Add(alarm);
                     }
                 }
 

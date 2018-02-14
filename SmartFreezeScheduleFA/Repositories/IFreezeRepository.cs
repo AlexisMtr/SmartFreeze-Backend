@@ -8,5 +8,6 @@ namespace SmartFreezeScheduleFA.Repositories
     {
         void AddFreeze(string deviceId, DateTime date, int TrustIndication);
         void AddFreeze(IEnumerable<Freeze> freezeList);
+        Freeze getLastFreezeByDevice(string deviceId);
     }
 }
