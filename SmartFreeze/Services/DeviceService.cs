@@ -29,9 +29,9 @@ namespace SmartFreeze.Services
             return deviceRepository.Create(device, siteId);
         }
 
-        public bool Update(Device device)
+        public bool Update(string deviceId, Device device)
         {
-            return deviceRepository.Update(device);
+            return deviceRepository.Update(deviceId, device);
         }
 
 

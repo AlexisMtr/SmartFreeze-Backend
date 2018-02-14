@@ -30,6 +30,14 @@ namespace SmartFreeze.Profiles
                     Altitude = s.Latitude,
                     Latitude = s.Latitude,
                 }));
+
+            CreateMap<DeviceUpdateDto, Device>()
+                .ForMember(d => d.Position, map => map.MapFrom(s => new Position
+                {
+                    Longitude = s.Longitude,
+                    Altitude = s.Latitude,
+                    Latitude = s.Latitude,
+                }));
         }
     }
 }

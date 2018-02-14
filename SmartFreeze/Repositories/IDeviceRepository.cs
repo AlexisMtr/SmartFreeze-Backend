@@ -12,7 +12,7 @@ namespace SmartFreeze.Repositories
 
         Device Create(Device device, string siteId);
 
-        bool Update(Device device);
+        bool Update(string deviceId, Device device);
 
 
         bool Delete(string deviceId);

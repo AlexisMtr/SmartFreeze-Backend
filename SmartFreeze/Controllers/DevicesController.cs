@@ -84,13 +84,13 @@ namespace SmartFreeze.Controllers
         [HttpPut("{deviceId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> UpdateDevice(string deviceId, [FromBody]DeviceRegistrationDto deviceRegistrationDto)
+        public async Task<IActionResult> UpdateDevice(string deviceId, [FromBody]DeviceUpdateDto deviceRegistrationDto)
         {
             //TODO : Create DTO for update (with only allowed fields)
             Device device = Mapper.Map<Device>(deviceRegistrationDto);
             device.Id = deviceId;
 
-            var isUpdated = deviceService.Update(device);
+            var isUpdated = deviceService.Update(deviceId, device);
 
             if (isUpdated) return Ok();
 

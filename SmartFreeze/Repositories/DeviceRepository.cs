@@ -42,15 +42,16 @@ namespace SmartFreeze.Repositories
             return device;
         }
 
-        public bool Update(Device device)
+        public bool Update(string deviceId, Device device)
         {
-            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == device.Id);
+            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
             var result = this.collection.FindOneAndUpdate(filter,
                Builders<Site>.Update.Set("Devices.$.Name", device.Name)
                .Set("Devices.$.IsFavorite", device.IsFavorite)
                .Set("Devices.$.Zone", device.Zone)
                .Set("Devices.$.SiteId", device.SiteId)
-               .Set("Devices.$.Position", device.Position));
+               .Set("Devices.$.Position.Latitude", device.Position.Latitude)
+               .Set("Devices.$.Position.Longitude", device.Position.Longitude));
 
             return result != null;
         }
