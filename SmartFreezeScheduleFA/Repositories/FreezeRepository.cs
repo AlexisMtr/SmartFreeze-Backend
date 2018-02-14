@@ -34,7 +34,11 @@ namespace SmartFreezeScheduleFA.Repositories
 
         public Freeze getLastFreezeByDevice(string deviceId)
         {
-            return (Freeze)collection.AsQueryable().Where(e => e.DeviceId == deviceId && e.Date < DateTime.UtcNow).OrderByDescending(e => e.Date).Take(1);
+            return collection.AsQueryable()
+                .Where(e => e.DeviceId == deviceId && e.Date < DateTime.UtcNow)
+                .OrderByDescending(e => e.Date)
+                .Take(1)
+                .FirstOrDefault();
         }
     }
 }

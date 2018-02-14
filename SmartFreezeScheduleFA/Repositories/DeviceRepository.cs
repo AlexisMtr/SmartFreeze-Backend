@@ -115,5 +115,16 @@ namespace SmartFreezeScheduleFA.Repositories
 
             collection.FindOneAndUpdate(filter, update);
         }
+
+        //TODO todo test
+        public void deleteAlarmById(string deviceId, string alarmId)
+        {
+            var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
+            var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
+            var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
+
+            //var update = Builders<Site>.Update.PullFilter(e => e.Devices, a => a.alarmId == alarmId);
+            //collection.FindOneAndUpdate(filter, update);
+        }
     }
 }

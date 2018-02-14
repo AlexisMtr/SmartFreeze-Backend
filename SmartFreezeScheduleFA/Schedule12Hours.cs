@@ -48,7 +48,7 @@ namespace SmartFreezeScheduleFA
                         // TODO : complete process
                         Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = freezeService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
                         freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
-                        alarmService.createFreezeAlarm(item.Value.DeviceId, item.Key.SiteId, averageFreezePrediction12h);
+                        alarmService.CreateFreezeAlarm(item.Value.DeviceId, item.Key.SiteId, averageFreezePrediction12h);
                         // - check gravity
                         // - check with Clarck possible values
                         //Alarm alarm = alarmService.CreateAlarm(item.Key.Id, item.Key.SiteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, string.Empty, string.Empty);
