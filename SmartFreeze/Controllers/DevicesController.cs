@@ -15,11 +15,13 @@ namespace SmartFreeze.Controllers
     {
         private readonly DeviceService deviceService;
         private readonly TelemetryService telemetryService;
+        private readonly AlarmService alarmService;
 
-        public DevicesController(DeviceService deviceService, TelemetryService telemetryService)
+        public DevicesController(DeviceService deviceService, TelemetryService telemetryService, AlarmService alarmService)
         {
             this.deviceService = deviceService;
             this.telemetryService = telemetryService;
+            this.alarmService = alarmService;
         }
 
         [HttpGet]
@@ -57,11 +59,59 @@ namespace SmartFreeze.Controllers
             return Ok(Mapper.Map<PaginatedItemsDto<TelemetryDto>>(telemetry));
         }
 
+        [HttpGet("{deviceId}/alarms")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PaginatedItemsDto<AlarmDetailsDto>))]
+        public async Task<IActionResult> GetAlarms(string deviceId, [FromQuery]AlarmFilter filter, int rowsPerPage = 0, int pageNumber = 1)
+        {
+            PaginatedItems<Alarm> alarms = alarmService.GetByDevice(deviceId, filter, rowsPerPage, pageNumber);
+            return Ok(Mapper.Map<PaginatedItemsDto<AlarmDetailsDto>>(alarms));
+        }
+
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> RegisterDevice([FromQuery]ApplicationContext context, [FromBody]DeviceRegistrationDto deviceRegistration)
+        public async Task<IActionResult> RegisterDevice([FromQuery] string idSite, [FromQuery] string idDevice, [FromBody]DeviceRegistrationDto deviceRegistration)
         {
-            return StatusCode((int)HttpStatusCode.NotImplemented);
+
+            Device device = Mapper.Map<Device>(deviceRegistration);
+            device.Id = idDevice;
+            Device newDevice = deviceService.Create(device, idSite);
+
+            return Ok(Mapper.Map<DeviceRegistrationDto>(newDevice));
+        }
+
+   
+
+        [HttpPut("{deviceId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateDevice(string deviceId, [FromBody]DeviceRegistrationDto deviceRegistrationDto)
+        {
+            //TODO : Create DTO for update (with only allowed fields)
+            Device device = Mapper.Map<Device>(deviceRegistrationDto);
+            device.Id = deviceId;
+
+            var isUpdated = deviceService.Update(device);
+
+            if (isUpdated) return Ok();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{deviceId}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteDevice(string deviceId)
+        {
+            if (deviceService.Delete(deviceId)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPut("{deviceId}/favorite")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> ManageFavorite(string deviceId, [FromQuery]bool isFavorite)
+        {
+            deviceService.Managefavorite(deviceId, isFavorite);
+            return Ok();
         }
     }
 }
