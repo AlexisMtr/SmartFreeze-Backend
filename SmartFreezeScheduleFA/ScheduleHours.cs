@@ -10,7 +10,7 @@ namespace SmartFreezeScheduleFA
     public static class ScheduleHours
     {
         [FunctionName("ScheduleHours")]
-        public static void Run([TimerTrigger("0 */5 */1 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 5 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             DependencyInjection.ConfigureInjection();

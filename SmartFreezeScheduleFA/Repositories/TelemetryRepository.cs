@@ -43,8 +43,8 @@ namespace SmartFreezeScheduleFA.Repositories
                 items.Add(BsonSerializer.Deserialize<BsonGroupClass<Telemetry>>(e.ToBson()));
                 return items;
             });
-
-            return elements.ToDictionary(k => k.Id, v => v.Accumulator);
+            
+            return elements.Where(e => e.Id != null).ToDictionary(k => k.Id, v => v.Accumulator);
         }
 
         private class BsonGroupClass<T>

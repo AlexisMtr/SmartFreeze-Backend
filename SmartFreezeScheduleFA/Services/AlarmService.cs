@@ -67,7 +67,7 @@ namespace SmartFreezeScheduleFA.Services
         {
             //créé des alarmes de freeze (date début et date fin) et thaw (date début)
             //TODO ajouter la condition ou lastFreeze est 
-            Freeze lastFreeze = freezeRepository.getLastFreezeByDevice(deviceId);
+            Freeze lastFreeze = freezeRepository.GetLastFreezeByDevice(deviceId);
             bool haveToCheckEndDate = false;
             bool haveToCheckEndDateForProlongation = false;
             bool checkForEndOFGel = false;

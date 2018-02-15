@@ -17,14 +17,16 @@ namespace SmartFreezeScheduleFA.Repositories
                 .GetCollection<Freeze>(nameof(Freeze));
         }
 
-        public void AddFreeze(string deviceId, DateTime date, int TrustIndication)
+        public void AddOrUpdateFreeze(string deviceId, DateTime date, int trustIndication)
         {
-            collection.InsertOne(new Freeze()
-            {
-                DeviceId = deviceId,
-                Date = date,
-                TrustIndication = TrustIndication
-            });
+            FilterDefinition<Freeze> queryFilterDate = Builders<Freeze>.Filter.Eq(e => e.Date, date);
+            FilterDefinition<Freeze> queryFilterDevice = Builders<Freeze>.Filter.Eq(e => e.DeviceId, deviceId);
+            UpdateDefinition<Freeze> update = Builders<Freeze>.Update
+                .Set(e => e.Date, date)
+                .Set(e => e.DeviceId, deviceId)
+                .Set(e => e.TrustIndication, trustIndication);
+
+            collection.UpdateOne(Builders<Freeze>.Filter.And(queryFilterDate, queryFilterDevice), update, new UpdateOptions { IsUpsert = true });
         }
 
         public void AddFreeze(IEnumerable<Freeze> freezeList)
@@ -32,7 +34,7 @@ namespace SmartFreezeScheduleFA.Repositories
             collection.InsertMany(freezeList);
         }
 
-        public Freeze getLastFreezeByDevice(string deviceId)
+        public Freeze GetLastFreezeByDevice(string deviceId)
         {
             return collection.AsQueryable()
                 .Where(e => e.DeviceId == deviceId && e.Date < DateTime.UtcNow)
