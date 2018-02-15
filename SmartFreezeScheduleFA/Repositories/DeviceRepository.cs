@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using SmartFreezeScheduleFA.Helpers;
 using Newtonsoft.Json;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 
 namespace SmartFreezeScheduleFA.Repositories
 {
@@ -97,24 +98,83 @@ namespace SmartFreezeScheduleFA.Repositories
         //TODO test
         public IList<Alarm> GetCrossAlarmsByDevice(string deviceId, DateTime start, DateTime end)
         {
-            return collection.AsQueryable()
-                .SelectMany(e => e.Devices)
-                .Where(e => e.Id == deviceId)
-                .SelectMany(e => e.Alarms)
-                .Where(e => ((start < e.End) && (start > e.Start)) || ((start < e.Start) && (end > e.Start)))
-                .ToList();
+            IEnumerable<BsonDocument> pipelineDef = GetPipelineDefinition(deviceId, start, end);
+            PipelineDefinition<Site, BsonDocument> pipelineDefinition = PipelineDefinition<Site, BsonDocument>.Create(pipelineDef);
+
+            return BsonIterator.Iterate(collection, pipelineDefinition, (BsonDocument e, IList<Alarm> items) =>
+            {
+                if (items == null) items = new List<Alarm>();
+                
+                items.Add(BsonSerializer.Deserialize<SingleBsonItem<Alarm>>(e).Item);
+
+                return items;
+            });
+        }
+
+        private IEnumerable<BsonDocument> GetPipelineDefinition(string deviceId, DateTime start, DateTime end)
+        {
+            BsonDocument unwindDeviceStage = new BsonDocument("$unwind", "$Devices");
+            BsonDocument projectDeviceStage = new BsonDocument("$project", new BsonDocument
+            {
+                { "_id" , 0 },
+                { "Devices", "$Devices" }
+            });
+            BsonDocument matchDeviceStage = new BsonDocument("$match", new BsonDocument
+            {
+                { "Devices.Id", deviceId }
+            });
+            BsonDocument unwindAlarmStage = new BsonDocument("$unwind", "$Devices.Alarms");
+            BsonDocument projectAlarmsStage = new BsonDocument("$project", new BsonDocument
+            {
+                { "_id" , 0 },
+                { "Item", "$Devices.Alarms" }
+            });
+
+            BsonDocument alarmDateBetweenStage = new BsonDocument
+            {
+                { "Item.End", new BsonDocument("$gt", start) },
+                { "Item.Start", new BsonDocument("$lte", start) }
+            };
+            BsonDocument startBetweenStage = new BsonDocument
+            {
+                { "Item.Start", new BsonDocument
+                    {
+                        { "$gte", start },
+                        { "$lt", end }
+                    }
+                }
+            };
+
+            BsonDocument orStage = new BsonDocument("$match",
+                new BsonDocument("$or", new BsonArray(new List<BsonDocument> { alarmDateBetweenStage, startBetweenStage })));
+
+            BsonDocument matchTypeStage = new BsonDocument("$match", new BsonDocument("Item.AlarmType", Alarm.Type.FreezeWarning));
+
+            return new List<BsonDocument> { unwindDeviceStage, projectDeviceStage, matchDeviceStage, unwindAlarmStage, projectAlarmsStage, orStage, matchTypeStage };
         }
 
         //TODO test
         public void UpdateAlarm(string deviceId, string alarmId, DateTime start, DateTime end)
         {
-            var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
-            var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
-            var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
-            UpdateDefinition<Site> update = Builders<Site>.Update.Set("Devices.$.Alarms.Start", start)
-                .Set("Devices.$.Alarms.End", end);
+            //var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
+            //var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
+            //var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
+            //UpdateDefinition<Site> update = Builders<Site>.Update.Set("Devices.$.Alarms.Start", start)
+            //    .Set("Devices.$.Alarms.End", end);
 
-            collection.FindOneAndUpdate(filter, update);
+            //collection.FindOneAndUpdate(filter, update);
+
+            var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarmId);
+            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
+
+            Site site = collection.Find(filter).ToList().FirstOrDefault();
+            Device devices = site.Devices.FirstOrDefault(e => e.Alarms.Any(a => a.Id == alarmId));
+            Alarm alarm = devices.Alarms.First(e => e.Id == alarmId);
+            int index = (devices.Alarms as List<Alarm>).IndexOf(alarm);
+
+            UpdateResult result = collection.UpdateOne(filter, Builders<Site>.Update
+                .Set($"Devices.$.Alarms.{index}.Start", start)
+                .Set($"Devices.$.Alarms.{index}.End", end), new UpdateOptions { IsUpsert = true });
         }
 
         //TODO todo test
@@ -142,6 +202,12 @@ namespace SmartFreezeScheduleFA.Repositories
             UpdateResult result = collection.UpdateOne(filter, Builders<Site>.Update.Set($"Devices.$.Alarms.{index}.IsActive", alarm.IsActive));
 
             return result.ModifiedCount == 1;
+        }
+
+
+        private class SingleBsonItem<T>
+        {
+            public T Item { get; set; }
         }
     }
 }
