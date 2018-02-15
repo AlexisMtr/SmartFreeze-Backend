@@ -24,7 +24,12 @@ namespace SmartFreeze.Models
         }
 
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
+
+        public Alarm()
+        {
+            _id = ObjectId.GenerateNewId();
+        }
 
         public string Id { get; set; }
         public string DeviceId { get; set; }

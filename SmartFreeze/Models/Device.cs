@@ -9,7 +9,13 @@ namespace SmartFreeze.Models
     public class Device
     {
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
+
+        public Device()
+        {
+            _id = ObjectId.GenerateNewId();
+        }
+
 
         public string Id { get; set; }
         public string Name { get; set; }

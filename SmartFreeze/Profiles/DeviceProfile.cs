@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using SmartFreeze.Dtos;
 using SmartFreeze.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SmartFreeze.Profiles
@@ -24,13 +26,15 @@ namespace SmartFreeze.Profiles
             CreateMap<PaginatedItems<Device>, PaginatedItemsDto<DeviceOverviewDto>>();
 
             CreateMap<DeviceRegistrationDto, Device>()
+                .ForMember(d => d.Alarms, opt => opt.UseValue(new List<Alarm>()))
+                .ForMember(d => d.LastCommunication, opt => opt.UseValue(DateTime.UtcNow))
                 .ForMember(d => d.Position, map => map.MapFrom(s => new Position
                 {
                     Longitude = s.Longitude,
-                    Altitude = s.Latitude,
+                    Altitude = s.Altitude,
                     Latitude = s.Latitude,
                 }));
-
+            
             CreateMap<DeviceUpdateDto, Device>()
                 .ForMember(d => d.Position, map => map.MapFrom(s => new Position
                 {

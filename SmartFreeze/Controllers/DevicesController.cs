@@ -73,14 +73,14 @@ namespace SmartFreeze.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> RegisterDevice([FromQuery] string idSite, [FromQuery] string idDevice, [FromBody]DeviceRegistrationDto deviceRegistration)
+        public async Task<IActionResult> RegisterDevice([FromBody]DeviceRegistrationDto deviceRegistration)
         {
-
             Device device = Mapper.Map<Device>(deviceRegistration);
-            device.Id = idDevice;
-            Device newDevice = deviceService.Create(device, idSite);
+            Device newDevice = deviceService.Create(device, device.SiteId);
 
-            return Ok(Mapper.Map<DeviceRegistrationDto>(newDevice));
+            if (newDevice == null) return StatusCode((int)HttpStatusCode.NotFound, new { Message = $"No site found with Id {device.SiteId}" });
+
+            return Ok(Mapper.Map<DeviceOverviewDto>(newDevice));
         }
         
         [HttpPut("{deviceId}")]

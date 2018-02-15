@@ -36,10 +36,9 @@ namespace SmartFreeze.Repositories
 
         public Device Create(Device device, string siteId)
         {
-            device.Id = "device"+DateTime.UtcNow.ToString("yyyyMMddHHmmss");
             UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Devices, device);
-            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
-            return device;
+            UpdateResult result = collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
+            return result.ModifiedCount == 0 ? null : device;
         }
 
         public bool Update(string deviceId, Device device)
