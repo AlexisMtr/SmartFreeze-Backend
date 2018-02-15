@@ -16,7 +16,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
         }
 
         /// <summary>
-        /// 
+        /// Execute the freezing algorithme on a specific device
         /// </summary>
         /// <param name="device">Device telemetry with temperature in Celsius</param>
         /// <returns></returns>
@@ -33,13 +33,15 @@ namespace WeatherLibrary.Algorithmes.Freeze
         }
 
         /// <summary>
-        /// Execute the freezing algorithme which return a FreezeForcast object which contains 
+        /// Execute the freezing algorithme depending on the forecast weather.
+        /// It return a FreezeForcast object which contains 
         /// a dictionnary of DateTime,FreezingProbability
         /// There is four levels of probability :
         /// ZERO = 0% of freezing
         /// LOW = The probability of freeze is under 50%
         /// MEDIUM = The probability of freezing is between 50% and 80%
         /// HIGH = The probability of freezing is greater than 80%
+        /// IMMINENT = The probability of freezing is 100% 
         /// </summary>
         /// <param name="device">Device telemetry with temperature in Celsius</param>
         /// <param name="devicePosition"></param>
