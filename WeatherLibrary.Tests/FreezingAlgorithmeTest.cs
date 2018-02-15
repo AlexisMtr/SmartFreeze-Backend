@@ -203,8 +203,8 @@ namespace WeatherLibrary.Tests
 
             //execute 
             FreezeForecast freeze = freezeAlgo.Execute(device, stationDevice, freezingToday, forecastList, station).Result;
-
-            //test voir l'idée du coeff ... 
+            
+            //test
             Check.That(freeze.FreezingStart.HasValue).IsEqualTo(true);
             Check.That(altitudeClient.Object.GetAltitude(0, 0).Result.Altitude - stationDevice.Altitude).IsStrictlyLessThan(Math.Abs(100));
             Console.WriteLine((forecastList as List<IWeather>).Count);
@@ -230,7 +230,7 @@ namespace WeatherLibrary.Tests
             stationDeviceMock.Setup(e => e.Altitude).Returns(1000);
             IStationPosition stationDevice = stationDeviceMock.Object;
 
-            WeatherTest freezingToday = new WeatherTest { Temperature = 6.0, Humidity = 80, Date = now };
+            WeatherTest freezingToday = new WeatherTest { Temperature = 4.0, Humidity = 80, Date = now };
             IEnumerable<IWeather> forecastList = new List<IWeather> { freezingToday };
 
             WeatherTest tomorrow = new WeatherTest { Temperature = -10.0, Humidity = 90, Date = now.AddDays(1) };

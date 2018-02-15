@@ -33,7 +33,13 @@ namespace WeatherLibrary.Algorithmes.Freeze
         }
 
         /// <summary>
-        /// 
+        /// Execute the freezing algorithme which return a FreezeForcast object which contains 
+        /// a dictionnary of DateTime,FreezingProbability
+        /// There is four levels of probability :
+        /// ZERO = 0% of freezing
+        /// LOW = The probability of freeze is under 50%
+        /// MEDIUM = The probability of freezing is between 50% and 80%
+        /// HIGH = The probability of freezing is greater than 80%
         /// </summary>
         /// <param name="device">Device telemetry with temperature in Celsius</param>
         /// <param name="devicePosition"></param>
@@ -49,13 +55,22 @@ namespace WeatherLibrary.Algorithmes.Freeze
                 FreezingStart = forecast.OrderBy(e => e.Date).First().Date,
                 FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date
             };
-            IWeather estimationWeather = await EstimateWeatherByAltitudeDiff(device, forecastStation, devicePosition);
-            double diffTemperature = estimationWeather.Temperature - device.Temperature;
-            double diffHumidity = device.Humidity - currentWeather.Humidity;
+            double deviceTemperature = device.Temperature;
+            double estimatateDeviceTemperature = await EstimateWeatherByAltitudeDiff(deviceTemperature, forecastStation, devicePosition);
+            if (estimatateDeviceTemperature == 0.0)
+            {
+                device.Temperature = 0.0000001;
+            }
+            if (currentWeather.Humidity == 0.0)
+            {
+                device.Humidity = 0.0000001;
+            }
+            double coefTemperature = Math.Abs(device.Temperature / estimatateDeviceTemperature);
+            double coefHumidity = Math.Abs(device.Humidity / currentWeather.Humidity);
 
             IWeather theoricWeather = device;
-            theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
-            theoricWeather.Humidity = diffHumidity + currentWeather.Humidity;
+            theoricWeather.Temperature = coefTemperature * estimatateDeviceTemperature;
+            theoricWeather.Humidity = coefHumidity * currentWeather.Humidity;
 
             freezeForecast.FreezingProbabilityList[currentWeather.Date] = GetProbabilityFreezing(theoricWeather);
 
@@ -64,10 +79,10 @@ namespace WeatherLibrary.Algorithmes.Freeze
             foreach (IWeather forecastItem in forecast)
             {
 
-                estimationWeather = forecastEstimation.ElementAt(i);
+                IWeather estimationWeather = forecastEstimation.ElementAt(i);
                 i++;
-                theoricWeather.Temperature = diffTemperature + estimationWeather.Temperature;
-                theoricWeather.Humidity = diffHumidity + forecastItem.Humidity;
+                theoricWeather.Temperature = coefTemperature + estimationWeather.Temperature;
+                theoricWeather.Humidity = coefHumidity + forecastItem.Humidity;
 
                 freezeForecast.FreezingProbabilityList[forecastItem.Date] = GetProbabilityFreezing(theoricWeather);
 
@@ -77,18 +92,19 @@ namespace WeatherLibrary.Algorithmes.Freeze
             return freezeForecast;
         }
 
-        private async Task<IWeather> EstimateWeatherByAltitudeDiff(IWeather weather, IStationPosition forecastStation, IStationPosition expectedStation)
+        private async Task<double> EstimateWeatherByAltitudeDiff(double deviceTemperature, IStationPosition forecastStation, IStationPosition expectedStation)
         {
             forecastStation.Altitude = (await client.GetAltitude(forecastStation.Latitude, forecastStation.Longitude)).Altitude;
 
             double elevationBetweenWeatherStationAndSite = forecastStation.Altitude - expectedStation.Altitude;
+            double estimateTemperature = deviceTemperature;
             // Only if altitude diff is greater than 100
             if (Math.Abs(elevationBetweenWeatherStationAndSite) >= 100.0)
             {
-                weather.Temperature = ConvertTemperature(weather.Temperature, elevationBetweenWeatherStationAndSite);
+                estimateTemperature = ConvertTemperature(estimateTemperature, elevationBetweenWeatherStationAndSite);
             }
 
-            return weather;
+            return estimateTemperature;
         }
 
         //Reduce the number of calls to Google Map Elevation API
@@ -99,13 +115,15 @@ namespace WeatherLibrary.Algorithmes.Freeze
             IEnumerable<IWeather> theoricWeatherList = new List<IWeather>();
 
             double elevationBetweenWeatherStationAndSite = forecastStation.Altitude - expectedStation.Altitude;
+
             // Only if altitude diff is greater than 100
             if (Math.Abs(elevationBetweenWeatherStationAndSite) >= 100.0)
             {
                 foreach (IWeather f in forecast)
                 {
-                    f.Temperature = ConvertTemperature(f.Temperature, elevationBetweenWeatherStationAndSite);
-                    (theoricWeatherList as List<IWeather>).Add(f);
+                    IWeather estimateWeather = f;
+                    estimateWeather.Temperature = ConvertTemperature(f.Temperature, elevationBetweenWeatherStationAndSite);
+                    (theoricWeatherList as List<IWeather>).Add(estimateWeather);
                 }
                 return theoricWeatherList;
             }
@@ -168,15 +186,16 @@ namespace WeatherLibrary.Algorithmes.Freeze
             {
                 return FreezeForecast.FreezingProbability.IMMINENT;
             }
-            else if ((theoricWeather.Temperature <= 0.0) && (theoricWeather.Humidity >= 80.0))
+            else if ((theoricWeather.Temperature <= 1.0) && (theoricWeather.Humidity >= 80.0))
             {
                 return FreezeForecast.FreezingProbability.HIGH;
             }
-            else if ((theoricWeather.Temperature <= 0.0) && (theoricWeather.Humidity < 80.0))
+            else if ((theoricWeather.Temperature <= 1.0) && (theoricWeather.Humidity < 80.0))
             {
                 return FreezeForecast.FreezingProbability.MEDIUM;
             }
-            else if (((theoricWeather.Temperature <= 5.0) && (theoricWeather.Temperature > 0)))
+            else if (((theoricWeather.Temperature <= 5.0) && (theoricWeather.Temperature > 1
+                )))
             {
                 return FreezeForecast.FreezingProbability.MINIMUM;
             }
