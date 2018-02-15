@@ -18,37 +18,40 @@ namespace SmartFreezeScheduleFA.Tests
         [TestInitialize]
         public void Setup()
         {
-            alarmsList = new List<Alarm> {
-                            new Alarm
-                            {
-                                Id = "1",
-                                AlarmType = Alarm.Type.CommuniationFailure,
-                                AlarmGravity = Alarm.Gravity.Information,
-                                Description ="",
-                                IsActive = false,
-                                DeviceId = "1",
-                                OccuredAt = DateTime.UtcNow,
-                                SiteId = "1"
-                            },
-                            new Alarm
-                            {
-                                Id = "2",
-                                AlarmType = Alarm.Type.CommuniationFailure,
-                                AlarmGravity = Alarm.Gravity.Information,
-                                Description ="",
-                                IsActive = false,
-                                DeviceId = "1",
-                                OccuredAt = DateTime.UtcNow,
-                                SiteId = "1"
-                            }
-                };
+            alarmsList = new List<Alarm>
+            {
+                new Alarm
+                {
+                    Id = "1",
+                    AlarmType = Alarm.Type.CommuniationFailure,
+                    AlarmGravity = Alarm.Gravity.Information,
+                    Description ="",
+                    IsActive = false,
+                    DeviceId = "1",
+                    OccuredAt = DateTime.UtcNow,
+                    SiteId = "1"
+                },
+                new Alarm
+                {
+                    Id = "2",
+                    AlarmType = Alarm.Type.CommuniationFailure,
+                    AlarmGravity = Alarm.Gravity.Information,
+                    Description ="",
+                    IsActive = false,
+                    DeviceId = "1",
+                    OccuredAt = DateTime.UtcNow,
+                    SiteId = "1"
+                }
+            };
+
             deviceList = new List<Device>
             {
-                new Device {
-                Id = "1",
-                IsFavorite = true,
-                Name = "Test",
-                Alarms = alarmsList
+                new Device
+                {
+                    Id = "1",
+                    IsFavorite = true,
+                    Name = "Test",
+                    Alarms = alarmsList
                 }
              };
         }
@@ -76,9 +79,11 @@ namespace SmartFreezeScheduleFA.Tests
             //initialize
             Mock<IDeviceRepository> deviceRepoMock = new Mock<IDeviceRepository>();
             Mock<ITelemetryRepository> telemetryRepoMock = new Mock<ITelemetryRepository>();
+            Mock<IFreezeRepository> freezeReop = new Mock<IFreezeRepository>();
 
-
-            deviceRepoMock.Setup(o => o.GetFailsCommunicationBetween(7, It.IsAny<int>())).Returns(deviceList);
+            int minMin = 1 * 60 + 5;
+            int minMax = 2 * 60 + 5;
+            deviceRepoMock.Setup(o => o.GetFailsCommunicationBetween(minMin, minMax)).Returns(deviceList);
 
 
             //deviceRepoMock.Setup(o => o.AddAlarm("1", new Alarm
@@ -96,18 +101,19 @@ namespace SmartFreezeScheduleFA.Tests
 
 
             DeviceService deviceService = new DeviceService(deviceRepoMock.Object, telemetryRepoMock.Object);
-            AlarmService alarmService = new AlarmService(deviceRepoMock.Object);
+            AlarmService alarmService = new AlarmService(deviceRepoMock.Object, freezeReop.Object);
             NotificationService notificationService = new NotificationService(deviceRepoMock.Object);
 
             CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService);
 
             //execute 
-            communicationStateService.Run(1, 2, Alarm.Gravity.Information);
+            communicationStateService.Run(1, 2, Alarm.Gravity.Serious);
 
             //tests
-            Check.That(deviceList[0].Alarms.Count()).IsEqualTo(3);
-            
 
+            // TODO : check tests (error)
+
+            deviceRepoMock.Verify(o => o.UpdateStatusAlarm("1", It.IsAny<Alarm>()), Times.Once);
         }
 
     }

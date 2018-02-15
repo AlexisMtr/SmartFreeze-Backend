@@ -1,5 +1,6 @@
 ﻿using SmartFreezeScheduleFA.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SmartFreezeScheduleFA.Services
 {
@@ -40,9 +41,17 @@ namespace SmartFreezeScheduleFA.Services
                 }
                 if (createAlarm)
                 {
-                    Alarm alarm = (device.Alarms as List<Alarm>).FindLast(e => e.AlarmGravity.Equals(gravity + 1) && e.IsActive);
-                    alarm.IsActive = false;
-                    alarmService.UpdateAlarm(device.Id, alarm);
+                    Alarm alarm = device.Alarms
+                        .Where(e => e.AlarmType == Alarm.Type.CommuniationFailure)
+                        .Where(e => (int)e.AlarmGravity < (int)gravity && e.IsActive)
+                        .OrderBy(e => e.OccuredAt).LastOrDefault();
+
+                    if(alarm != null)
+                    {
+                        alarm.IsActive = false;
+                        alarmService.UpdateAlarm(device.Id, alarm);
+                    }
+
                     alarmService.CreateCommunicationAlarm(device.Id, device.SiteId, device.LastCommunication, gravity);
                 }
             }
