@@ -30,7 +30,7 @@ namespace SmartFreeze.Repositories
 
         public Dictionary<string, IEnumerable<Freeze>> GetByDevice(IEnumerable<string> devicesIds = null, DateTime? from = null)
         {
-            PipelineDefinition<Freeze, BsonDocument> pipelineDefinition = PipelineDefinition<Freeze, BsonDocument>.Create(GetPipeline(devicesIds));
+            PipelineDefinition<Freeze, BsonDocument> pipelineDefinition = PipelineDefinition<Freeze, BsonDocument>.Create(GetPipeline(devicesIds, from));
 
             return BsonIterator.Iterate(collection, pipelineDefinition, (BsonDocument e, Dictionary<string, IEnumerable<Freeze>> items) =>
             {
