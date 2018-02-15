@@ -11,5 +11,6 @@ namespace SmartFreeze.Repositories
         IEnumerable<Alarm> GetByDevice(string deviceId, DeviceAlarmFilter filter, int rowsPerPage, int pageNumber);
         int Count(DeviceAlarmFilter filter);
         int CountByDevice(string deviceId, DeviceAlarmFilter filter);
+        bool SetAlarmToRead(string alarmId);
     }
 }

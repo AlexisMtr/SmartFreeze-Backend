@@ -22,7 +22,8 @@ namespace SmartFreeze.Services
                 Context = (filter as AlarmFilter).Context,
                 AlarmType = (filter as AlarmFilter).AlarmType,
                 Gravity = (filter as AlarmFilter).Gravity,
-                DeviceId = string.Empty
+                DeviceId = string.Empty,
+                ReadFilter = (filter as AlarmFilter).ReadFilter
             };
 
             var totalCount = alarmRepository.Count(alarmFilter);
@@ -42,7 +43,8 @@ namespace SmartFreeze.Services
             {
                 AlarmType = (filter as AlarmFilter).AlarmType,
                 Gravity = (filter as AlarmFilter).Gravity,
-                DeviceId = deviceId
+                DeviceId = deviceId,
+                ReadFilter = (filter as AlarmFilter).ReadFilter
             };
             
             var totalCount = alarmRepository.CountByDevice(deviceId, alarmFilter);
@@ -54,6 +56,11 @@ namespace SmartFreeze.Services
                 TotalItemsCount = totalCount,
                 Items = alarmRepository.GetByDevice(deviceId, alarmFilter, rowsPerPage, pageNumber)
             };
+        }
+
+        public bool Ack(string alarmId)
+        {
+            return alarmRepository.SetAlarmToRead(alarmId);
         }
     }
 }

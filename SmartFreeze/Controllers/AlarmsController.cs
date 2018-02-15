@@ -26,5 +26,13 @@ namespace SmartFreeze.Controllers
             PaginatedItems<Alarm> alarms = alarmService.GetAll(filter, rowsPerPage, pageNumber);
             return Ok(Mapper.Map<PaginatedItemsDto<AlarmDetailsDto>>(alarms));
         }
+
+        [HttpPut("{alarmId}/ack")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotModified)]
+        public async Task<IActionResult> Ack([FromRoute]string alarmId)
+        {
+            return alarmService.Ack(alarmId) ? Ok() : StatusCode((int)HttpStatusCode.NotModified);
+        }
     }
 }

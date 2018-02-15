@@ -11,6 +11,7 @@ namespace SmartFreeze.Filters
         public Alarm.Gravity Gravity { get; set; }
         public Alarm.Type AlarmType { get; set; }
         public string DeviceId { get; set; }
+        public ReadFilter ReadFilter { get; set; }
 
         public IList<BsonDocument> CountAlarmsPipeline()
         {
@@ -71,6 +72,24 @@ namespace SmartFreeze.Filters
                 pipeline.Add(matchDevice);
             }
 
+            if(ReadFilter == ReadFilter.Read)
+            {
+                BsonDocument unreadStage = new BsonDocument("$match", new BsonDocument
+                {
+                    { "Devices.Alarms.IsRead", true }
+                });
+                pipeline.Add(unreadStage);
+            }
+            else if(ReadFilter == ReadFilter.Unread)
+            {
+                BsonDocument readStage = new BsonDocument("$match", new BsonDocument("$or", new BsonArray()
+                {
+                    new BsonDocument("Devices.Alarms.IsRead", false),
+                    new BsonDocument("Devices.Alarms.IsRead", new BsonDocument("$exists", false))
+                }));
+                pipeline.Add(readStage);
+            }
+            
             BsonDocument unwindAlarms = new BsonDocument("$unwind", "$Devices.Alarms");
             pipeline.Add(unwindAlarms);
             BsonDocument projectAlarms = new BsonDocument("$project", new BsonDocument

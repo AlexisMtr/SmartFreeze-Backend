@@ -35,6 +35,7 @@ namespace SmartFreeze.Models
         public string DeviceId { get; set; }
         public string SiteId { get; set; }
         public bool IsActive { get; set; }
+        public bool IsRead { get; set; }
         [BsonRepresentation(BsonType.Int32)]
         public Type AlarmType { get; set; }
         [BsonRepresentation(BsonType.Int32)]
