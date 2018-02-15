@@ -43,7 +43,7 @@ namespace SmartFreezeScheduleFA.Services
                 {
                     Alarm alarm = device.Alarms
                         .Where(e => e.AlarmType == Alarm.Type.CommuniationFailure)
-                        .Where(e => (int)e.AlarmGravity < (int)gravity && e.IsActive)
+                        .Where(e => (int)e.AlarmGravity == ((int)gravity+1) && e.IsActive)
                         .OrderBy(e => e.OccuredAt).LastOrDefault();
 
                     if(alarm != null)

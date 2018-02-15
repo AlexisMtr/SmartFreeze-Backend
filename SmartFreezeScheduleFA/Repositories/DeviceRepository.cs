@@ -130,12 +130,18 @@ namespace SmartFreezeScheduleFA.Repositories
 
         public bool UpdateStatusAlarm(string deviceId, Alarm alarm)
         {
+
             var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarm.Id);
             var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
 
-            var result = this.collection.FindOneAndUpdate(filter, Builders<Site>.Update.Set("Alarm.$.IsActive", alarm.IsActive));
+            Site site = collection.Find(filter).ToList().FirstOrDefault();
+            Device devices = site.Devices.FirstOrDefault(e => e.Alarms.Any(a => a.Id == alarm.Id));
+            Alarm alarmBase = devices.Alarms.First(e => e.Id == alarm.Id);
+            int index = (devices.Alarms as List<Alarm>).IndexOf(alarmBase);
 
-            return result != null;
+            UpdateResult result = collection.UpdateOne(filter, Builders<Site>.Update.Set($"Devices.$.Alarms.{index}.IsActive", alarm.IsActive));
+
+            return result.ModifiedCount == 1;
         }
     }
 }
