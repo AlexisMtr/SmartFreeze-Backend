@@ -26,7 +26,7 @@ namespace SmartFreeze.Profiles
                 bool exist = item.Forecast.Any(e => e.Date.IsSameDay(freeze.Date));
                 if(exist)
                 {
-                    if(freeze.Date.Hour <= 12)
+                    if(freeze.Date.Hour < 12)
                     {
                         item.Forecast.First(e => e.Date.IsSameDay(freeze.Date)).Morning = new FreezeDto
                         {

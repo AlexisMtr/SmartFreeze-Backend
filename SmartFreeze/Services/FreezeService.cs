@@ -9,9 +9,9 @@ namespace SmartFreeze.Services
     public class FreezeService
     {
         private readonly IFreezeRepository freezeRepository;
-        private readonly SiteRepository siteRepository;
+        private readonly ISiteRepository siteRepository;
 
-        public FreezeService(IFreezeRepository freezeRepository, SiteRepository siteRepository)
+        public FreezeService(IFreezeRepository freezeRepository, ISiteRepository siteRepository)
         {
             this.freezeRepository = freezeRepository;
             this.siteRepository = siteRepository;
@@ -22,15 +22,16 @@ namespace SmartFreeze.Services
             DateTime from;
             if(DateTime.UtcNow.Hour < 12)
             {
-                from = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 0, 0, 0);
+                from = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 0, 0, 0, DateTimeKind.Utc);
             }
             else
             {
-                from = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 12, 0, 0);
+                from = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 12, 0, 0, DateTimeKind.Utc);
             }
 
             Site site = siteRepository.Get(siteId);
             Dictionary<string, IEnumerable<Freeze>> freezeByDevice = freezeRepository.GetByDevice(site.Devices.Select(e => e.Id), from);
+            if (freezeByDevice == null) return new List<Freeze>();
 
             IList<Freeze> freezeForecast = new List<Freeze>();
             IEnumerable<DateTime> dates = freezeByDevice.Values.SelectMany(e => e.Select(i => i.Date)).Distinct();
