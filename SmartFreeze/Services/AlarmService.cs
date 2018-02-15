@@ -55,5 +55,10 @@ namespace SmartFreeze.Services
                 Items = alarmRepository.GetByDevice(deviceId, alarmFilter, rowsPerPage, pageNumber)
             };
         }
+
+        public bool Ack(string alarmId)
+        {
+            return alarmRepository.SetAlarmToRead(alarmId);
+        }
     }
 }
