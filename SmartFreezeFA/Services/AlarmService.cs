@@ -149,17 +149,13 @@ namespace SmartFreezeFA.Services
             
             if(predictions3h.First().Key.Hour < 12)
             {
-                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0); //AM
+                start = new DateTime(predictions3h.First().Key.Year, predictions3h.First().Key.Month, predictions3h.First().Key.Day, 0, 0, 0); //AM
             }
             else
             {
-                start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0); //PM
+                start = new DateTime(predictions3h.First().Key.Year, predictions3h.First().Key.Month, predictions3h.First().Key.Day, 12, 0, 0); //PM
             }
             DateTime end = start.AddHours(12);
-            //compte le nombre de demie-journée
-            double halfDayNumber = ((predictions3h.Last().Key) - (predictions3h.First().Key)).TotalDays;
-
-
             while (start <= predictions3h.Last().Key)
             {
                 //prédictions pour la demie-journée en cours
@@ -182,8 +178,6 @@ namespace SmartFreezeFA.Services
 
         private void CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string shortDescription, string description)
         {
-            var list = new List<int>();
-            list.Average();
             Alarm alarm = new Alarm()
             {
                 Id = DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
