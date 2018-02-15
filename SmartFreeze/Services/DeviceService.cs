@@ -7,9 +7,9 @@ namespace SmartFreeze.Services
 {
     public class DeviceService
     {
-        private readonly DeviceRepository deviceRepository;
+        private readonly IDeviceRepository deviceRepository;
 
-        public DeviceService(DeviceRepository deviceRepository)
+        public DeviceService(IDeviceRepository deviceRepository)
         {
             this.deviceRepository = deviceRepository;
         }
@@ -29,9 +29,9 @@ namespace SmartFreeze.Services
             return deviceRepository.Create(device, siteId);
         }
 
-        public bool Update(Device device)
+        public bool Update(string deviceId, Device device)
         {
-            return deviceRepository.Update(device);
+            return deviceRepository.Update(deviceId, device);
         }
 
 

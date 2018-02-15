@@ -9,13 +9,19 @@ namespace SmartFreeze.Models
     public class Device
     {
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
+
+        public Device()
+        {
+            _id = ObjectId.GenerateNewId();
+        }
+
 
         public string Id { get; set; }
         public string Name { get; set; }
         public bool IsFavorite { get; set; }
         public string Zone { get; set; }
-        public string SiteName { get; set; }
+        public string SiteId { get; set; }
         public IEnumerable<Alarm> Alarms { get; set; }
         public DateTime LastCommunication { get; set; }
         public Position Position { get; set; }

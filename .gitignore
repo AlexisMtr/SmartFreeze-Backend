@@ -263,3 +263,5 @@ WeatherLibrary.Tests/app.config
 WeatherLibrary.Tests/appsettings.json
 *.pyc
 SmartFreeze/Properties/PublishProfiles/
+WeatherLibrary.Tests/appsettings.json
+SmartFreezeScheduleFA/Properties/PublishProfiles/

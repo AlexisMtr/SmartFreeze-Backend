@@ -1,15 +1,17 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 using SmartFreeze.Context;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SmartFreeze.Repositories
 {
-    public class AlarmRepository
+    public class AlarmRepository : IAlarmRepository 
     {
         private readonly IMongoCollection<Site> collection;
 
@@ -77,6 +79,21 @@ namespace SmartFreeze.Repositories
             }
 
             return value;
+        }
+
+        public bool SetAlarmToRead(string alarmId)
+        {
+            var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarmId);
+            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
+
+            Site site = collection.Find(filter).ToList().FirstOrDefault();
+            Device devices = site.Devices.FirstOrDefault(e => e.Alarms.Any(a => a.Id == alarmId));
+            Alarm alarm = devices.Alarms.First(e => e.Id == alarmId);
+            int index = (devices.Alarms as List<Alarm>).IndexOf(alarm);
+
+            UpdateResult result = collection.UpdateOne(filter, Builders<Site>.Update.Set($"Devices.$.Alarms.{index}.IsRead", true));
+
+            return result.ModifiedCount == 1;
         }
 
         private class BsonAlarmRoot

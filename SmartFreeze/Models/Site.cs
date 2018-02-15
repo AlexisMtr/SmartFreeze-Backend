@@ -8,7 +8,12 @@ namespace SmartFreeze.Models
     public class Site
     {
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
+
+        public Site()
+        {
+            _id = ObjectId.GenerateNewId();
+        }
 
         public string Id { get; set; }
         public string Name { get; set; }
@@ -21,6 +26,6 @@ namespace SmartFreeze.Models
         public string Department { get; set; }
         public string Region { get; set; }
         public string Description { get; set; }
-        public string ImageUri { get; set; }
+        public string Image { get; set; }
     }
 }

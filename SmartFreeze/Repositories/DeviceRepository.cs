@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace SmartFreeze.Repositories
 {
-    public class DeviceRepository
+    public class DeviceRepository : IDeviceRepository
     {
         private readonly IMongoCollection<Site> collection;
 
@@ -36,21 +36,21 @@ namespace SmartFreeze.Repositories
 
         public Device Create(Device device, string siteId)
         {
-            device.Id = "device"+DateTime.UtcNow.ToString("yyyyMMddHHmmss");
             UpdateDefinition<Site> update = Builders<Site>.Update.Push(e => e.Devices, device);
-            this.collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
-            return device;
+            UpdateResult result = collection.UpdateOne(Builders<Site>.Filter.Eq(p => p.Id, siteId), update);
+            return result.ModifiedCount == 0 ? null : device;
         }
 
-        public bool Update(Device device)
+        public bool Update(string deviceId, Device device)
         {
-            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == device.Id);
+            var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
             var result = this.collection.FindOneAndUpdate(filter,
                Builders<Site>.Update.Set("Devices.$.Name", device.Name)
                .Set("Devices.$.IsFavorite", device.IsFavorite)
                .Set("Devices.$.Zone", device.Zone)
-               .Set("Devices.$.SiteName", device.SiteName)
-               .Set("Devices.$.Position", device.Position));
+               .Set("Devices.$.SiteId", device.SiteId)
+               .Set("Devices.$.Position.Latitude", device.Position.Latitude)
+               .Set("Devices.$.Position.Longitude", device.Position.Longitude));
 
             return result != null;
         }
