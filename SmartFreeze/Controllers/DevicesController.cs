@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
+using SmartFreeze.Profiles;
 using SmartFreeze.Services;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -16,12 +18,14 @@ namespace SmartFreeze.Controllers
         private readonly DeviceService deviceService;
         private readonly TelemetryService telemetryService;
         private readonly AlarmService alarmService;
+        private readonly FreezeService freezeService;
 
-        public DevicesController(DeviceService deviceService, TelemetryService telemetryService, AlarmService alarmService)
+        public DevicesController(DeviceService deviceService, TelemetryService telemetryService, AlarmService alarmService, FreezeService freezeService)
         {
             this.deviceService = deviceService;
             this.telemetryService = telemetryService;
             this.alarmService = alarmService;
+            this.freezeService = freezeService;
         }
 
         [HttpGet]
@@ -78,9 +82,7 @@ namespace SmartFreeze.Controllers
 
             return Ok(Mapper.Map<DeviceRegistrationDto>(newDevice));
         }
-
-   
-
+        
         [HttpPut("{deviceId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -112,6 +114,16 @@ namespace SmartFreeze.Controllers
         {
             deviceService.Managefavorite(deviceId, isFavorite);
             return Ok();
+        }
+
+        [HttpGet("{deviceId}/freeze")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(WeekFreezeDto))]
+        public async Task<IActionResult> GetFreezeForecast(string deviceId)
+        {
+            IEnumerable<Freeze> freeze = freezeService.GetFreezeOnDevice(deviceId);
+            WeekFreezeDto weekFreeze = FreezeProfile.Merge(freeze);
+            weekFreeze.Id = deviceId;
+            return Ok(weekFreeze);
         }
     }
 }

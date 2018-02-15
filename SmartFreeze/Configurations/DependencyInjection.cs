@@ -14,11 +14,13 @@ namespace SmartFreeze
             services.AddScoped<ITelemetryRepository, TelemetryRepository>();
             services.AddScoped<ISiteRepository, SiteRepository>();
             services.AddScoped<IAlarmRepository, AlarmRepository>();
+            services.AddScoped<IFreezeRepository, FreezeRepository>();
 
             services.AddScoped<DeviceService>();
             services.AddScoped<TelemetryService>();
             services.AddScoped<SiteService>();
             services.AddScoped<AlarmService>();
+            services.AddScoped<FreezeService>();
         }
 
         public void ConfigureContext(IServiceCollection services)

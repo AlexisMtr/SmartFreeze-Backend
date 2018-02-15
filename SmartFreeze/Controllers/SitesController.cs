@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
+using SmartFreeze.Profiles;
 using SmartFreeze.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,12 @@ namespace SmartFreeze.Controllers
     public class SitesController : Controller
     {
         private readonly SiteService siteService;
+        private readonly FreezeService freezeService;
 
-        public SitesController(SiteService siteService)
+        public SitesController(SiteService siteService, FreezeService freezeService)
         {
             this.siteService = siteService;
+            this.freezeService = freezeService;
         }
 
         [HttpGet]
@@ -85,6 +88,15 @@ namespace SmartFreeze.Controllers
         {
             if(siteService.Delete(siteId)) return Ok();
             return NotFound();
+        }
+
+        [HttpGet("{siteId}/freeze")]
+        public async Task<IActionResult> GetFreezeForecast(string siteId)
+        {
+            IEnumerable<Freeze> freeze = freezeService.GetFreezeOnSite(siteId);
+            WeekFreezeDto weekFreeze = FreezeProfile.Merge(freeze);
+            weekFreeze.Id = siteId;
+            return Ok(weekFreeze);
         }
 
     }
