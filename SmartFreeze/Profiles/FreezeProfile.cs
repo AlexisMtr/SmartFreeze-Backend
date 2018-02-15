@@ -46,7 +46,7 @@ namespace SmartFreeze.Profiles
                 else
                 {
                     DayFreezeDto day = new DayFreezeDto { Date = new DateTime(freeze.Date.Year, freeze.Date.Month, freeze.Date.Day, 0, 0, 0) };
-                    if (freeze.Date.Hour <= 12)
+                    if (freeze.Date.Hour < 12)
                     {
                         day.Morning = new FreezeDto
                         {
