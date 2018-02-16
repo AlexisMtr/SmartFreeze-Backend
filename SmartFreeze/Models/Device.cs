@@ -23,6 +23,7 @@ namespace SmartFreeze.Models
         public string Zone { get; set; }
         public string SiteId { get; set; }
         public IEnumerable<Alarm> Alarms { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime LastCommunication { get; set; }
         public Position Position { get; set; }
     }

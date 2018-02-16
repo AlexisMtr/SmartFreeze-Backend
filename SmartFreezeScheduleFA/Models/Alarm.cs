@@ -25,8 +25,13 @@ namespace SmartFreezeScheduleFA.Models
             Information = 3
         }
 
+        public Alarm()
+        {
+            this._id = ObjectId.GenerateNewId();
+        }
+
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
 
         public string Id { get; set; }
         public string DeviceId { get; set; }
@@ -34,10 +39,15 @@ namespace SmartFreezeScheduleFA.Models
         public bool IsActive { get; set; }
         public Type AlarmType { get; set; }
         public Gravity AlarmGravity { get; set; }
-        public DateTime OccuredAt { get; set; } 
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
+        public DateTime OccuredAt { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
+        public DateTime LastUpdate { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime? Start { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime? End { get; set; }
     }
 }

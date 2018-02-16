@@ -1,9 +1,11 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 using SmartFreeze.Context;
 using SmartFreeze.Filters;
+using SmartFreeze.Helpers;
 using SmartFreeze.Models;
 using System;
 using System.Collections.Generic;
@@ -27,10 +29,10 @@ namespace SmartFreeze.Repositories
             IEnumerable<BsonDocument> pipeline = filter.SkipedAlarmsPipeline(rowsPerPage, pageNumber);
 
             PipelineDefinition<Site, BsonDocument> pipelineDefinition = PipelineDefinition<Site, BsonDocument>.Create(pipeline);
-            return Iterate<IList<Alarm>>(pipelineDefinition, (e, alarms) =>
+            return BsonIterator.Iterate(collection, pipelineDefinition, (BsonDocument e, IList<Alarm> alarms) =>
             {
                 if (alarms == null) alarms = new List<Alarm>();
-                alarms.Add(JsonConvert.DeserializeObject<BsonAlarmRoot>(e).Alarms);
+                alarms.Add(BsonSerializer.Deserialize<BsonAlarmRoot>(e).Alarms);
                 return alarms;
             });
         }

@@ -44,10 +44,13 @@ namespace SmartFreezeScheduleFA.Repositories
             {
                 expression = e => e.LastCommunication < maxDate;
             }
-
-            return collection.AsQueryable()
+            var query = collection.AsQueryable()
                 .SelectMany(e => e.Devices)
                 .Where(expression);
+
+            System.Diagnostics.Debug.WriteLine(query);
+
+            return query;
         }
 
         public void AddAlarm(string deviceId, Alarm alarm)

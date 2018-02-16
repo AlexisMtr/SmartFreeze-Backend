@@ -9,8 +9,13 @@ namespace SmartFreezeScheduleFA.Models
     [BsonIgnoreExtraElements]
     public class Device : IStationPosition
     {
+        public Device()
+        {
+            this._id = ObjectId.GenerateNewId();
+        }
+
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
 
         public string Id { get; set; }
         public string Name { get; set; }
@@ -18,6 +23,7 @@ namespace SmartFreezeScheduleFA.Models
         public string SiteId { get; set; }
         public string Zone { get; set; }
         public IEnumerable<Alarm> Alarms { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime LastCommunication { get; set; }
         public Position Position { get; set; }
 

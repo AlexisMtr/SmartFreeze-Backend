@@ -41,11 +41,18 @@ namespace SmartFreeze.Models
         public Type AlarmType { get; set; }
         [BsonRepresentation(BsonType.Int32)]
         public Gravity AlarmGravity { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime OccuredAt { get; set; }
+        [BsonIgnoreIfNull]
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime LastUpdate { get; set; }
         public string ShortDescription { get; set; }
         public string Description { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        [BsonIgnoreIfNull]
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
+        public DateTime? Start { get; set; }
+        [BsonIgnoreIfNull]
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
+        public DateTime? End { get; set; }
     }
 }

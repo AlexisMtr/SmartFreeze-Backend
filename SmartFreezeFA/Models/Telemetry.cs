@@ -8,10 +8,11 @@ namespace SmartFreezeFA.Models
     public class Telemetry : IWeather
     {
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
 
         public string Id { get; set; }
         public string DeviceId { get; set; }
+        [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime OccuredAt { get; set; }
         public double? BatteryVoltage { get; set; }
         public double Pressure { get => PressureValue ?? 0; set => PressureValue = value; }

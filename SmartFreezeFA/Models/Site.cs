@@ -7,8 +7,13 @@ namespace SmartFreezeFA.Models
     [BsonIgnoreExtraElements]
     public class Site
     {
+        public Site()
+        {
+            this._id = ObjectId.GenerateNewId();
+        }
+
         [BsonId]
-        private ObjectId ObjectId { get; set; }
+        private ObjectId _id { get; set; }
 
         public string Id { get; set; }
         public string Name { get; set; }
