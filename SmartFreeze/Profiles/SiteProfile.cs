@@ -30,7 +30,7 @@ namespace SmartFreeze.Profiles
                 .ForMember(d => d.Position, map => map.MapFrom(s => new Position
                 {
                     Longitude = s.Longitude,
-                    Altitude = s.Latitude,
+                    Altitude = s.Altitude,
                     Latitude = s.Latitude,
                 }));
 
@@ -38,10 +38,12 @@ namespace SmartFreeze.Profiles
                 .ForMember(d => d.Position, map => map.MapFrom(s => new Position
                 {
                     Longitude = s.Longitude,
-                    Altitude = s.Latitude,
+                    Altitude = s.Altitude,
                     Latitude = s.Latitude,
-                }));
-             
+                }))
+                .ForMember(d => d.Image, opt => opt.MapFrom(s => s.ImageUri));
+
+
 
             CreateMap<SiteUpdateDto, Site>()
                 .ForMember(d => d.Position, opt => opt.MapFrom(s => new Position

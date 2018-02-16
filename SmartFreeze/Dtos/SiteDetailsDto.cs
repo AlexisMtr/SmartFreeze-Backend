@@ -10,9 +10,6 @@ namespace SmartFreeze.Dtos
         public string SurfaceAreaUnit { get; set; }
         public ApplicationContext SiteType { get; set; }
         public IEnumerable<string> Zones { get; set; }
-        public string Department { get; set; }
-        public string Region { get; set; }
         public string Description { get; set; }
-        public string Image { get; set; }
     }
 }
