@@ -55,7 +55,7 @@ namespace SmartFreezeScheduleFA.Services
                 double avg = predictionsForOneHalfDay.Values.Average();
                 double avgRounded = Math.Round(avg);
 
-                averageFreezePrediction12h.Add(start, (FreezeForecast.FreezingProbability)(avgRounded));
+                averageFreezePrediction12h.Add(start, (FreezingProbability)(avgRounded));
 
                 start = start.AddHours(12);
                 end = end.AddHours(12);
@@ -63,7 +63,7 @@ namespace SmartFreezeScheduleFA.Services
             return averageFreezePrediction12h;
         }
 
-        public void CreateFreezeAlarm(string deviceId, string siteId, Dictionary<DateTime, FreezeForecast.FreezingProbability> dicoEntree)
+        public void CreateFreezeAlarm(string deviceId, string siteId, Dictionary<DateTime, FreezingProbability> dicoEntree)
         {
             Freeze lastFreeze = freezeRepository.GetLastFreezeByDevice(deviceId); //dernière mesure freeze + indiceDeConfiance enregistrée
             bool haveToCheckEndDate = false;
@@ -122,7 +122,7 @@ namespace SmartFreezeScheduleFA.Services
                         crossAlarms.RemoveAt(0);
                         foreach (var alarm in crossAlarms)
                         {
-                            deviceRepository.deleteAlarmById(deviceId, alarm.Id);
+                            deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
                         }
                         //degel
                         CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le " + prediction.Key, prediction.Key, null);
@@ -140,7 +140,7 @@ namespace SmartFreezeScheduleFA.Services
                             crossAlarms.RemoveAt(0);
                             foreach (var alarm in crossAlarms)
                             {
-                                deviceRepository.deleteAlarmById(deviceId, alarm.Id);
+                                deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
                             }
                         }else
                             {
@@ -161,7 +161,7 @@ namespace SmartFreezeScheduleFA.Services
                             crossAlarms.RemoveAt(0);
                             foreach (var alarm in crossAlarms)
                             {
-                                deviceRepository.deleteAlarmById(deviceId, alarm.Id);
+                                deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
                             }
                         }
                         else
@@ -195,7 +195,7 @@ namespace SmartFreezeScheduleFA.Services
                             alarms.RemoveAt(0);
                             foreach (var alarm in alarms)
                             {
-                                deviceRepository.deleteAlarmById(deviceId, alarm.Id);
+                                deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
                             }
 
                         }

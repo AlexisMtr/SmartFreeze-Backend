@@ -41,11 +41,12 @@ namespace SmartFreezeScheduleFA
                         OwmCurrentWeather current = await weatherClient.GetCurrentWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
                         OwmForecastWeather forecast = await weatherClient.GetForecastWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
 
+                        log.Info($"Execute Algorithme");
                         FreezeForecast freeze = await algorithme.Execute(item.Value, item.Key, current.Weather, forecast.Forecast, forecast.StationPosition);
 
-                        log.Info($"Create Alarm");
                         // TODO : complete process
                         Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = freezeService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
+                        log.Info($"Insert Freeze in Db");
                         freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
                     }
 

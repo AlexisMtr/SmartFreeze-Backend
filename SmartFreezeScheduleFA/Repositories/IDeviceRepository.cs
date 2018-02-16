@@ -13,7 +13,7 @@ namespace SmartFreezeScheduleFA.Repositories
         IEnumerable<AlarmNotification> GetNotificationDetails(IEnumerable<string> devicesIds);
         IList<Alarm> GetCrossAlarmsByDevice(string deviceId, DateTime start, DateTime end);
         void UpdateAlarm(string deviceId, string alarmId, DateTime start, DateTime end);
-        void deleteAlarmById(string deviceId, string alarmId);
+        void DeleteAlarmById(string deviceId, string alarmId);
         bool UpdateStatusAlarm(string deviceId, Alarm alarm);
     }
 }

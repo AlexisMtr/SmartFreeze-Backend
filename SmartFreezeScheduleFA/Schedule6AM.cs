@@ -16,7 +16,7 @@ namespace SmartFreezeScheduleFA
     public static class Schedule6AM
     {
         [FunctionName("Schedule6AM")]
-        public static async Task Run([TimerTrigger("0 0 9 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static async Task Run([TimerTrigger("0 0 6 * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             DependencyInjection.ConfigureInjection();
@@ -42,11 +42,12 @@ namespace SmartFreezeScheduleFA
                         OwmCurrentWeather current = await weatherClient.GetCurrentWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
                         OwmForecastWeather forecast = await weatherClient.GetForecastWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
 
+                        log.Info($"Execute Algorithme");
                         FreezeForecast freeze = await algorithme.Execute(item.Value, item.Key, current.Weather, forecast.Forecast, forecast.StationPosition);
-
-                        log.Info($"Create Alarm");
+                        
                         // TODO : complete process
                         Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = freezeService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
+                        log.Info($"Insert Freeze in Db");
                         freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
                     }
 

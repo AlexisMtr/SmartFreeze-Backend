@@ -94,11 +94,10 @@ namespace SmartFreezeScheduleFA.Repositories
                 return items;
             });
         }
-
-        //TODO test
+        
         public IList<Alarm> GetCrossAlarmsByDevice(string deviceId, DateTime start, DateTime end)
         {
-            IEnumerable<BsonDocument> pipelineDef = GetPipelineDefinition(deviceId, start, end);
+            IEnumerable<BsonDocument> pipelineDef = GetCrossAlarmPipeline(deviceId, start, end);
             PipelineDefinition<Site, BsonDocument> pipelineDefinition = PipelineDefinition<Site, BsonDocument>.Create(pipelineDef);
 
             return BsonIterator.Iterate(collection, pipelineDefinition, (BsonDocument e, IList<Alarm> items) =>
@@ -111,7 +110,7 @@ namespace SmartFreezeScheduleFA.Repositories
             });
         }
 
-        private IEnumerable<BsonDocument> GetPipelineDefinition(string deviceId, DateTime start, DateTime end)
+        private IEnumerable<BsonDocument> GetCrossAlarmPipeline(string deviceId, DateTime start, DateTime end)
         {
             BsonDocument unwindDeviceStage = new BsonDocument("$unwind", "$Devices");
             BsonDocument projectDeviceStage = new BsonDocument("$project", new BsonDocument
@@ -152,18 +151,9 @@ namespace SmartFreezeScheduleFA.Repositories
 
             return new List<BsonDocument> { unwindDeviceStage, projectDeviceStage, matchDeviceStage, unwindAlarmStage, projectAlarmsStage, orStage, matchTypeStage };
         }
-
-        //TODO test
+        
         public void UpdateAlarm(string deviceId, string alarmId, DateTime start, DateTime end)
         {
-            //var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
-            //var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
-            //var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
-            //UpdateDefinition<Site> update = Builders<Site>.Update.Set("Devices.$.Alarms.Start", start)
-            //    .Set("Devices.$.Alarms.End", end);
-
-            //collection.FindOneAndUpdate(filter, update);
-
             var filterAlarm = Builders<Device>.Filter.ElemMatch(e => e.Alarms, a => a.Id == alarmId);
             var filter = Builders<Site>.Filter.ElemMatch(e => e.Devices, filterAlarm);
 
@@ -178,11 +168,11 @@ namespace SmartFreezeScheduleFA.Repositories
         }
 
         //TODO todo test
-        public void deleteAlarmById(string deviceId, string alarmId)
+        public void DeleteAlarmById(string deviceId, string alarmId)
         {
-            var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
-            var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
-            var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
+            //var deviceFilter = Builders<Site>.Filter.ElemMatch(e => e.Devices, d => d.Id == deviceId);
+            //var deviceSiteFilter = Builders<Site>.Filter.Eq("Devices.Alarms.Id", alarmId);
+            //var filter = Builders<Site>.Filter.And(deviceFilter, deviceSiteFilter);
 
             //var update = Builders<Site>.Update.PullFilter(e => e.Devices, a => a.alarmId == alarmId);
             //collection.FindOneAndUpdate(filter, update);
