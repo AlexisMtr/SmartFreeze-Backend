@@ -70,151 +70,94 @@ namespace SmartFreezeScheduleFA.Services
             bool haveToCheckEndDateForProlongation = false;
             bool checkForEndOFGel = false;
             bool lookingForEnd = false;
-            DateTime startFreeze = DateTime.UtcNow;
-            DateTime startFreezeV2 = DateTime.UtcNow;
+
+            DateTime startFreezeDate = DateTime.UtcNow;
             KeyValuePair<DateTime, FreezingProbability>? previousPrediction = null;
-            IList<Alarm> crossAlarms;
 
             foreach (var prediction in dicoEntree)
             {
-                if(!previousPrediction.HasValue)
+                if (!previousPrediction.HasValue)
                 {
-                    //première valeur
-                    if (!haveToCheckEndDate && !haveToCheckEndDateForProlongation)
-                    {
-                        if(lastFreeze != null)
-                        {
-                            //si la prédiction est à 0 et que dernière freeze en base est de plus de 1 alors alarm degel
-                            if ((int)prediction.Value == 0 && (lastFreeze.TrustIndication > 1))//OK
-                            {//DEGEL
-                                CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le : " + prediction.Key,prediction.Key,null);
-                            }
-                            else if((int)prediction.Value > 1 && lastFreeze.TrustIndication == 0) 
-                            {//GEL
-                                startFreeze = prediction.Key;
-                                haveToCheckEndDate = true; //puis boucler pour avoir la date de fin
-                            }
-                            else if ((int)prediction.Value > 1 && lastFreeze.TrustIndication > 1)//alors on parcours jusqu'à ce qu'on tombe sur 1 ou 0 et on update l'alarme
-                            {//prolongation GEL de la dernière alarme
-                                haveToCheckEndDateForProlongation = true; //puis boucler pour avoir la date de fin
-                            }
-                        }
-                        else
-                        {
-                            if((int)prediction.Value > 1)
-                            {
-                                lookingForEnd = true;
-                            }
-                        }
-
-                    }
+                    ProcessFirstPrediction(prediction, lastFreeze, siteId, out haveToCheckEndDate, out haveToCheckEndDateForProlongation, out lookingForEnd);
                 }
                 else
                 {
-                    //à partir du deuxième élément
-                    if (haveToCheckEndDate && (int)prediction.Value < 1)//OK
-                    {   
-                        //méthode pour vérifier qu'il n'existe pas une alarm qui croise celle là
-                        crossAlarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, startFreeze, prediction.Key);
-                        //update la première alarm de la liste
-                        deviceRepository.UpdateAlarm(deviceId, crossAlarms.First().Id, startFreeze, prediction.Key);
-                        //supprime le reste des alarms en base
-                        crossAlarms.RemoveAt(0);
-                        foreach (var alarm in crossAlarms)
-                        {
-                            deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
-                        }
-                        //degel
-                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le " + prediction.Key, prediction.Key, null);
-                        haveToCheckEndDate = false;
-                    }else if (haveToCheckEndDate && prediction.Key == dicoEntree.Last().Key)//OK
+                    if (haveToCheckEndDate && (int)prediction.Value < 1)
                     {
-                        IList<Alarm> alarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, startFreezeV2, prediction.Key);
-                        if (alarms != null && alarms.Any())
-                        {
-                            //méthode pour vérifier qu'il n'existe pas une alarm qui croise celle là
-                            crossAlarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, startFreeze, prediction.Key);
-                            //update la première alarm de la liste
-                            deviceRepository.UpdateAlarm(deviceId, crossAlarms.First().Id, startFreeze, prediction.Key);
-                            //supprime le reste des alarms en base
-                            crossAlarms.RemoveAt(0);
-                            foreach (var alarm in crossAlarms)
-                            {
-                                deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
-                            }
-                        }else
-                            {
-                            CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + startFreeze + " au " + previousPrediction.Value.Key, startFreezeV2, previousPrediction.Value.Key);
-                        }
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} detecte un dégel le {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Dégel prévu le {prediction.Key.ToString("dd/MM/yyyy")}");
+                        haveToCheckEndDate = false;
+                    }
+                    else if (haveToCheckEndDate && prediction.Key == dicoEntree.Last().Key)
+                    {
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} detecte du gel du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}",
+                            $"Gel prévu du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}");
                         haveToCheckEndDate = false;
                     }
                     else if (haveToCheckEndDateForProlongation && ((int)prediction.Value < 1))
-                    {//vérifie si il y a déjà eu un dégel si oui update sinon créer TODO
-                        IList<Alarm> alarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, startFreezeV2, prediction.Key);
-                        if (alarms != null && alarms.Any())
-                        {
-                            //méthode pour vérifier qu'il n'existe pas une alarm qui croise celle là
-                            crossAlarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, prediction.Key, prediction.Key);
-                            //update la première alarm de la liste
-                            deviceRepository.UpdateAlarm(deviceId, crossAlarms.First().Id, startFreeze, prediction.Key);
-                            //supprime le reste des alarms en base
-                            crossAlarms.RemoveAt(0);
-                            foreach (var alarm in crossAlarms)
-                            {
-                                deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
-                            }
-                        }
-                        else
-                        {
-                            CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le " + prediction.Key, prediction.Key, null);
-                        }
+                    {
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} detecte un dégel à partir du {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Dégel prévu le {prediction.Key.ToString("dd/MM/yyyy")}");
                         haveToCheckEndDateForProlongation = false;
                     }
-                    else if ((int)prediction.Value > 1 && !checkForEndOFGel && !lookingForEnd && !haveToCheckEndDate && !haveToCheckEndDateForProlongation)//OK
-                    {   //créer alarm de GEL puis boucler pour avoir la fin et créer alarme de dégel
-                        startFreezeV2 = prediction.Key;
+                    else if (haveToCheckEndDateForProlongation && prediction.Key == dicoEntree.Last().Key)
+                    {
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} detecte du gel du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Dégel prévu le {dicoEntree.First().Key.ToString("dd/MM/yyyy")}");
+                        haveToCheckEndDateForProlongation = false;
+                    }
+                    else if ((int)prediction.Value > 1 && !checkForEndOFGel && !lookingForEnd && !haveToCheckEndDate && !haveToCheckEndDateForProlongation)
+                    {   
+                        startFreezeDate = prediction.Key;
                         checkForEndOFGel = true;
-
                     }
                     else if ((checkForEndOFGel && prediction.Value == FreezingProbability.ZERO))
-                    {   //créer alarm de gel
-                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + startFreezeV2 + " au " + previousPrediction.Value.Key, startFreezeV2, previousPrediction.Value.Key);
-                        // créer alam de dégel
-                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le " + prediction.Key, prediction.Key, null);
+                    {
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} detecte du gel du {startFreezeDate.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}",
+                            $"Gel prévu du {startFreezeDate.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}");
+                        
+                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical,
+                            $"Dégel prévu le {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Le capteur {deviceId} detecte un dégel à partir du {prediction.Key.ToString("dd/MM/yyyy")}",
+                            prediction.Key, null);
+
                         checkForEndOFGel = false;
                     }
-                    else if ((checkForEndOFGel && prediction.Key == dicoEntree.Last().Key))//OK
+                    else if ((checkForEndOFGel && prediction.Key == dicoEntree.Last().Key))
                     {
-                        IList<Alarm> alarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, startFreezeV2, prediction.Key);
-                        // TODO empêcher l'update si alarm est identique : if (alarms.First().Start == startFreezeV2 && alarms.First().End == prediction.Key)
-                        if (alarms != null && alarms.Any())
-                        {
-                            //update la première alarm de la liste
-                            deviceRepository.UpdateAlarm(deviceId, alarms.First().Id, startFreezeV2, prediction.Key);
-                            //supprime le reste des alarms en base
-                            alarms.RemoveAt(0);
-                            foreach (var alarm in alarms)
-                            {
-                                deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
-                            }
-
-                        }
-                        else
-                        {
-                            //créer alarm de gel
-                            CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + startFreezeV2 + " au " + prediction.Key, startFreezeV2, prediction.Key);
-                        }
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} détecte du gel du {startFreezeDate.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Gel prévu du {startFreezeDate.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}");
                         checkForEndOFGel = false;
                     }
                     else if (lookingForEnd && prediction.Value == FreezingProbability.ZERO)
                     {
-                        //créer alarm de gel
-                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "gel prévu", "gel prévu du " + dicoEntree.First().Key + " au " + previousPrediction.Value.Key, dicoEntree.First().Key, previousPrediction.Value.Key);
-                        // créer alam de dégel
-                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, "degel prévu", "degel prévu le " + prediction.Key, prediction.Key, null);
+                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical,
+                            $"Gel prévu du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {dicoEntree.First().Key.ToString("dd/MM/yyyy")}",
+                            $"Le capteur {deviceId} détecte du gel du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}",
+                            dicoEntree.First().Key,
+                            previousPrediction.Value.Key);
+                        
+                        CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical,
+                            $"Dégel prévu le {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Le capteur {deviceId} detecte un dégel à partir du {prediction.Key.ToString("dd/MM/yyyy")}",
+                            prediction.Key, null);
                         lookingForEnd = false;
                     }
+                    else if (lookingForEnd && prediction.Key == dicoEntree.Last().Key)
+                    {
+                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                            $"Le capteur {deviceId} détecte du gel du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}",
+                            $"Gel prévu du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}");
+                    }
                 }
+
+
                 previousPrediction = prediction;
             }
         }
@@ -244,6 +187,61 @@ namespace SmartFreezeScheduleFA.Services
         public void UpdateAlarm(String deviceId, Alarm alarm)
         {
             deviceRepository.UpdateStatusAlarm(deviceId, alarm);
+        }
+
+
+        private void ManageAlarm(string deviceId, string siteId, DateTime start, DateTime end, string description, string shortDescription)
+        {
+            IList<Alarm> alarms = deviceRepository.GetCrossAlarmsByDevice(deviceId, start, end);
+            if (alarms != null && alarms.Any())
+            {
+                //update la première alarm de la liste
+                deviceRepository.UpdateAlarm(deviceId, alarms.First().Id, start, end);
+                //supprime le reste des alarms en base
+                alarms.RemoveAt(0);
+                foreach (var alarm in alarms)
+                {
+                    deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
+                }
+            }
+            else
+            {
+                CreateAlarm(deviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, shortDescription, description, start, end);
+            }
+        }
+
+
+        private void ProcessFirstPrediction(KeyValuePair<DateTime, FreezingProbability> firstPrediction, Freeze previousFreeze, string siteId,
+            out bool haveToCheckEndDate, out bool haveToCheckEndDateForProlongation, out bool lookingForEnd)
+        {
+            haveToCheckEndDate = false;
+            haveToCheckEndDateForProlongation = false;
+            lookingForEnd = false;
+
+            if (previousFreeze != null)
+            {
+                if (firstPrediction.Value == FreezingProbability.ZERO && (previousFreeze.TrustIndication > 1))
+                {
+                    CreateAlarm(previousFreeze.DeviceId, siteId, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical,
+                        $"Dégel prévu le {firstPrediction.Key.ToString("dd/MM/yyyy")}",
+                        $"Le capteur {previousFreeze.DeviceId} detecte un dégel à partir du {firstPrediction.Key.ToString("dd/MM/yyyy")}", firstPrediction.Key, null);
+                }
+                else if ((int)firstPrediction.Value > 1 && previousFreeze.TrustIndication == 0)
+                {
+                    haveToCheckEndDate = true;
+                }
+                else if ((int)firstPrediction.Value > 1 && previousFreeze.TrustIndication > 1)
+                {
+                    haveToCheckEndDateForProlongation = true;
+                }
+            }
+            else
+            {
+                if ((int)firstPrediction.Value > 1)
+                {
+                    lookingForEnd = true;
+                }
+            }
         }
 
     }
