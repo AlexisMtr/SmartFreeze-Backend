@@ -402,5 +402,62 @@ namespace SmartFreezeScheduleFA.Tests
                 e.Start == new DateTime(2018, 02, 14, 18, 0, 0) &&
                 e.End == null)), Times.Once);
         }
+
+        // LFE last
+        //lastfreeze = null / 44
+        [TestMethod]
+        public void TestcreateFreezeAlarm44_sansFreeze_BD()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            deviceRepo.Setup(o => o.GetCrossAlarmsByDevice("1", new DateTime(2018, 02, 14, 6, 0, 0), new DateTime(2018, 02, 14, 18, 0, 0))).Returns(new List<Alarm>()
+            {
+                new Alarm
+                {
+                    Id = "6",
+                    Start = new DateTime(2018, 02, 10, 6, 0, 0),
+                    End = new DateTime(2018, 02, 14, 7, 0, 0)
+                }
+            });
+            // 44
+            dico.Add(dateRef, FreezingProbability.IMMINENT);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.IMMINENT);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.UpdateAlarm("1", "6",
+                It.IsAny<DateTime>(),
+                new DateTime(2018, 02, 14, 18, 0, 0)),
+                Times.Once);
+        }
+
+        // LFE autre
+        //lastfreeze = null / 40
+
+        //CFEOG last
+        //lastfreeze = null / 044
+
+        //CFEOG autre
+        //lastfreeze = null / 040
+
+        // HTCED last
+        //lastfreeze = 0 / 44
+
+        // HTCED autre
+        //lastfreeze = 0 / 40
+
+        // HTCEPD last
+        //lastfreeze = 4 / 44
+
+        // HTCEPD autre
+        //lastfreeze = 4 / 40
     }
 }
