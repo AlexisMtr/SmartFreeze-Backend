@@ -134,7 +134,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
 
         private double ConvertTemperature(double temperature, double altitudeDiff)
         {
-            double temperatureAdiabatic = (altitudeDiff * (-6.5)) / 1_000;
+            double temperatureAdiabatic = (altitudeDiff * (6.5)) / 1_000;
             double predictedTemperature = temperature + temperatureAdiabatic;
             return predictedTemperature;
         }
