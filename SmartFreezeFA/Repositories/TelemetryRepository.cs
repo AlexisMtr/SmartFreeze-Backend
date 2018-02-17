@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using SmartFreezeFA.Configurations;
 using SmartFreezeFA.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SmartFreezeFA.Repositories
@@ -12,7 +13,7 @@ namespace SmartFreezeFA.Repositories
         public TelemetryRepository(DbContext context)
         {
             this.collection = context.Database
-                .GetCollection<Telemetry>("Temp_Telemetry");
+                .GetCollection<Telemetry>(nameof(Telemetry));
         }
 
         public Telemetry GetLatest(string deviceId)
@@ -21,6 +22,11 @@ namespace SmartFreezeFA.Repositories
                 .Where(e => e.DeviceId == deviceId)
                 .OrderByDescending(e => e.OccuredAt)
                 .FirstOrDefault();
+        }
+
+        public void InsertTelemetries(IEnumerable<Telemetry> telemetries)
+        {
+            collection.InsertMany(telemetries);
         }
     }
 }

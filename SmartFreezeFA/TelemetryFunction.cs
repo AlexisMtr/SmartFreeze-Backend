@@ -1,6 +1,5 @@
 using Autofac;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using SmartFreezeFA.Configurations;
@@ -9,7 +8,6 @@ using SmartFreezeFA.Parsers;
 using SmartFreezeFA.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using WeatherLibrary.Algorithmes.Freeze;
 
@@ -28,8 +26,12 @@ namespace SmartFreezeFA
 
             using (var scope = DependencyInjection.Container.BeginLifetimeScope())
             {
+                DeviceService deviceService = scope.Resolve<DeviceService>();
                 AlarmService alarmService = scope.Resolve<AlarmService>();
+                TelemetryService telemetryService = scope.Resolve<TelemetryService>();
                 FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
+
+                telemetryService.InsertTelemetries(telemetries);
 
                 Task<FreezeForecast> forecast = algorithme.Execute(telemetries.Last());
 
@@ -46,6 +48,9 @@ namespace SmartFreezeFA
                 {
                     alarmService.CreateFreezingAlarm(telemetries.Last(), freeze.FreezingStart, freeze.FreezingEnd);
                 }
+
+                deviceService.UpdateLastCommunication(telemetries.Last().DeviceId, telemetries.Last().OccuredAt);
+
             }
         }
 
