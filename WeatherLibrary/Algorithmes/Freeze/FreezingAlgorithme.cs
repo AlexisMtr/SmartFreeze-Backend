@@ -58,20 +58,20 @@ namespace WeatherLibrary.Algorithmes.Freeze
                 FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date
             };
             double deviceTemperature = device.Temperature;
-            double estimatateDeviceTemperature = await EstimateWeatherByAltitudeDiff(deviceTemperature, forecastStation, devicePosition);
-            if (estimatateDeviceTemperature == 0.0)
+            double estimateDeviceTemperature = await EstimateWeatherByAltitudeDiff(deviceTemperature, forecastStation, devicePosition);
+            if (estimateDeviceTemperature == 0.0)
             {
-                device.Temperature = 0.0000001;
+                estimateDeviceTemperature = 0.0000001;
             }
             if (currentWeather.Humidity == 0.0)
             {
-                device.Humidity = 0.0000001;
+                currentWeather.Humidity = 0.0000001;
             }
-            double coefTemperature = Math.Abs(device.Temperature / estimatateDeviceTemperature);
+            double coefTemperature = Math.Abs(device.Temperature / estimateDeviceTemperature);
             double coefHumidity = Math.Abs(device.Humidity / currentWeather.Humidity);
 
             IWeather theoricWeather = device;
-            theoricWeather.Temperature = coefTemperature * estimatateDeviceTemperature;
+            theoricWeather.Temperature = coefTemperature * estimateDeviceTemperature;
             theoricWeather.Humidity = coefHumidity * currentWeather.Humidity;
 
             freezeForecast.FreezingProbabilityList[currentWeather.Date] = GetProbabilityFreezing(theoricWeather);
@@ -134,7 +134,7 @@ namespace WeatherLibrary.Algorithmes.Freeze
 
         private double ConvertTemperature(double temperature, double altitudeDiff)
         {
-            double temperatureAdiabatic = (altitudeDiff * (-6.5)) / 1_000;
+            double temperatureAdiabatic = (altitudeDiff * (6.5)) / 1_000;
             double predictedTemperature = temperature + temperatureAdiabatic;
             return predictedTemperature;
         }
