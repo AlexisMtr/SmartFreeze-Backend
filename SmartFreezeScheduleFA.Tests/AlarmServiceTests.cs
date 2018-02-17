@@ -108,8 +108,13 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 18:00:00 au 15/02/2018 06:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("15/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.ShortDescription.Contains("15/02/2018") &&
                 e.Start == new DateTime(2018,02,14,18,0,0) &&
                 e.End == new DateTime(2018, 02, 15, 06, 0, 0))), Times.Once);
         }
@@ -143,24 +148,35 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 06:00:00 au 14/02/2018 18:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
                 e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
 
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 16/02/2018 18:00:00 au 17/02/2018 06:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("16/02/2018") &&
+                e.Description.Contains("17/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("16/02/2018") &&
+                e.ShortDescription.Contains("17/02/2018") &&
                 e.Start == new DateTime(2018, 02, 16, 18, 0, 0) &&
                 e.End == new DateTime(2018, 02, 17, 06, 0, 0))), Times.Once);
 
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "degel prévu le 15/02/2018 06:00:00" &&
-                e.ShortDescription == "degel prévu" &&
+                e.Description.Contains("15/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("15/02/2018") &&
                 e.Start == new DateTime(2018, 02, 15, 06, 0, 0) &&
                 e.End == null)), Times.Once);
         }
@@ -188,16 +204,22 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 18:00:00 au 14/02/2018 18:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 18, 0, 0) &&
                 e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
 
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "degel prévu le 15/02/2018 06:00:00" &&
-                e.ShortDescription == "degel prévu" &&
+                e.Description.Contains("15/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("15/02/2018") &&
                 e.Start == new DateTime(2018, 02, 15, 06, 0, 0) &&
                 e.End == null)), Times.Once);
         }
@@ -224,8 +246,11 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 06:00:00 au 14/02/2018 18:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
                 e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
         }
@@ -259,8 +284,11 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "degel prévu le 14/02/2018 06:00:00" &&
-                e.ShortDescription == "degel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
                 e.End == null)), Times.Once);
         }
@@ -294,10 +322,13 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 06:00:00 au 14/02/2018 18:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
-                e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
+                e.End == new DateTime(2018, 02, 14, 06, 0, 0))), Times.Once);
         }
 
         //DEGEL -> GEL avec lastFreeze (40)
@@ -329,10 +360,13 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 06:00:00 au 14/02/2018 06:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
-                e.End == new DateTime(2018, 02, 14, 06, 0, 0))), Times.Once);
+                e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
         }
 
 
@@ -393,12 +427,17 @@ namespace SmartFreezeScheduleFA.Tests
             AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
             alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
 
+            //TODO : Alexis! Degel -> pas de date de fin
+
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "degel prévu le 14/02/2018 18:00:00" &&
-                e.ShortDescription == "degel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 18, 0, 0) &&
                 e.End == null)), Times.Once);
         }

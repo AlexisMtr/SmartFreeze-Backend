@@ -85,9 +85,10 @@ namespace SmartFreezeScheduleFA.Services
                     if (haveToCheckEndDate && (int)prediction.Value < 1)
                     {
                         ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
-                            $"Le capteur {deviceId} detecte un dégel le {prediction.Key.ToString("dd/MM/yyyy")}",
-                            $"Dégel prévu le {prediction.Key.ToString("dd/MM/yyyy")}");
+                            $"Le capteur {deviceId} detecte un gel du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}",
+                            $"Gel prévu du {dicoEntree.First().Key.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}");
                         haveToCheckEndDate = false;
+                        // TODO : Alarm de degel
                     }
                     else if (haveToCheckEndDate && prediction.Key == dicoEntree.Last().Key)
                     {
@@ -98,7 +99,7 @@ namespace SmartFreezeScheduleFA.Services
                     }
                     else if (haveToCheckEndDateForProlongation && ((int)prediction.Value < 1))
                     {
-                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                        ManageAlarm(deviceId, siteId, prediction.Key, prediction.Key,
                             $"Le capteur {deviceId} detecte un dégel à partir du {prediction.Key.ToString("dd/MM/yyyy")}",
                             $"Dégel prévu le {prediction.Key.ToString("dd/MM/yyyy")}");
                         haveToCheckEndDateForProlongation = false;
@@ -117,7 +118,7 @@ namespace SmartFreezeScheduleFA.Services
                     }
                     else if ((checkForEndOFGel && prediction.Value == FreezingProbability.ZERO))
                     {
-                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                        ManageAlarm(deviceId, siteId, startFreezeDate, previousPrediction.Value.Key,
                             $"Le capteur {deviceId} detecte du gel du {startFreezeDate.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}",
                             $"Gel prévu du {startFreezeDate.ToString("dd/MM/yyyy")} au {previousPrediction.Value.Key.ToString("dd/MM/yyyy")}");
                         
@@ -130,7 +131,7 @@ namespace SmartFreezeScheduleFA.Services
                     }
                     else if ((checkForEndOFGel && prediction.Key == dicoEntree.Last().Key))
                     {
-                        ManageAlarm(deviceId, siteId, dicoEntree.First().Key, prediction.Key,
+                        ManageAlarm(deviceId, siteId, startFreezeDate, prediction.Key,
                             $"Le capteur {deviceId} détecte du gel du {startFreezeDate.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}",
                             $"Gel prévu du {startFreezeDate.ToString("dd/MM/yyyy")} au {prediction.Key.ToString("dd/MM/yyyy")}");
                         checkForEndOFGel = false;
