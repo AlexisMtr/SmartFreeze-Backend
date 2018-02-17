@@ -86,7 +86,7 @@ namespace SmartFreezeScheduleFA.Tests
         }
 
         [TestMethod]
-        public void TestcreateFreezeAlarm022()
+        public void TestcreateFreezeAlarm022_sansFreeze()
         {
             //GIVEN
             string deviceId = "1";
@@ -108,14 +108,19 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 18:00:00 au 15/02/2018 06:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("15/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.ShortDescription.Contains("15/02/2018") &&
                 e.Start == new DateTime(2018,02,14,18,0,0) &&
                 e.End == new DateTime(2018, 02, 15, 06, 0, 0))), Times.Once);
         }
 
         [TestMethod]
-        public void TestcreateFreezeAlarm2200123()
+        public void TestcreateFreezeAlarm2200123_sansFreeze()
         {
             //GIVEN
             string deviceId = "1";
@@ -143,30 +148,41 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 06:00:00 au 14/02/2018 18:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
                 e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
 
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 16/02/2018 18:00:00 au 17/02/2018 06:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("16/02/2018") &&
+                e.Description.Contains("17/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("16/02/2018") &&
+                e.ShortDescription.Contains("17/02/2018") &&
                 e.Start == new DateTime(2018, 02, 16, 18, 0, 0) &&
                 e.End == new DateTime(2018, 02, 17, 06, 0, 0))), Times.Once);
 
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "degel prévu le 15/02/2018 06:00:00" &&
-                e.ShortDescription == "degel prévu" &&
+                e.Description.Contains("15/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("15/02/2018") &&
                 e.Start == new DateTime(2018, 02, 15, 06, 0, 0) &&
                 e.End == null)), Times.Once);
         }
 
         [TestMethod]
-        public void TestcreateFreezeAlarm020()
+        public void TestcreateFreezeAlarm020_sansFreeze()
         {
             //GIVEN
             string deviceId = "1";
@@ -188,18 +204,299 @@ namespace SmartFreezeScheduleFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "gel prévu du 14/02/2018 18:00:00 au 14/02/2018 18:00:00" &&
-                e.ShortDescription == "gel prévu" &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 18, 0, 0) &&
                 e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
 
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.FreezeWarning &&
-                e.Description == "degel prévu le 15/02/2018 06:00:00" &&
-                e.ShortDescription == "degel prévu" &&
+                e.Description.Contains("15/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("15/02/2018") &&
                 e.Start == new DateTime(2018, 02, 15, 06, 0, 0) &&
                 e.End == null)), Times.Once);
         }
+
+        [TestMethod]
+        public void TestcreateFreezeAlarm22_sansFreeze()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            // 22
+            dico.Add(dateRef, FreezingProbability.MEDIUM);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.MEDIUM);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Critical &&
+                e.AlarmType == Alarm.Type.FreezeWarning &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
+                e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
+        }
+
+        //GEL -> DEGEL avec lastFreeze
+        [TestMethod]
+        public void TestcreateFreezeAlarm00_gel_degel_avecFreeze()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            freezeRepo.Setup(o => o.GetLastFreezeByDevice("1")).Returns(new Freeze
+            {
+                Date = new DateTime(2018, 02, 14, 0, 0, 0),
+                DeviceId = "1",
+                TrustIndication = 4
+            });
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            // 00
+            dico.Add(dateRef, FreezingProbability.ZERO);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.ZERO);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Critical &&
+                e.AlarmType == Alarm.Type.FreezeWarning &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
+                e.End == null)), Times.Once);
+        }
+
+        //DEGEL -> GEL avec lastFreeze (44)
+        [TestMethod]
+        public void TestcreateFreezeAlarm44_degel_gel_avecFreeze()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            freezeRepo.Setup(o => o.GetLastFreezeByDevice("1")).Returns(new Freeze
+            {
+                Date = new DateTime(2018, 02, 14, 0, 0, 0),
+                DeviceId = "1",
+                TrustIndication = 0
+            });
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            // 44
+            dico.Add(dateRef, FreezingProbability.IMMINENT);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.IMMINENT);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Critical &&
+                e.AlarmType == Alarm.Type.FreezeWarning &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
+                e.End == new DateTime(2018, 02, 14, 06, 0, 0))), Times.Once);
+        }
+
+        //DEGEL -> GEL avec lastFreeze (40)
+        [TestMethod]
+        public void TestcreateFreezeAlarm40_degel_gel_avecFreeze()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            freezeRepo.Setup(o => o.GetLastFreezeByDevice("1")).Returns(new Freeze
+            {
+                Date = new DateTime(2018, 02, 14, 0, 0, 0),
+                DeviceId = "1",
+                TrustIndication = 0
+            });
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            // 40
+            dico.Add(dateRef, FreezingProbability.IMMINENT);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.ZERO);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Critical &&
+                e.AlarmType == Alarm.Type.FreezeWarning &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("gel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Gel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
+                e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
+        }
+
+
+        //GEL -> GEL avec lastFreeze (44) TODO
+        [TestMethod]
+        public void TestcreateFreezeAlarm44_gel_gel_avecFreeze()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            freezeRepo.Setup(o => o.GetLastFreezeByDevice("1")).Returns(new Freeze
+            {
+                Date = new DateTime(2018, 02, 14, 0, 0, 0),
+                DeviceId = "1",
+                TrustIndication = 4
+            });
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            // 44
+            dico.Add(dateRef, FreezingProbability.IMMINENT);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.IMMINENT);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.UpdateAlarm("1", It.IsAny<string>(),
+                It.IsAny<DateTime>(),
+                new DateTime(2018, 02, 14, 18, 0, 0)),
+                Times.Once);
+        }
+
+        //GEL -> GEL avec lastFreeze (40)
+        [TestMethod]
+        public void TestcreateFreezeAlarm40_gel_gel_avecFreeze()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            freezeRepo.Setup(o => o.GetLastFreezeByDevice("1")).Returns(new Freeze
+            {
+                Date = new DateTime(2018, 02, 14, 0, 0, 0),
+                DeviceId = "1",
+                TrustIndication = 4
+            });
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            // 40
+            dico.Add(dateRef, FreezingProbability.IMMINENT);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.ZERO);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //TODO : Alexis! Degel -> pas de date de fin
+
+            //THEN
+            deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
+                e.AlarmGravity == Alarm.Gravity.Critical &&
+                e.AlarmType == Alarm.Type.FreezeWarning &&
+                e.Description.Contains("14/02/2018") &&
+                e.Description.Contains("dégel") &&
+                e.Description.Contains("1") &&
+                e.ShortDescription.Contains("Dégel") &&
+                e.ShortDescription.Contains("14/02/2018") &&
+                e.Start == new DateTime(2018, 02, 14, 18, 0, 0) &&
+                e.End == null)), Times.Once);
+        }
+
+        // LFE last
+        //lastfreeze = null / 44
+        [TestMethod]
+        public void TestcreateFreezeAlarm44_sansFreeze_BD()
+        {
+            //GIVEN
+            string deviceId = "1";
+            string siteId = "1";
+            DateTime dateRef = new DateTime(2018, 02, 14, 6, 0, 0);
+            Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IFreezeRepository> freezeRepo = new Mock<IFreezeRepository>();
+            Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
+            deviceRepo.Setup(o => o.GetCrossAlarmsByDevice("1", new DateTime(2018, 02, 14, 6, 0, 0), new DateTime(2018, 02, 14, 18, 0, 0))).Returns(new List<Alarm>()
+            {
+                new Alarm
+                {
+                    Id = "6",
+                    Start = new DateTime(2018, 02, 10, 6, 0, 0),
+                    End = new DateTime(2018, 02, 14, 7, 0, 0)
+                }
+            });
+            // 44
+            dico.Add(dateRef, FreezingProbability.IMMINENT);
+            dico.Add(dateRef.AddHours(12), FreezingProbability.IMMINENT);
+
+            //WHEN
+            AlarmService alarmService = new AlarmService(deviceRepo.Object, freezeRepo.Object);
+            alarmService.CreateFreezeAlarm(deviceId, siteId, dico);
+
+            //THEN
+            deviceRepo.Verify(o => o.UpdateAlarm("1", "6",
+                It.IsAny<DateTime>(),
+                new DateTime(2018, 02, 14, 18, 0, 0)),
+                Times.Once);
+        }
+
+        // LFE autre
+        //lastfreeze = null / 40
+
+        //CFEOG last
+        //lastfreeze = null / 044
+
+        //CFEOG autre
+        //lastfreeze = null / 040
+
+        // HTCED last
+        //lastfreeze = 0 / 44
+
+        // HTCED autre
+        //lastfreeze = 0 / 40
+
+        // HTCEPD last
+        //lastfreeze = 4 / 44
+
+        // HTCEPD autre
+        //lastfreeze = 4 / 40
     }
 }
