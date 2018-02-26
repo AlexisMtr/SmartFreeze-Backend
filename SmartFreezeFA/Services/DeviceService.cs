@@ -1,9 +1,5 @@
 ﻿using SmartFreezeFA.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmartFreezeFA.Services
 {
@@ -19,6 +15,11 @@ namespace SmartFreezeFA.Services
         public void UpdateLastCommunication(string deviceId, DateTime date)
         {
             deviceRepository.UpdateLastCommunication(deviceId, date);
+        }
+
+        public string GetSiteId(string deviceId)
+        {
+            return deviceRepository.GetSiteId(deviceId);
         }
     }
 }

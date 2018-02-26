@@ -11,138 +11,124 @@ namespace SmartFreezeFA.Services
     public class AlarmService
     {
         private readonly IDeviceRepository deviceRepository;
+        private readonly IAlarmRepository alarmRepository;
 
         const double maxVoltageValue = 3.6;
 
-        public AlarmService(IDeviceRepository deviceRepository)
+        public AlarmService(IDeviceRepository deviceRepository, IAlarmRepository alarmRepository)
         {
             this.deviceRepository = deviceRepository;
+            this.alarmRepository = alarmRepository;
         }
 
-        public void CreateHumidityAlarm(Telemetry telemetry)
+        public void CreateHumidityAlarm(Telemetry telemetry, string siteId)
         {
-
-            double humidity = telemetry.Humidity;
-            string deviceId = telemetry.DeviceId;
-
-       
-            string shortDescription, description = null;
-
-            if (humidity > 100)
+            alarmRepository.SetAsInactive(telemetry.DeviceId, Alarm.AlarmSubtype.Humidity);
+            
+            if (telemetry.Humidity > 100)
             {
-                description = "Donnée d'humidité anormale";
-                shortDescription = $"L'humidité du capteur {telemetry.DeviceId} est supérieure à 100% ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Humidity, Alarm.Gravity.Critical, "Donnée d'humidité anormale",
+                    $"L'humidité du capteur {telemetry.DeviceId} est supérieure à 100% ({telemetry.Temperature})");
             }
 
-            else if (humidity <=0)
+            else if (telemetry.Humidity <= 0)
             {
-                description = "Donnée d'humidité anormale";
-                shortDescription = $"L'humidité du capteur {telemetry.DeviceId} est inférieure à 0% ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Humidity, Alarm.Gravity.Critical, "Donnée d'humidité anormale",
+                    $"L'humidité du capteur {telemetry.DeviceId} est inférieure à 0% ({telemetry.Temperature})");
             }
 
         }
 
-        public void CreateTemperatureAlarm(Telemetry telemetry)
+        public void CreateTemperatureAlarm(Telemetry telemetry, string siteId)
         {
-
-            double temperature = telemetry.Temperature;
-            string deviceId = telemetry.DeviceId;
-            string shortDescription = string.Empty;
-            string description = string.Empty;
-
-            if (temperature > 100)
+            alarmRepository.SetAsInactive(telemetry.DeviceId, Alarm.AlarmSubtype.Temperature);
+            
+            if (telemetry.Temperature > 100)
             {
-                description = "Donnée de température anormale";
-                shortDescription = $"La température du capteur {telemetry.DeviceId} est supérieure à 100°C ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Temperature, Alarm.Gravity.Critical, "Donnée de température anormale",
+                    $"La température du capteur {telemetry.DeviceId} est supérieure à 100°C ({telemetry.Temperature})");
             }
 
-            if (temperature < -300)
+            if (telemetry.Temperature < -300)
             {
-                description = "Donnée de température anormale";
-                shortDescription = $"La température du capteur {telemetry.DeviceId} est inférieure à -300°C ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Temperature, Alarm.Gravity.Critical, "Donnée de température anormale",
+                    $"La température du capteur {telemetry.DeviceId} est inférieure à -300°C ({telemetry.Temperature})");
             }
 
-            else if ((temperature >= -300) && (temperature < -100))
+            else if ((telemetry.Temperature >= -300) && (telemetry.Temperature < -100))
             {
-                description = "Donnée de température anormale";
-                shortDescription = $"La température du capteur {telemetry.DeviceId} est inférieure à -100°C ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Serious, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Temperature, Alarm.Gravity.Serious, "Donnée de température anormale",
+                    $"La température du capteur {telemetry.DeviceId} est inférieure à -100°C ({telemetry.Temperature})");
             }
 
-            else if  ((temperature > 80) && (temperature < 100))
+            else if ((telemetry.Temperature > 80) && (telemetry.Temperature < 100))
             {
-                description = "Donnée de température anormale";
-                shortDescription = $"La température du capteur {telemetry.DeviceId} est supérieure à 80°C ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Serious, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Temperature, Alarm.Gravity.Serious, "Donnée de température anormale",
+                    $"La température du capteur {telemetry.DeviceId} est supérieure à 80°C ({telemetry.Temperature})");
             }
 
-            else if ((temperature > -99) && (temperature < -50))
+            else if ((telemetry.Temperature > -99) && (telemetry.Temperature < -50))
             {
-                description = "Donnée de température anormale";
-                shortDescription = $"La température du capteur {telemetry.DeviceId} est inférieure à -50°C ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Information, shortDescription, description);
-             }
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Temperature, Alarm.Gravity.Information, "Donnée de température anormale",
+                    $"La température du capteur {telemetry.DeviceId} est inférieure à -50°C ({telemetry.Temperature})");
+            }
 
-            else if  ((temperature > 50) && (temperature < 79))
+            else if ((telemetry.Temperature > 50) && (telemetry.Temperature < 79))
             {
-                description = "Donnée de température anormale";
-                shortDescription = $"La température du capteur {telemetry.DeviceId} est supérieure à 50°C ({telemetry.Temperature})";
-                CreateAlarm(deviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Information, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Temperature, Alarm.Gravity.Information, "Donnée de température anormale",
+                    $"La température du capteur {telemetry.DeviceId} est supérieure à 50°C ({telemetry.Temperature})");
             }
 
         }
 
-        public void CreatePressureAlarm(Telemetry telemetry)
+        public void CreateBatteryAlarm(Telemetry telemetry, string siteId)
         {
-            // TODO : Add check on Pressure value
-        }
-
-        public void CreateBatteryAlarm(Telemetry telemetry)
-        {
-            string shortDescription = string.Empty;
-            string description = string.Empty;
-
+            alarmRepository.SetAsInactive(telemetry.DeviceId, Alarm.AlarmSubtype.Battery);
+            
             if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.15))
             {
-                //créer alarme level 3 15%
-                shortDescription = "Niveau de batterie critique";
-                description = $"La batterie du capteur {telemetry.DeviceId} est inférieur à 15% ({telemetry.BatteryVoltage}V)";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Critical, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Battery, Alarm.Gravity.Critical, "Niveau de batterie critique",
+                    $"La batterie du capteur {telemetry.DeviceId} est inférieur à 15% ({telemetry.BatteryVoltage}V)");
             }
             else if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.3))
             {
-                //créer alarme level 2 30%
-                shortDescription = "Niveau de batterie faible";
-                description = $"La batterie du capteur {telemetry.DeviceId} est inférieur à 30% ({telemetry.BatteryVoltage}V)";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Serious, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Battery, Alarm.Gravity.Serious, "Niveau de batterie faible",
+                    $"La batterie du capteur {telemetry.DeviceId} est inférieur à 30% ({telemetry.BatteryVoltage}V)");
 
             }
             else if (telemetry.BatteryVoltage <= (maxVoltageValue * 0.5))
             {
-                //créer alarme level 1 50%
-                shortDescription = "Niveau de batterie faible";
-                description = $"La batterie du capteur {telemetry.DeviceId} est inférieur à 50% ({telemetry.BatteryVoltage}V)";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.DeviceFailure, Alarm.Gravity.Information, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.DeviceFailure, Alarm.AlarmSubtype.Battery, Alarm.Gravity.Information, "Niveau de batterie faible",
+                    $"La batterie du capteur {telemetry.DeviceId} est inférieur à 50% ({telemetry.BatteryVoltage}V)");
 
             }
         }
 
-        public void CreateFreezingAlarm(Telemetry telemetry, DateTime? start, DateTime? end)
+        // TODO : Check for previous freeze alarm
+        public void CreateFreezingAlarm(Telemetry telemetry, string siteId, DateTime? start, DateTime? end)
         {
-            string shortDescription = string.Empty;
-            string description = string.Empty;
+            Alarm latestFreezeAlarm = alarmRepository.GetLatestAlarmByType(telemetry.DeviceId, Alarm.Type.FreezeWarning, null);
 
-            if (start.HasValue)
+            if (start.HasValue && latestFreezeAlarm == null)
             {
-                shortDescription = "Gel détecté";
-                description = $"Le capteur {telemetry.DeviceId} detecte du gel";
-                CreateAlarm(telemetry.DeviceId, null, Alarm.Type.FreezeWarning, Alarm.Gravity.Critical, shortDescription, description);
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.FreezeWarning, Alarm.AlarmSubtype.Freeze, Alarm.Gravity.Critical,
+                    "Gel détecté", $"Le capteur {telemetry.DeviceId} detecte du gel");
             }
 
+        }
+
+        public void SetFreezeAlarmAsInactive(string deviceId)
+        {
+            alarmRepository.SetAsInactive(deviceId, Alarm.AlarmSubtype.Freeze);
+        }
+
+        public void CheckForActiveCommunicationFailureAlarms(string deviceId)
+        {
+            Alarm alarm = alarmRepository.GetLatestAlarmByType(deviceId, Alarm.Type.CommunicationError, null);
+            if(alarm != null)
+            {
+                alarmRepository.SetAsInactive(alarm.Id);
+            }
         }
 
         public Dictionary<DateTime, FreezeForecast.FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezeForecast.FreezingProbability> predictions3h)
@@ -180,22 +166,23 @@ namespace SmartFreezeFA.Services
         }
 
 
-        private void CreateAlarm(string DeviceId, string SiteId, Alarm.Type AlarmType, Alarm.Gravity AlarmGravity, string shortDescription, string description)
+        private void CreateAlarm(string deviceId, string siteId, Alarm.Type alarmType, Alarm.AlarmSubtype subtype, Alarm.Gravity alarmGravity, string shortDescription, string description)
         {
             Alarm alarm = new Alarm()
             {
-                Id = DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
-                DeviceId = DeviceId,
-                SiteId = SiteId,
+                Id = $"{deviceId}-{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}",
+                DeviceId = deviceId,
+                SiteId = siteId,
                 IsActive = true,
-                AlarmType = AlarmType,
-                AlarmGravity = AlarmGravity,
+                AlarmType = alarmType,
+                AlarmGravity = alarmGravity,
                 OccuredAt = DateTime.UtcNow,
                 ShortDescription = shortDescription,
-                Description = description
+                Description = description,
+                Subtype = subtype
             };
 
-            deviceRepository.AddAlarm(DeviceId, alarm);
+            deviceRepository.AddAlarm(deviceId, alarm);
         }
 
     }

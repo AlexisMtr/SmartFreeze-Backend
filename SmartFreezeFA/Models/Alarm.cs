@@ -15,6 +15,14 @@ namespace SmartFreezeFA.Models
             CommunicationError = 4
         }
 
+        public enum AlarmSubtype
+        {
+            Temperature = 1,
+            Humidity = 2,
+            Battery = 3,
+            Freeze = 4
+        }
+
         public enum Gravity
         {
             Critical = 1,
@@ -38,6 +46,9 @@ namespace SmartFreezeFA.Models
         public Type AlarmType { get; set; }
         [BsonRepresentation(BsonType.Int32)]
         public Gravity AlarmGravity { get; set; }
+        // only for this FA. Allow to make a difference between deviceFailure alarms
+        [BsonRepresentation(BsonType.Int32)]
+        public AlarmSubtype Subtype { get; set; }
         [BsonDateTimeOptions(Representation = BsonType.DateTime)]
         public DateTime OccuredAt { get; set; }
         [BsonDateTimeOptions(Representation = BsonType.DateTime)]
@@ -46,8 +57,8 @@ namespace SmartFreezeFA.Models
         public string ShortDescription { get; set; }
         public string Description { get; set; }
         [BsonDateTimeOptions(Representation = BsonType.DateTime)]
-        public DateTime Start { get; set; }
+        public DateTime? Start { get; set; }
         [BsonDateTimeOptions(Representation = BsonType.DateTime)]
-        public DateTime End { get; set; }
+        public DateTime? End { get; set; }
     }
 }

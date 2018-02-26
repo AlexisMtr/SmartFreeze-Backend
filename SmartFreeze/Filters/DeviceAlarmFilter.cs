@@ -125,6 +125,12 @@ namespace SmartFreeze.Filters
                 pipeline.Add(matchAlarms);
             }
 
+            BsonDocument inactiveStage = new BsonDocument("$match", new BsonDocument
+            {
+                { "Alarms.IsActive", true }
+            });
+            pipeline.Add(inactiveStage);
+
             return pipeline;
         }
     }

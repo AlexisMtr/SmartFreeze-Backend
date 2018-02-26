@@ -6,6 +6,7 @@ using SmartFreezeFA.Configurations;
 using SmartFreezeFA.Models;
 using SmartFreezeFA.Parsers;
 using SmartFreezeFA.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,76 +17,75 @@ namespace SmartFreezeFA
     public static class TelemetryFunction
     {
         [FunctionName("TelemetryFunction")]
-        public static async void Run([EventHubTrigger("device-data", Connection = "EventHubConnectionString")]string myEventHubMessage, TraceWriter log)
+        public static async Task Run([EventHubTrigger("device-data", Connection = "EventHubConnectionString")]string myEventHubMessage, TraceWriter log)
         {
             log.Info($"C# Event Hub trigger function processed a message: {myEventHubMessage}");
             DependencyInjection.ConfigureInjection();
+            IEnumerable<Telemetry> telemetries = null;
 
-            IEnumerable<Telemetry> telemetries = FrameParser.Parse(myEventHubMessage);
-            if (!telemetries.Any()) return;
-
-            using (var scope = DependencyInjection.Container.BeginLifetimeScope())
+            try
             {
-                DeviceService deviceService = scope.Resolve<DeviceService>();
-                AlarmService alarmService = scope.Resolve<AlarmService>();
-                TelemetryService telemetryService = scope.Resolve<TelemetryService>();
-                FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
+                telemetries = FrameParser.Parse(myEventHubMessage);
+                if (!telemetries.Any()) return;
+            }
+            catch(FormatException e)
+            {
+                log.Error($"Error on parsing frame", e);
+                return;
+            }
 
-                telemetryService.InsertTelemetries(telemetries);
-
-                Task<FreezeForecast> forecast = algorithme.Execute(telemetries.Last());
-
-                foreach (Telemetry telemetry in telemetries)
+            try
+            {
+                using (var scope = DependencyInjection.Container.BeginLifetimeScope())
                 {
-                    alarmService.CreateHumidityAlarm(telemetry);
-                    alarmService.CreatePressureAlarm(telemetry);
-                    alarmService.CreateTemperatureAlarm(telemetry);
-                    alarmService.CreateBatteryAlarm(telemetry);
+                    DeviceService deviceService = scope.Resolve<DeviceService>();
+                    AlarmService alarmService = scope.Resolve<AlarmService>();
+                    TelemetryService telemetryService = scope.Resolve<TelemetryService>();
+                    FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
+
+                    telemetryService.InsertTelemetries(telemetries);
+                    string siteId = deviceService.GetSiteId(telemetries.First().DeviceId);
+                    log.Info($"Telemetries inserted");
+
+                    Task<FreezeForecast> forecast = algorithme.Execute(telemetries.Last());
+                    log.Info($"FreezeForecast executed");
+
+                    log.Info($"Create humidity alarm ...");
+                    alarmService.CreateHumidityAlarm(telemetries.Last(), siteId);
+                    log.Info($"Create temperature alarm ...");
+                    alarmService.CreateTemperatureAlarm(telemetries.Last(), siteId);
+                    log.Info($"Create battery alarm ...");
+                    alarmService.CreateBatteryAlarm(telemetries.Last(), siteId);
+
+                    FreezeForecast freeze = await forecast;
+                    if (freeze.FreezingStart.HasValue && Freeze(freeze.FreezingProbabilityList.FirstOrDefault().Value))
+                    {
+                        log.Info($"Create freeze alarm ...");
+                        alarmService.CreateFreezingAlarm(telemetries.Last(), siteId, freeze.FreezingStart, freeze.FreezingEnd);
+                    }
+                    else if(!Freeze(freeze.FreezingProbabilityList.FirstOrDefault().Value))
+                    {
+                        log.Info($"Set latest freeze alarm as inactive ...");
+                        alarmService.SetFreezeAlarmAsInactive(telemetries.Last().DeviceId);
+                    }
+
+                    log.Info($"Remove CommunicationFail alarm ...");
+                    alarmService.CheckForActiveCommunicationFailureAlarms(telemetries.First().DeviceId);
+
+                    log.Info($"Update last communication date ...");
+                    deviceService.UpdateLastCommunication(telemetries.Last().DeviceId, DateTime.UtcNow);
                 }
-
-                FreezeForecast freeze = await forecast;
-                if (freeze.FreezingStart.HasValue)
-                {
-                    alarmService.CreateFreezingAlarm(telemetries.Last(), freeze.FreezingStart, freeze.FreezingEnd);
-                }
-
-                deviceService.UpdateLastCommunication(telemetries.Last().DeviceId, telemetries.Last().OccuredAt);
-
+            }
+            catch(Exception e)
+            {
+                log.Error($"Error on processing telemetries", e);
+                throw;
             }
         }
 
-        // METHODE DE TEST DU FA (appel http via postman)
-        //[FunctionName("HttpFA")]
-        //public static async void Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]HttpRequestMessage req, TraceWriter log)
-        //{
-        //    log.Info($"C# Event Hub trigger function processed a message: {req}");
-        //    DependencyInjection.ConfigureInjection();
-
-        //    string body = await req.Content.ReadAsStringAsync();
-
-        //    IEnumerable<Telemetry> telemetries = FrameParser.Parse(await req.Content.ReadAsStringAsync());
-
-        //    using (var scope = DependencyInjection.Container.BeginLifetimeScope())
-        //    {
-        //        AlarmService alarmService = scope.Resolve<AlarmService>();
-        //        FreezingAlgorithme algorithme = scope.Resolve<FreezingAlgorithme>();
-
-        //        Task<FreezeForecast> forecast = algorithme.Execute(telemetries.Last());
-
-        //        foreach (Telemetry telemetry in telemetries)
-        //        {
-        //            alarmService.CreateHumidityAlarm(telemetry);
-        //            alarmService.CreatePressureAlarm(telemetry);
-        //            alarmService.CreateTemperatureAlarm(telemetry);
-        //            alarmService.CreateBatteryAlarm(telemetry);
-        //        }
-
-        //        FreezeForecast freeze = await forecast;
-        //        if (freeze.FreezingStart.HasValue)
-        //        {
-        //            alarmService.CreateFreezingAlarm(telemetries.Last(), freeze.FreezingStart, freeze.FreezingEnd);
-        //        }
-        //    }
-        //}
+        private static bool Freeze(FreezeForecast.FreezingProbability probability)
+        {
+            return probability != FreezeForecast.FreezingProbability.ZERO && probability != FreezeForecast.FreezingProbability.MINIMUM;
+        }
     }
 }

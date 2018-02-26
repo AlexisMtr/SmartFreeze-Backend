@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using SmartFreezeFA.Configurations;
 using SmartFreezeFA.Models;
 using System;
@@ -32,6 +33,14 @@ namespace SmartFreezeFA.Repositories
             var filter = Builders<Site>.Filter.And(siteIdFilter, deviceSiteFilter);
             UpdateDefinition<Site> update = Builders<Site>.Update.Set("Devices.$.LastCommunication", date);
             collection.FindOneAndUpdate(filter, update);
+        }
+
+        public string GetSiteId(string deviceId)
+        {
+            return collection.AsQueryable()
+                .SelectMany(e => e.Devices)
+                .Where(e => e.Id == deviceId)
+                .FirstOrDefault()?.SiteId;
         }
     }
 }
