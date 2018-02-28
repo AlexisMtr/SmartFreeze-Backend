@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Azure.WebJobs.Host;
 using SmartFreezeScheduleFA.Repositories;
 using SmartFreezeScheduleFA.Services;
 using System.Configuration;
@@ -13,7 +14,7 @@ namespace SmartFreezeScheduleFA.Configurations
     {
         public static IContainer Container { get; private set; }
 
-        public static void ConfigureInjection()
+        public static void ConfigureInjection(TraceWriter logger)
         {
             var builder = new ContainerBuilder();
 
@@ -23,6 +24,9 @@ namespace SmartFreezeScheduleFA.Configurations
 
             builder.RegisterInstance(context)
                 .SingleInstance();
+
+            builder.Register(ctx => new Logger(logger)).As<ILogger>()
+                .InstancePerLifetimeScope();
 
             builder.RegisterType<CommunicationStateService>()
                 .InstancePerLifetimeScope();
@@ -62,7 +66,7 @@ namespace SmartFreezeScheduleFA.Configurations
 
             builder.RegisterType<FreezingAlgorithme>()
                 .As<IAlgorithme<FreezeForecast>, FreezingAlgorithme>()
-                .UsingConstructor(typeof(IAltitudeClient))
+                .UsingConstructor(typeof(IAltitudeClient), typeof(ILogger))
                 .InstancePerLifetimeScope();
 
             Container = builder.Build();

@@ -7,7 +7,8 @@ namespace WeatherLibrary.Abstraction
     {
         Task<TForecast> Execute(IWeather device);
 
-        Task<TForecast> Execute(IWeather device, IStationPosition devicePosition, IWeather currentWeather, IEnumerable<IWeather> forecast, IStationPosition forecastStation);
+        Task<TForecast> Execute(IWeather device, IStationPosition devicePosition,
+            IWeather currentWeather, IEnumerable<IWeather> forecast, IStationPosition forecastStation);
     }
 
 }

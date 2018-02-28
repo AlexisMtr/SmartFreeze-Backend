@@ -21,7 +21,8 @@ namespace WeatherLibrary.Tests
         {
             DateTime now = DateTime.Now;
             Mock<IAltitudeClient> altitudeClientMock = new Mock<IAltitudeClient>();
-            algo = new FreezingAlgorithme(altitudeClientMock.Object);
+            Mock<ILogger> logger = new Mock<ILogger>();
+            algo = new FreezingAlgorithme(altitudeClientMock.Object, logger.Object);
         }
 
         [TestMethod]
@@ -199,7 +200,8 @@ namespace WeatherLibrary.Tests
             {
                 Altitude = 0
             });
-            var freezeAlgo = new FreezingAlgorithme(altitudeClient.Object);
+            Mock<ILogger> logger = new Mock<ILogger>();
+            var freezeAlgo = new FreezingAlgorithme(altitudeClient.Object, logger.Object);
 
             //execute 
             FreezeForecast freeze = freezeAlgo.Execute(device, stationDevice, freezingToday, forecastList, station).Result;
@@ -221,7 +223,6 @@ namespace WeatherLibrary.Tests
 
         [TestMethod]
         public void ExecuteAlgorithmeWithForecast_ElevationOverHundredTest()
-
         {
             //initialize
             DeviceTest device = new DeviceTest { Temperature = 6.0, Humidity = 80 };
@@ -230,14 +231,14 @@ namespace WeatherLibrary.Tests
             stationDeviceMock.Setup(e => e.Altitude).Returns(1000);
             IStationPosition stationDevice = stationDeviceMock.Object;
 
-            WeatherTest freezingToday = new WeatherTest { Temperature = 4.0, Humidity = 80, Date = now };
-            IEnumerable<IWeather> forecastList = new List<IWeather> { freezingToday };
+            WeatherTest freezingToday = new WeatherTest { Temperature = 7.0, Humidity = 80, Date = now };
+            IList<IWeather> forecastList = new List<IWeather> { freezingToday };
 
-            WeatherTest tomorrow = new WeatherTest { Temperature = -10.0, Humidity = 90, Date = now.AddDays(1) };
-            (forecastList as List<IWeather>).Add(tomorrow);
+            WeatherTest tomorrow = new WeatherTest { Temperature = 5.5, Humidity = 90, Date = now.AddDays(1) };
+            forecastList.Add(tomorrow);
 
-            WeatherTest afterTomorrow = new WeatherTest { Temperature = -30.0, Humidity = 90, Date = now.AddDays(2) };
-            (forecastList as List<IWeather>).Add(afterTomorrow);
+            WeatherTest afterTomorrow = new WeatherTest { Temperature = -1.0, Humidity = 90, Date = now.AddDays(2) };
+            forecastList.Add(afterTomorrow);
 
             Mock<IStationPosition> stationMock = new Mock<IStationPosition>();
             IStationPosition station = stationMock.Object;
@@ -247,19 +248,21 @@ namespace WeatherLibrary.Tests
             {
                 Altitude = 0
             });
-            var freezeAlgo = new FreezingAlgorithme(altitudeClient.Object);
+            Mock<ILogger> logger = new Mock<ILogger>();
+            var freezeAlgo = new FreezingAlgorithme(altitudeClient.Object, logger.Object);
 
             //execute 
             FreezeForecast freeze = freezeAlgo.Execute(device, stationDevice, freezingToday, forecastList, station).Result;
 
             Check.That(freeze.FreezingStart.HasValue).IsEqualTo(true);
-            Check.That(Math.Abs(altitudeClient.Object.GetAltitude(0, 0).Result.Altitude - stationDevice.Altitude)).IsStrictlyGreaterThan(Math.Abs(100));
-            Console.WriteLine((forecastList as List<IWeather>).Count);
-            Check.That(freeze.FreezingProbabilityList.Count).IsEqualTo((forecastList as List<IWeather>).Count);
+            Check.That(freeze.FreezingEnd.HasValue).IsEqualTo(true);
+
+            Check.That(stationDevice.Altitude).IsStrictlyGreaterThan(100);
+
+            Check.That(freeze.FreezingProbabilityList.Count).IsEqualTo(forecastList.Count());
             Check.That(freeze.FreezingProbabilityList.GetValueOrDefault(now)).IsEqualTo(FreezeForecast.FreezingProbability.ZERO);
             Check.That(freeze.FreezingProbabilityList.GetValueOrDefault(now.AddDays(1))).IsEqualTo(FreezeForecast.FreezingProbability.HIGH);
             Check.That(freeze.FreezingProbabilityList.GetValueOrDefault(now.AddDays(2))).IsEqualTo(FreezeForecast.FreezingProbability.IMMINENT);
-            Check.That(freeze.FreezingEnd.HasValue).IsEqualTo(true);
         }
 
         private class DeviceTest : IWeather

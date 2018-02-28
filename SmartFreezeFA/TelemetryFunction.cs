@@ -60,7 +60,7 @@ namespace SmartFreezeFA
                     FreezeForecast freeze = await forecast;
                     if (freeze.FreezingStart.HasValue && Freeze(freeze.FreezingProbabilityList.FirstOrDefault().Value))
                     {
-                        log.Info($"Create freeze alarm ...");
+                        log.Info($"Create freeze alarm (if not already active)...");
                         alarmService.CreateFreezingAlarm(telemetries.Last(), siteId, freeze.FreezingStart, freeze.FreezingEnd);
                     }
                     else if(!Freeze(freeze.FreezingProbabilityList.FirstOrDefault().Value))

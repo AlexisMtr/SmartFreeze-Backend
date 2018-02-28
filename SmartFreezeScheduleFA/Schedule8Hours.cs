@@ -13,7 +13,7 @@ namespace SmartFreezeScheduleFA
         public static void Run([TimerTrigger("0 5 */8 * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
-            DependencyInjection.ConfigureInjection();
+            DependencyInjection.ConfigureInjection(log);
 
             using (var scope = DependencyInjection.Container.BeginLifetimeScope())
             {
