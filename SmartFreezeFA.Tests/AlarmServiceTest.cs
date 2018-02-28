@@ -29,17 +29,18 @@ namespace SmartFreezeFA.Tests
             };
             
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService service = new AlarmService(deviceRepo.Object);
-            service.CreateBatteryAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateBatteryAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e => 
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "Batterie très faible pour le capteur (moins de 15%)" &&
-                e.ShortDescription == "batterie < 15%")), Times.Once);
+                e.Description.ToLower().Contains("batterie") &&
+                e.ShortDescription.ToLower().Contains("15%"))), Times.Once);
         }
 
         [TestMethod]
@@ -58,17 +59,18 @@ namespace SmartFreezeFA.Tests
             };
 
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService service = new AlarmService(deviceRepo.Object);
-            service.CreateBatteryAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateBatteryAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "Batterie faible pour le capteur (moins de 30%)" &&
-                e.ShortDescription == "batterie < 30%")), Times.Once);
+                e.Description.ToLower().Contains("batterie") &&
+                e.ShortDescription.ToLower().Contains("30%"))), Times.Once);
         }
 
         [TestMethod]
@@ -87,17 +89,18 @@ namespace SmartFreezeFA.Tests
             };
 
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService service = new AlarmService(deviceRepo.Object);
-            service.CreateBatteryAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateBatteryAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "Batterie à 50% pour le capteur" &&
-                e.ShortDescription == "batterie < 50%")), Times.Once);
+                e.Description.ToLower().Contains("batterie") &&
+                e.ShortDescription.ToLower().Contains("50%"))), Times.Once);
         }
 
         [TestMethod]
@@ -116,17 +119,19 @@ namespace SmartFreezeFA.Tests
             };
 
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
-            serviceHumidity.CreateHumidityAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateHumidityAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité est anormalement élevée" &&
-                e.ShortDescription == "humidité > 100")), Times.Once);
+                e.Description.ToLower().Contains("humidité") &&
+                e.ShortDescription.ToLower().Contains("humidité") &&
+                e.ShortDescription.ToLower().Contains("100%"))), Times.Once);
         }
 
         [TestMethod]
@@ -143,19 +148,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 0,
                 Temperature = 15
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceHumidity = new AlarmService(deviceRepo.Object);
-            serviceHumidity.CreateHumidityAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateHumidityAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "L'humidité est anormalement basse" &&
-                e.ShortDescription == "humidité <=0")), Times.Once);
+                e.Description.ToLower().Contains("humidité") &&
+                e.ShortDescription.ToLower().Contains("humidité") &&
+                e.ShortDescription.ToLower().Contains("0%"))), Times.Once);
         }
 
         [TestMethod]
@@ -172,19 +179,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = 115
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
-            serviceTempérature.CreateTemperatureAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateTemperatureAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "La température  est anormalement hausse" &&
-                e.ShortDescription == "température > 100")), Times.Once);
+                e.Description.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("100%"))), Times.Once);
         }
 
         [TestMethod]
@@ -201,19 +210,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = -400
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
-            serviceTempérature.CreateTemperatureAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateTemperatureAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "La température  est anormalement basse" &&
-                e.ShortDescription == "température <-300")), Times.Once);
+                e.Description.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("-300"))), Times.Once);
         }
 
 
@@ -231,19 +242,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = -200
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
-            serviceTempérature.CreateTemperatureAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateTemperatureAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "La température  est critique" &&
-                e.ShortDescription == "température entre -300 et -100")), Times.Once);
+                e.Description.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("-100"))), Times.Once);
         }
 
         [TestMethod]
@@ -260,19 +273,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = 95
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
-            serviceTempérature.CreateTemperatureAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateTemperatureAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "La température  est critique" &&
-                e.ShortDescription == "température entre 80 et 100")), Times.Once);
+                e.Description.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("80"))), Times.Once);
         }
 
         [TestMethod]
@@ -289,19 +304,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = -88
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
-            serviceTempérature.CreateTemperatureAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateTemperatureAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "La température  est anormale" &&
-                e.ShortDescription == "température entre -99 et -50")), Times.Once);
+                e.Description.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("-50"))), Times.Once);
         }
 
         [TestMethod]
@@ -318,19 +335,21 @@ namespace SmartFreezeFA.Tests
                 Humidity = 42,
                 Temperature = 60
             };
-            
+
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceTempérature = new AlarmService(deviceRepo.Object);
-            serviceTempérature.CreateTemperatureAlarm(telemetry);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateTemperatureAlarm(telemetry, "site1");
 
             //THEN
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description == "La température  est anormale" &&
-                e.ShortDescription == "température entre 50 et 79")), Times.Once);
+                e.Description.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("température") &&
+                e.ShortDescription.ToLower().Contains("50"))), Times.Once);
         }
 
         [TestMethod]
@@ -353,16 +372,17 @@ namespace SmartFreezeFA.Tests
             DateTime dateEnd = new DateTime();
 
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             //WHEN
-            AlarmService serviceGel = new AlarmService(deviceRepo.Object);
-            serviceGel.CreateFreezingAlarm(telemetry, dateStart, dateEnd);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            service.CreateFreezingAlarm(telemetry, "site1", dateStart, dateEnd);
 
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                e.AlarmGravity == Alarm.Gravity.Critical &&
                e.AlarmType == Alarm.Type.FreezeWarning &&
-               e.Description == "Le capteur detecte du gel" &&
-               e.ShortDescription == "Gel!")), Times.Once);
+               e.Description.ToLower().Contains("gel") &&
+               e.ShortDescription.ToLower().Contains("gel"))), Times.Once);
         }
 
         [TestMethod]
@@ -370,6 +390,7 @@ namespace SmartFreezeFA.Tests
         {
             //GIVEN
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             DateTime dateRef = new DateTime(2018, 02, 13, 6, 0, 0);
             Dictionary<DateTime, FreezeForecast.FreezingProbability> previsions3h = new Dictionary<DateTime, FreezeForecast.FreezingProbability>();
@@ -395,8 +416,8 @@ namespace SmartFreezeFA.Tests
             previsions3h.Add(dateRef.AddHours(39), FreezeForecast.FreezingProbability.HIGH);//21h
 
             //WHEN
-            AlarmService alarmService = new AlarmService(deviceRepo.Object);
-            Dictionary<DateTime, FreezeForecast.FreezingProbability> prevsions12h = alarmService.CalculAverageFreezePrediction12h(previsions3h);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            Dictionary<DateTime, FreezeForecast.FreezingProbability> prevsions12h = service.CalculAverageFreezePrediction12h(previsions3h);
 
             //THEN
             Check.That(prevsions12h).Contains(new Dictionary<DateTime, FreezeForecast.FreezingProbability>
@@ -414,6 +435,7 @@ namespace SmartFreezeFA.Tests
         {
             //GIVEN
             Mock<IDeviceRepository> deviceRepo = new Mock<IDeviceRepository>();
+            Mock<IAlarmRepository> alarmRepo = new Mock<IAlarmRepository>();
 
             DateTime dateRef = new DateTime(2018, 02, 13, 6, 0, 0);
             Dictionary<DateTime, FreezeForecast.FreezingProbability> previsions3h = new Dictionary<DateTime, FreezeForecast.FreezingProbability>();
@@ -442,8 +464,8 @@ namespace SmartFreezeFA.Tests
             previsions3h.Add(dateRef.AddHours(42), FreezeForecast.FreezingProbability.ZERO);//00:00h
 
             //WHEN
-            AlarmService alarmService = new AlarmService(deviceRepo.Object);
-            Dictionary<DateTime, FreezeForecast.FreezingProbability> prevsions12h = alarmService.CalculAverageFreezePrediction12h(previsions3h);
+            AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
+            Dictionary<DateTime, FreezeForecast.FreezingProbability> prevsions12h = service.CalculAverageFreezePrediction12h(previsions3h);
 
             //THEN
             Check.That(prevsions12h).Contains(new Dictionary<DateTime, FreezeForecast.FreezingProbability>
