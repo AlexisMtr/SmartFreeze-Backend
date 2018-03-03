@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WeatherLibrary.Algorithmes.Freeze;
+using static WeatherLibrary.Algorithmes.Freeze.FreezeForecast;
 
 namespace SmartFreezeFA
 {
@@ -61,7 +62,7 @@ namespace SmartFreezeFA
                     if (freeze.FreezingStart.HasValue && Freeze(freeze.FreezingProbabilityList.FirstOrDefault().Value))
                     {
                         log.Info($"Create freeze alarm (if not already active)...");
-                        alarmService.CreateFreezingAlarm(telemetries.Last(), siteId, freeze.FreezingStart, freeze.FreezingEnd);
+                        alarmService.CreateFreezingAlarm(telemetries.Last(), siteId, freeze.FreezingProbabilityList.FirstOrDefault().Value);
                     }
                     else if(!Freeze(freeze.FreezingProbabilityList.FirstOrDefault().Value))
                     {
@@ -83,9 +84,10 @@ namespace SmartFreezeFA
             }
         }
 
-        private static bool Freeze(FreezeForecast.FreezingProbability probability)
+        private static bool Freeze(FreezingProbability probability)
         {
-            return probability != FreezeForecast.FreezingProbability.ZERO && probability != FreezeForecast.FreezingProbability.MINIMUM;
+            return probability != FreezingProbability.ZERO
+                && probability != FreezingProbability.MINIMUM;
         }
     }
 }

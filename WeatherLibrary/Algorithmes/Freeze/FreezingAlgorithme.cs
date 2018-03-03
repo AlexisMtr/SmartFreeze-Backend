@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WeatherLibrary.Abstraction;
 using WeatherLibrary.Algorithmes.Exceptions;
+using static WeatherLibrary.Algorithmes.Freeze.FreezeForecast;
 
 namespace WeatherLibrary.Algorithmes.Freeze
 {
@@ -103,11 +104,11 @@ namespace WeatherLibrary.Algorithmes.Freeze
                     i++;
                 }
 
-                logger.Info($"Freeze probabibility {FreezeForecast.FreezingProbability.ZERO.ToString()} : {freezeForecast.FreezingProbabilityList.Where(e => e.Value == FreezeForecast.FreezingProbability.ZERO).Count()}");
-                logger.Info($"Freeze probabibility {FreezeForecast.FreezingProbability.MINIMUM.ToString()} : {freezeForecast.FreezingProbabilityList.Where(e => e.Value == FreezeForecast.FreezingProbability.MINIMUM).Count()}");
-                logger.Info($"Freeze probabibility {FreezeForecast.FreezingProbability.MEDIUM.ToString()} : {freezeForecast.FreezingProbabilityList.Where(e => e.Value == FreezeForecast.FreezingProbability.MEDIUM).Count()}");
-                logger.Info($"Freeze probabibility {FreezeForecast.FreezingProbability.HIGH.ToString()} : {freezeForecast.FreezingProbabilityList.Where(e => e.Value == FreezeForecast.FreezingProbability.HIGH).Count()}");
-                logger.Info($"Freeze probabibility {FreezeForecast.FreezingProbability.IMMINENT.ToString()} : {freezeForecast.FreezingProbabilityList.Where(e => e.Value == FreezeForecast.FreezingProbability.IMMINENT).Count()}");
+                logger.Info($"Freeze probabibility {FreezingProbability.ZERO.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.ZERO)}");
+                logger.Info($"Freeze probabibility {FreezingProbability.MINIMUM.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.MINIMUM)}");
+                logger.Info($"Freeze probabibility {FreezingProbability.MEDIUM.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.MEDIUM)}");
+                logger.Info($"Freeze probabibility {FreezingProbability.HIGH.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.HIGH)}");
+                logger.Info($"Freeze probabibility {FreezingProbability.IMMINENT.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.IMMINENT)}");
 
                 freezeForecast.FreezingStart = forecast.OrderBy(e => e.Date).First().Date;
                 freezeForecast.FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date;
@@ -123,7 +124,9 @@ namespace WeatherLibrary.Algorithmes.Freeze
 
         private async Task<double> EstimateWeatherByAltitudeDiff(double deviceTemperature, IStationPosition forecastStation, IStationPosition expectedStation)
         {
+            logger.Info($"Altitude on station ({forecastStation.Latitude} ; {forecastStation.Longitude}) :");
             forecastStation.Altitude = (await client.GetAltitude(forecastStation.Latitude, forecastStation.Longitude)).Altitude;
+            logger.Info($"{forecastStation.Altitude}");
 
             double elevationBetweenWeatherStationAndSite = forecastStation.Altitude - expectedStation.Altitude;
             double estimateTemperature = deviceTemperature;
@@ -139,7 +142,9 @@ namespace WeatherLibrary.Algorithmes.Freeze
         //Reduce the number of calls to Google Map Elevation API
         private async Task<IEnumerable<IWeather>> EstimateWeatherByAltitudeDiffForecast(IEnumerable<IWeather> forecast, IStationPosition forecastStation, IStationPosition expectedStation)
         {
+            logger.Info($"Altitude on station ({forecastStation.Latitude} ; {forecastStation.Longitude}) :");
             forecastStation.Altitude = (await client.GetAltitude(forecastStation.Latitude, forecastStation.Longitude)).Altitude;
+            logger.Info($"{forecastStation.Altitude}");
 
             IList<IWeather> theoricWeatherList = new List<IWeather>();
 
@@ -209,27 +214,27 @@ namespace WeatherLibrary.Algorithmes.Freeze
             return kelvinTemp - 273.15;
         }
 
-        private FreezeForecast.FreezingProbability GetProbabilityFreezing(IWeather theoricWeather)
+        private FreezingProbability GetProbabilityFreezing(IWeather theoricWeather)
         {
             if (IsFreezing(theoricWeather))
             {
-                return FreezeForecast.FreezingProbability.IMMINENT;
+                return FreezingProbability.IMMINENT;
             }
             else if ((theoricWeather.Temperature <= 1.0) && (theoricWeather.Humidity >= 80.0))
             {
-                return FreezeForecast.FreezingProbability.HIGH;
+                return FreezingProbability.HIGH;
             }
             else if ((theoricWeather.Temperature <= 1.0) && (theoricWeather.Humidity < 80.0))
             {
-                return FreezeForecast.FreezingProbability.MEDIUM;
+                return FreezingProbability.MEDIUM;
             }
             else if (theoricWeather.Temperature <= 5.0 && theoricWeather.Temperature > 1)
             {
-                return FreezeForecast.FreezingProbability.MINIMUM;
+                return FreezingProbability.MINIMUM;
             }
             else
             {
-                return FreezeForecast.FreezingProbability.ZERO;
+                return FreezingProbability.ZERO;
             }
         }
     }

@@ -10,12 +10,14 @@ namespace SmartFreezeScheduleFA.Services
         private readonly DeviceService deviceService;
         private readonly AlarmService alarmService;
         private readonly NotificationService notificationService;
+        private readonly Logger logger;
 
-        public CommunicationStateService(DeviceService deviceService, AlarmService alarmService, NotificationService notificationService)
+        public CommunicationStateService(DeviceService deviceService, AlarmService alarmService, NotificationService notificationService, Logger logger)
         {
             this.deviceService = deviceService;
             this.alarmService = alarmService;
             this.notificationService = notificationService;
+            this.logger = logger;
         }
 
         public void Run(int minHour, int? maxHour, Alarm.Gravity gravity)
@@ -27,6 +29,8 @@ namespace SmartFreezeScheduleFA.Services
 
                 IEnumerable<Device> devices = deviceService.CheckDeviceCommunication(minMin, minMax);
                 IList<Alarm> alarms = new List<Alarm>();
+
+                logger.Info($"{devices.Count()} device(s) which has Communication Alarms");
 
                 foreach (var device in devices)
                 {
@@ -63,7 +67,7 @@ namespace SmartFreezeScheduleFA.Services
             }
             catch(Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.Message, e);
+                logger.Error($"Error on create communication alarms", e);
             }
         }
     }

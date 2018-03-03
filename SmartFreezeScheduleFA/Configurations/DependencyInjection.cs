@@ -25,7 +25,7 @@ namespace SmartFreezeScheduleFA.Configurations
             builder.RegisterInstance(context)
                 .SingleInstance();
 
-            builder.Register(ctx => new Logger(logger)).As<ILogger>()
+            builder.Register(ctx => new Logger(logger)).As<ILogger, Logger>()
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<CommunicationStateService>()

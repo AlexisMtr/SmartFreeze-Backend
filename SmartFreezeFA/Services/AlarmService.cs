@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WeatherLibrary.Algorithmes.Freeze;
+using static WeatherLibrary.Algorithmes.Freeze.FreezeForecast;
 
 namespace SmartFreezeFA.Services
 {
@@ -105,13 +106,17 @@ namespace SmartFreezeFA.Services
         }
 
         // TODO : Check for previous freeze alarm
-        public void CreateFreezingAlarm(Telemetry telemetry, string siteId, DateTime? start, DateTime? end)
+        public void CreateFreezingAlarm(Telemetry telemetry, string siteId, FreezingProbability probability)
         {
             Alarm latestFreezeAlarm = alarmRepository.GetLatestAlarmByType(telemetry.DeviceId, Alarm.Type.FreezeWarning, null);
 
-            if (start.HasValue && latestFreezeAlarm == null)
+            if (latestFreezeAlarm == null)
             {
-                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.FreezeWarning, Alarm.AlarmSubtype.Freeze, Alarm.Gravity.Critical,
+                Alarm.Gravity gravity = Alarm.Gravity.Information;
+                if (probability == FreezingProbability.HIGH) gravity = Alarm.Gravity.Serious;
+                if (probability == FreezingProbability.IMMINENT) gravity = Alarm.Gravity.Critical;
+
+                CreateAlarm(telemetry.DeviceId, siteId, Alarm.Type.FreezeWarning, Alarm.AlarmSubtype.Freeze, gravity,
                     "Gel détecté", $"Le capteur {telemetry.DeviceId} detecte du gel");
             }
 
