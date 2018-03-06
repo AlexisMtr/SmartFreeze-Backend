@@ -23,7 +23,8 @@ namespace SmartFreeze.Services
                 AlarmType = (filter as AlarmFilter).AlarmType,
                 Gravity = (filter as AlarmFilter).Gravity,
                 DeviceId = string.Empty,
-                ReadFilter = (filter as AlarmFilter).ReadFilter
+                IsRead = (filter as AlarmFilter).IsRead,
+                IsActive = (filter as AlarmFilter).IsActive
             };
 
             var totalCount = alarmRepository.Count(alarmFilter);
@@ -41,10 +42,12 @@ namespace SmartFreeze.Services
         {
             DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter
             {
+                Context = (filter as AlarmFilter).Context,
                 AlarmType = (filter as AlarmFilter).AlarmType,
                 Gravity = (filter as AlarmFilter).Gravity,
                 DeviceId = deviceId,
-                ReadFilter = (filter as AlarmFilter).ReadFilter
+                IsRead = (filter as AlarmFilter).IsRead,
+                IsActive = (filter as AlarmFilter).IsActive
             };
             
             var totalCount = alarmRepository.CountByDevice(deviceId, alarmFilter);

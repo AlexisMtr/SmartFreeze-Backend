@@ -9,7 +9,8 @@ namespace SmartFreeze.Filters
         public ApplicationContext Context { get; set; }
         public Alarm.Gravity Gravity { get; set; }
         public Alarm.Type AlarmType { get; set; }
-        public ReadFilter ReadFilter { get; set; }
+        public bool? IsRead { get; set; }
+        public bool? IsActive { get; set; }
         
         public IMongoQueryable<Alarm> FilterSource(IMongoQueryable<Device> source)
         {
