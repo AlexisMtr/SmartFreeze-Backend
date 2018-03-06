@@ -187,18 +187,20 @@ namespace WeatherLibrary.Algorithmes.Freeze
         // Use only when the temperature is <=0
         private bool IsFreezing(IWeather device)
         {
-
-            //The dew temperature is greater than the freezing temperature
-            double dewTemperature = DewPoint(device.Humidity, device.Temperature);
-            if (device.Temperature <= dewTemperature)
+            if (device.Temperature <= 0)
             {
-                return true;
-            }
+                //The dew temperature is greater than the freezing temperature
+                double dewTemperature = DewPoint(device.Humidity, device.Temperature);
+                if ((device.Temperature <= dewTemperature) && (dewTemperature <= 0))
+                {
+                    return true;
+                }
 
-            double freezingTemperature = FreezingPoint(dewTemperature, device.Temperature);
-            if (device.Temperature <= freezingTemperature)
-            {
-                return true;
+                double freezingTemperature = FreezingPoint(dewTemperature, device.Temperature);
+                if (device.Temperature <= freezingTemperature)
+                {
+                    return true;
+                }
             }
             return false;
         }
