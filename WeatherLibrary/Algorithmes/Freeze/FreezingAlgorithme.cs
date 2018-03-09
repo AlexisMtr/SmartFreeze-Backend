@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using WeatherLibrary.Abstraction;
 using WeatherLibrary.Algorithmes.Exceptions;
@@ -55,16 +56,12 @@ namespace WeatherLibrary.Algorithmes.Freeze
         public async Task<FreezeForecast> Execute(IWeather device, IStationPosition devicePosition,
             IWeather currentWeather, IEnumerable<IWeather> forecast, IStationPosition forecastStation)
         {
+            if (!forecast.Any()) return null;
             try
             {
-                FreezeForecast freezeForecast = new FreezeForecast
-                {
-                    FreezingStart = forecast.OrderBy(e => e.Date).First().Date,
-                    FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date
-                };
+                FreezeForecast freezeForecast = new FreezeForecast();
                 double deviceTemperature = device.Temperature;
                 double estimateDeviceTemperature = await EstimateWeatherByAltitudeDiff(deviceTemperature, forecastStation, devicePosition);
-                logger.Info($"Estimate temperature : {estimateDeviceTemperature}");
 
                 if (estimateDeviceTemperature == 0.0)
                 {
@@ -105,14 +102,21 @@ namespace WeatherLibrary.Algorithmes.Freeze
                     i++;
                 }
 
-                logger.Info($"Freeze probabibility {FreezingProbability.ZERO.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.ZERO)}");
-                logger.Info($"Freeze probabibility {FreezingProbability.MINIMUM.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.MINIMUM)}");
-                logger.Info($"Freeze probabibility {FreezingProbability.MEDIUM.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.MEDIUM)}");
-                logger.Info($"Freeze probabibility {FreezingProbability.HIGH.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.HIGH)}");
-                logger.Info($"Freeze probabibility {FreezingProbability.IMMINENT.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.IMMINENT)}");
+                StringBuilder logBuilder = new StringBuilder();
+                logBuilder.Append($"Freeze probabibility {FreezingProbability.ZERO.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.ZERO)}");
+                logBuilder.Append(" / ");
+                logBuilder.Append($"Freeze probabibility {FreezingProbability.MINIMUM.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.MINIMUM)}");
+                logBuilder.Append(" / ");
+                logBuilder.Append($"Freeze probabibility {FreezingProbability.MEDIUM.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.MEDIUM)}");
+                logBuilder.Append(" / ");
+                logBuilder.Append($"Freeze probabibility {FreezingProbability.HIGH.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.HIGH)}");
+                logBuilder.Append(" / ");
+                logBuilder.Append($"Freeze probabibility {FreezingProbability.IMMINENT.ToString()} : {freezeForecast.FreezingProbabilityList.Count(e => e.Value == FreezingProbability.IMMINENT)}");
 
-                freezeForecast.FreezingStart = forecast.OrderBy(e => e.Date).First().Date;
-                freezeForecast.FreezingEnd = forecast.OrderBy(e => e.Date).Last().Date;
+                logger.Info(logBuilder.ToString());
+
+                freezeForecast.FreezingStart = forecast.OrderBy(e => e.Date).FirstOrDefault().Date;
+                freezeForecast.FreezingEnd = forecast.OrderBy(e => e.Date).LastOrDefault().Date;
 
                 return freezeForecast;
             }

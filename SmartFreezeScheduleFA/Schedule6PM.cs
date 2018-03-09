@@ -35,7 +35,6 @@ namespace SmartFreezeScheduleFA
 
                 try
                 {
-
                     log.Info("Get latest telemtry");
                     Dictionary<Device, Telemetry> telemetries = deviceService.GetLatestTelemetryByDevice();
                     foreach (var item in telemetries)
@@ -43,9 +42,13 @@ namespace SmartFreezeScheduleFA
                         OwmCurrentWeather current = await weatherClient.GetCurrentWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
                         OwmForecastWeather forecast = await weatherClient.GetForecastWeather(item.Key.Position.Latitude, item.Key.Position.Longitude);
 
-                        log.Info($"Execute Algorithme");
+                        log.Info($"Execute Algorithme (device {item.Key.Id})");
                         FreezeForecast freeze = await algorithme.Execute(item.Value, item.Key, current.Weather, forecast.Forecast, forecast.StationPosition);
-                        log.Info($"Executed");
+                        if(freeze == null)
+                        {
+                            log.Error($"Unable to calculate the freeze probability (no forecast)");
+                            continue;
+                        }
                         // TODO : complete process
                         Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = freezeService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
                         log.Info($"Insert Freeze in Db");

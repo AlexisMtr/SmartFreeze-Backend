@@ -26,6 +26,7 @@ namespace SmartFreezeScheduleFA.Services
         public Dictionary<DateTime, FreezingProbability> CalculAverageFreezePrediction12h(Dictionary<DateTime, FreezingProbability> freezingProbabilityList)
         {
             Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = new Dictionary<DateTime, FreezingProbability>();
+            if (!freezingProbabilityList.Any()) return averageFreezePrediction12h;
 
             DateTime start = new DateTime();
 

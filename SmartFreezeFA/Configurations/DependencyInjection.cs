@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Azure.WebJobs.Host;
 using SmartFreezeFA.Repositories;
 using SmartFreezeFA.Services;
 using System.Configuration;
@@ -13,13 +14,16 @@ namespace SmartFreezeFA.Configurations
     {
         public static IContainer Container { get; private set; }
 
-        public static void ConfigureInjection()
+        public static void ConfigureInjection(TraceWriter logger)
         {
             ContainerBuilder builder = new ContainerBuilder();
 
             DbContext context = new DbContext(ConfigurationManager.ConnectionStrings["DefaultConnectionString"].ConnectionString, ConfigurationManager.AppSettings["DatabaseName"]);
             builder.RegisterInstance(context);
-            
+
+            builder.Register(ctx => new Logger(logger)).As<ILogger, Logger>()
+                .InstancePerLifetimeScope();
+
             builder.RegisterType<TelemetryRepository>()
                 .As<ITelemetryRepository>();
             builder.RegisterType<DeviceRepository>()
@@ -46,7 +50,7 @@ namespace SmartFreezeFA.Configurations
 
             builder.RegisterType<FreezingAlgorithme>()
                 .As<IAlgorithme<FreezeForecast>, FreezingAlgorithme>()
-                .UsingConstructor(typeof(IAltitudeClient))
+                .UsingConstructor(typeof(IAltitudeClient), typeof(ILogger))
                 .InstancePerLifetimeScope();
 
             Container = builder.Build();

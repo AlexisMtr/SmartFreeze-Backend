@@ -21,7 +21,7 @@ namespace SmartFreezeFA
         public static async Task Run([EventHubTrigger("device-data", Connection = "EventHubConnectionString")]string myEventHubMessage, TraceWriter log)
         {
             log.Info($"C# Event Hub trigger function processed a message: {myEventHubMessage}");
-            DependencyInjection.ConfigureInjection();
+            DependencyInjection.ConfigureInjection(log);
             IEnumerable<Telemetry> telemetries = null;
 
             try
