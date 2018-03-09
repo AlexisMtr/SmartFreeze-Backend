@@ -39,8 +39,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e => 
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("batterie") &&
-                e.ShortDescription.ToLower().Contains("15%"))), Times.Once);
+                e.ShortDescription.ToLower().Contains("batterie") &&
+                e.Description.ToLower().Contains("15%"))), Times.Once);
         }
 
         [TestMethod]
@@ -69,8 +69,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("batterie") &&
-                e.ShortDescription.ToLower().Contains("30%"))), Times.Once);
+                e.ShortDescription.ToLower().Contains("batterie") &&
+                e.Description.ToLower().Contains("30%"))), Times.Once);
         }
 
         [TestMethod]
@@ -99,8 +99,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("1", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("batterie") &&
-                e.ShortDescription.ToLower().Contains("50%"))), Times.Once);
+                e.ShortDescription.ToLower().Contains("batterie") &&
+                e.Description.ToLower().Contains("50%"))), Times.Once);
         }
 
         [TestMethod]
@@ -129,9 +129,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("humidité") &&
                 e.ShortDescription.ToLower().Contains("humidité") &&
-                e.ShortDescription.ToLower().Contains("100%"))), Times.Once);
+                e.Description.ToLower().Contains("100%"))), Times.Once);
         }
 
         [TestMethod]
@@ -160,9 +159,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("humidité") &&
                 e.ShortDescription.ToLower().Contains("humidité") &&
-                e.ShortDescription.ToLower().Contains("0%"))), Times.Once);
+                e.Description.ToLower().Contains("0%"))), Times.Once);
         }
 
         [TestMethod]
@@ -191,9 +189,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("température") &&
                 e.ShortDescription.ToLower().Contains("température") &&
-                e.ShortDescription.ToLower().Contains("100%"))), Times.Once);
+                e.Description.ToLower().Contains("100°"))), Times.Once);
         }
 
         [TestMethod]
@@ -222,9 +219,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Critical &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("température") &&
                 e.ShortDescription.ToLower().Contains("température") &&
-                e.ShortDescription.ToLower().Contains("-300"))), Times.Once);
+                e.Description.ToLower().Contains("-300"))), Times.Once);
         }
 
 
@@ -254,9 +250,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("température") &&
                 e.ShortDescription.ToLower().Contains("température") &&
-                e.ShortDescription.ToLower().Contains("-100"))), Times.Once);
+                e.Description.ToLower().Contains("-100"))), Times.Once);
         }
 
         [TestMethod]
@@ -285,9 +280,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Serious &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("température") &&
                 e.ShortDescription.ToLower().Contains("température") &&
-                e.ShortDescription.ToLower().Contains("80"))), Times.Once);
+                e.Description.ToLower().Contains("80"))), Times.Once);
         }
 
         [TestMethod]
@@ -316,9 +310,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("température") &&
                 e.ShortDescription.ToLower().Contains("température") &&
-                e.ShortDescription.ToLower().Contains("-50"))), Times.Once);
+                e.Description.ToLower().Contains("-50"))), Times.Once);
         }
 
         [TestMethod]
@@ -347,9 +340,8 @@ namespace SmartFreezeFA.Tests
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                 e.AlarmGravity == Alarm.Gravity.Information &&
                 e.AlarmType == Alarm.Type.DeviceFailure &&
-                e.Description.ToLower().Contains("température") &&
                 e.ShortDescription.ToLower().Contains("température") &&
-                e.ShortDescription.ToLower().Contains("50"))), Times.Once);
+                e.Description.ToLower().Contains("50"))), Times.Once);
         }
 
         [TestMethod]
@@ -376,13 +368,13 @@ namespace SmartFreezeFA.Tests
 
             //WHEN
             AlarmService service = new AlarmService(deviceRepo.Object, alarmRepo.Object);
-            service.CreateFreezingAlarm(telemetry, "site1", dateStart, dateEnd);
+            service.CreateFreezingAlarm(telemetry, "site1", FreezeForecast.FreezingProbability.IMMINENT);
 
             deviceRepo.Verify(o => o.AddAlarm("2", It.Is<Alarm>(e =>
                e.AlarmGravity == Alarm.Gravity.Critical &&
                e.AlarmType == Alarm.Type.FreezeWarning &&
-               e.Description.ToLower().Contains("gel") &&
-               e.ShortDescription.ToLower().Contains("gel"))), Times.Once);
+               e.ShortDescription.ToLower().Contains("gel") &&
+               e.Description.ToLower().Contains("gel"))), Times.Once);
         }
 
         [TestMethod]

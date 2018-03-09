@@ -68,11 +68,12 @@ namespace WeatherLibrary.Algorithmes.Freeze
 
                 if (estimateDeviceTemperature == 0.0)
                 {
-                    estimateDeviceTemperature = 0.0000001;
+                    estimateDeviceTemperature = 1;
                 }
                 if (currentWeather.Humidity == 0.0)
                 {
-                    currentWeather.Humidity = 0.0000001;
+                    // to force the coef to be 1
+                    currentWeather.Humidity = device.Humidity;
                 }
                 double coefTemperature = Math.Abs(device.Temperature / estimateDeviceTemperature);
                 double coefHumidity = Math.Abs(device.Humidity / currentWeather.Humidity);

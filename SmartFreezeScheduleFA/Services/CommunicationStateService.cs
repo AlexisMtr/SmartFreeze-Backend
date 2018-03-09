@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WeatherLibrary.Abstraction;
 
 namespace SmartFreezeScheduleFA.Services
 {
@@ -10,9 +11,9 @@ namespace SmartFreezeScheduleFA.Services
         private readonly DeviceService deviceService;
         private readonly AlarmService alarmService;
         private readonly NotificationService notificationService;
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
-        public CommunicationStateService(DeviceService deviceService, AlarmService alarmService, NotificationService notificationService, Logger logger)
+        public CommunicationStateService(DeviceService deviceService, AlarmService alarmService, NotificationService notificationService, ILogger logger)
         {
             this.deviceService = deviceService;
             this.alarmService = alarmService;

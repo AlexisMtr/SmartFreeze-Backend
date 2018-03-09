@@ -6,6 +6,7 @@ using NFluent;
 using SmartFreezeScheduleFA.Models;
 using SmartFreezeScheduleFA.Repositories;
 using SmartFreezeScheduleFA.Services;
+using WeatherLibrary.Abstraction;
 
 namespace SmartFreezeScheduleFA.Tests
 {
@@ -14,12 +15,11 @@ namespace SmartFreezeScheduleFA.Tests
     {
         private List<Alarm> alarmsList;
         private List<Device> deviceList;
+        private Mock<ILogger> logger;
 
         [TestInitialize]
         public void Setup()
         {
-
-
             deviceList = new List<Device>
             {
                 new Device
@@ -82,8 +82,9 @@ namespace SmartFreezeScheduleFA.Tests
             DeviceService deviceService = new DeviceService(deviceRepoMock.Object, telemetryRepoMock.Object);
             AlarmService alarmService = new AlarmService(deviceRepoMock.Object, freezeReop.Object);
             NotificationService notificationService = new NotificationService(deviceRepoMock.Object);
+            Mock<ILogger> logger = new Mock<ILogger>();
 
-            CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService);
+            CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService, logger.Object);
 
             //execute 
             communicationStateService.Run(7, null, Alarm.Gravity.Serious);
@@ -113,7 +114,8 @@ namespace SmartFreezeScheduleFA.Tests
             AlarmService alarmService = new AlarmService(deviceRepoMock.Object, freezeReop.Object);
             NotificationService notificationService = new NotificationService(deviceRepoMock.Object);
 
-            CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService);
+            Mock<ILogger> logger = new Mock<ILogger>();
+            CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService, logger.Object);
 
             //execute 
             communicationStateService.Run(1, 2, Alarm.Gravity.Information);
@@ -157,8 +159,9 @@ namespace SmartFreezeScheduleFA.Tests
             DeviceService deviceService = new DeviceService(deviceRepoMock.Object, telemetryRepoMock.Object);
             AlarmService alarmService = new AlarmService(deviceRepoMock.Object, freezeReop.Object);
             NotificationService notificationService = new NotificationService(deviceRepoMock.Object);
+            Mock<ILogger> logger = new Mock<ILogger>();
 
-            CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService);
+            CommunicationStateService communicationStateService = new CommunicationStateService(deviceService, alarmService, notificationService, logger.Object);
 
             //execute 
             communicationStateService.Run(1, 2, Alarm.Gravity.Information);
