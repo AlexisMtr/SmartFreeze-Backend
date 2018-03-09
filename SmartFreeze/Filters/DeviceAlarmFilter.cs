@@ -110,10 +110,12 @@ namespace SmartFreeze.Filters
 
             if (IsRead.HasValue)
             {
-                BsonDocument readStage = new BsonDocument("$match", new BsonDocument
+                BsonDocument readStage = new BsonDocument("$match", new BsonDocument("$or", new BsonArray()
                 {
-                    { "Alarms.IsRead", IsRead.Value }
-                });
+                    new BsonDocument("Alarms.IsRead", IsRead),
+                    new BsonDocument("Alarms.IsRead", new BsonDocument("$exists", false))
+                }));
+
                 pipeline.Add(readStage);
             }
             if (IsActive.HasValue)
@@ -124,6 +126,12 @@ namespace SmartFreeze.Filters
                 });
                 pipeline.Add(activeStage);
             }
+
+            BsonDocument sortStage = new BsonDocument("$sort", new BsonDocument
+            {
+                { "Alarms.OccuredAt", -1 }
+            });
+            pipeline.Add(sortStage);
 
             return pipeline;
         }
