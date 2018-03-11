@@ -328,7 +328,7 @@ namespace SmartFreezeScheduleFA.Tests
                 e.ShortDescription.Contains("Gel") &&
                 e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 06, 0, 0) &&
-                e.End == new DateTime(2018, 02, 14, 06, 0, 0))), Times.Once);
+                e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
         }
 
         //DEGEL -> GEL avec lastFreeze (40)
@@ -370,7 +370,7 @@ namespace SmartFreezeScheduleFA.Tests
         }
 
 
-        //GEL -> GEL avec lastFreeze (44) TODO
+        //GEL -> GEL avec lastFreeze (44)
         [TestMethod]
         public void TestcreateFreezeAlarm44_gel_gel_avecFreeze()
         {
@@ -386,6 +386,24 @@ namespace SmartFreezeScheduleFA.Tests
                 DeviceId = "1",
                 TrustIndication = 4
             });
+            deviceRepo.Setup(o => o.GetCrossAlarmsByDevice("1", new DateTime(2018, 02, 14, 6, 0, 0), new DateTime(2018, 02, 14, 18, 0, 0))).Returns(new List<Alarm>()
+            {
+                new Alarm()
+                {
+                    Id = $"{"1"}-alarm{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}",
+                    DeviceId = "1",
+                    SiteId = "1",
+                    IsActive = true,
+                    AlarmType = Alarm.Type.FreezeWarning,
+                    AlarmGravity = Alarm.Gravity.Critical,
+                    OccuredAt = DateTime.UtcNow,
+                    ShortDescription = "Gel",
+                    Description = "Gel",
+                    Start = new DateTime(2018, 02, 13, 6, 0, 0),
+                    End = new DateTime(2018, 02, 14, 6, 0, 0)
+        }
+            });
+
             Dictionary<DateTime, FreezingProbability> dico = new Dictionary<DateTime, FreezingProbability>();
             // 44
             dico.Add(dateRef, FreezingProbability.IMMINENT);
@@ -439,7 +457,7 @@ namespace SmartFreezeScheduleFA.Tests
                 e.ShortDescription.Contains("Dégel") &&
                 e.ShortDescription.Contains("14/02/2018") &&
                 e.Start == new DateTime(2018, 02, 14, 18, 0, 0) &&
-                e.End == null)), Times.Once);
+                e.End == new DateTime(2018, 02, 14, 18, 0, 0))), Times.Once);
         }
 
         // LFE last
