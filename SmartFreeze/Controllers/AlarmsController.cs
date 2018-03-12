@@ -4,6 +4,7 @@ using SmartFreeze.Dtos;
 using SmartFreeze.Filters;
 using SmartFreeze.Models;
 using SmartFreeze.Services;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -34,5 +35,14 @@ namespace SmartFreeze.Controllers
         {
             return alarmService.Ack(alarmId) ? Ok() : StatusCode((int)HttpStatusCode.NotModified);
         }
+
+        [HttpGet("count")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Count([FromQuery]AlarmFilter filter)
+        {
+            int count = alarmService.CountAll(filter);
+            return Ok(count);
+        }
+
     }
 }

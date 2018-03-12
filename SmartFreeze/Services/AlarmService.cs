@@ -38,6 +38,20 @@ namespace SmartFreeze.Services
             };
         }
 
+        public int CountAll(IMongoFilter<Device, Alarm> filter)
+        {
+            DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter
+            {
+                Context = (filter as AlarmFilter).Context,
+                AlarmType = (filter as AlarmFilter).AlarmType,
+                Gravity = (filter as AlarmFilter).Gravity,
+                DeviceId = string.Empty,
+                IsRead = (filter as AlarmFilter).IsRead,
+                IsActive = (filter as AlarmFilter).IsActive
+            };
+            return alarmRepository.Count(alarmFilter);
+        }
+
         public PaginatedItems<Alarm> GetByDevice(string deviceId, IMongoFilter<Device, Alarm> filter, int rowsPerPage, int pageNumber)
         {
             DeviceAlarmFilter alarmFilter = new DeviceAlarmFilter
