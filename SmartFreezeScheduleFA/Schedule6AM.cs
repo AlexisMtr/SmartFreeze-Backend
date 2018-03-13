@@ -28,6 +28,7 @@ namespace SmartFreezeScheduleFA
                 DeviceService deviceService = scope.Resolve<DeviceService>();
                 NotificationService notificationService = scope.Resolve<NotificationService>();
                 FreezeService freezeService = scope.Resolve<FreezeService>();
+                AlarmService alarmService = scope.Resolve<AlarmService>();
 
                 OpenWeatherMapClient weatherClient = scope.Resolve<OpenWeatherMapClient>();
 
@@ -49,6 +50,8 @@ namespace SmartFreezeScheduleFA
 
                         // TODO : complete process
                         Dictionary<DateTime, FreezingProbability> averageFreezePrediction12h = freezeService.CalculAverageFreezePrediction12h(freeze.FreezingProbabilityList);
+                        log.Info($"Create alarms");
+                        alarmService.CreateFreezeAlarm(item.Key.Id, item.Key.SiteId, averageFreezePrediction12h);
                         log.Info($"Insert Freeze in Db");
                         freezeService.CreateFreezeAndThawByDevice(item.Key.Id, averageFreezePrediction12h);
                     }
