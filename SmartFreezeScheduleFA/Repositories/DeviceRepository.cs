@@ -192,7 +192,7 @@ namespace SmartFreezeScheduleFA.Repositories
             Alarm alarmBase = devices.Alarms.First(e => e.Id == alarm.Id);
             int index = (devices.Alarms as List<Alarm>).IndexOf(alarmBase);
 
-            UpdateResult result = collection.UpdateOne(filter, Builders<Site>.Update.Set($"Devices.$.Alarms.{index}.IsActive", alarm.IsActive));
+            UpdateResult result = collection.UpdateOne(filter, Builders<Site>.Update.Set($"Devices.$.Alarms.{index}.IsActive", false));
 
             return result.ModifiedCount == 1;
         }

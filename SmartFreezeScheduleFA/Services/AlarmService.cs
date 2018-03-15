@@ -202,7 +202,7 @@ namespace SmartFreezeScheduleFA.Services
                 alarms.RemoveAt(0);
                 foreach (var alarm in alarms)
                 {
-                    deviceRepository.DeleteAlarmById(deviceId, alarm.Id);
+                    deviceRepository.UpdateStatusAlarm(deviceId, alarm);
                 }
             }
             else
